@@ -13,6 +13,7 @@ class Subject(models.Model):
         ('fifth_year', 'Fifth Year')
     ]
     college_year = models.CharField(max_length=20, choices=YEAR_CHOICES)
+    class_division = models.CharField(max_length=10)
 
 class Announcement(models.Model):
     announcement_id = models.CharField(max_length=12, unique=True)

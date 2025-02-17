@@ -1,0 +1,418 @@
+:root {
+    --eh-body-bg-color: #F6F8F9;
+    /* --eh-blue-primary: #17C6ED; */
+    --eh-blue-primary: #130c3d;
+    /* --eh-blue-primary-faded: rgba(23, 198, 237, 0.6); */
+    --eh-red-primary: #f60019;
+    --eh-blue-primary-faded: rgba(19, 12, 61, 0.6);
+    --eh-light-grey: #EBEDED;
+    --eh-dark-grey: #7E8A8C;
+    --eh-dark-grey-faded: #b3b7b882;
+    --eh-danger: rgba(255, 0, 0, 0.35);
+}
+
+body {
+    background-color: var(--eh-body-bg-color);
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+@font-face {
+    font-family: 'JuliusBlack';
+    src: url('/static/fonts/JuliusBlackRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Create a class for this font */
+.font-julius {
+    font-family: 'JuliusBlack', sans-serif !important;
+}
+
+.block-div {
+    display: block !important;
+}
+
+.none-div {
+    display: none !important;
+}
+
+.eh-btn-blue-primary-no-hover {
+    background-color: var(--eh-blue-primary);
+    color: white;
+    border: none;
+    transition: transform 0.2s ease-in-out;
+
+}
+
+.eh-btn-blue-primary-no-hover:hover {
+    background-color: var(--eh-red-primary);
+    color: white;
+    border: none;
+    transition: transform 0.2s ease-in-out;
+
+}
+
+.eh-btn-blue-primary {
+    background-color: var(--eh-blue-primary);
+    color: white;
+    border: none;
+
+}
+
+.eh-btn-blue-primary:hover {
+    /* box-shadow: 0 0 0px 3px var(--eh-blue-primary-faded); */
+    border: none;
+    background-color: var(--eh-red-primary);
+    color: white;
+}
+
+.eh-btn-blue-primary-outline {
+    background-color: transparent;
+    color: var(--eh-blue-primary);
+    border: 2px solid var(--eh-blue-primary);
+    transition: transform 0.2s ease-in-out;
+}
+
+.eh-btn-blue-primary-outline:hover {
+    box-shadow: 1px 1px 4px 4px var(--eh-blue-primary-faded);
+    color: var(--eh-blue-primary);
+    border: 2px solid var(--eh-blue-primary);
+    background-color: white;
+    /* border: none; */
+    font-weight: 800;
+}
+
+.eh-bg-blue-primary {
+    background-color: var(--eh-blue-primary) !important;
+}
+
+.eh-text-blue-primary {
+    color: var(--eh-blue-primary) !important;
+}
+
+@media (max-width: 768px) {
+    .offcanvas {
+        width: 75% !important;
+        /* Adjust this percentage as needed */
+    }
+}
+
+.eh-menu-item {
+    font-weight: 600;
+    color: var(--eh-blue-primary);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.eh-menu-item-active {
+    font-weight: 600;
+    background-color: var(--eh-blue-primary);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.eh-progress-bar {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.eh-progress-bar-line {
+    flex: 1;
+    height: 2px;
+    background-color: var(--eh-dark-grey);
+}
+
+.eh-progress-bar-line-completed {
+    flex: 1;
+    height: 4px;
+    background-color: var(--eh-blue-primary);
+}
+
+.eh-progress-bar-icon {
+    /* margin: 0 8px 0 0; */
+    padding: 18px 0px;
+    color: var(--eh-blue-primary);
+}
+
+.eh-progress-bar-icon-incomplete {
+    margin: 0 6px;
+    color: var(--eh-blue-primary);
+    background-color: var(--eh-light-grey);
+    padding: 18px 14px;
+    border-radius: 100%;
+}
+
+.eh-progress-bar-text {
+    padding: 0 10px;
+    color: #ccc;
+    font-weight: bold;
+}
+
+.eh-nav-link-case-coordinator {
+    color: var(--eh-dark-grey);
+    cursor: pointer;
+}
+
+.eh-nav-link-case-coordinator:hover {
+    color: #000;
+    font-weight: 600;
+}
+
+.eh-head {
+    font-weight: 700;
+}
+
+.eh-label {
+    font-weight: 500;
+}
+
+.dark-input {
+    background-color: var(--eh-light-grey);
+}
+
+.dark-input:focus {
+    border-color: var(--eh-blue-primary);
+    box-shadow: 0 0 0px 3px var(--eh-blue-primary-faded);
+}
+
+.eh-checkbox {
+    background-color: var(--eh-light-grey);
+    box-shadow: 0 0 0px 3px var(--eh-blue-primary-faded);
+}
+
+.eh-checkbox:checked {
+    background-color: var(--eh-blue-primary);
+    border-color: var(--eh-blue-primary);
+}
+
+.eh-checkbox:focus {
+    box-shadow: 0 0 0px 3px var(--eh-blue-primary-faded);
+    border-color: var(--eh-blue-primary);
+}
+
+.document-card {
+    border: 2px solid black; 
+    border-radius: 15px;
+    background-color: var(--eh-light-grey);
+    cursor: pointer;
+}
+
+.select-question-card {
+    background-color: var(--eh-light-grey);
+    box-shadow: 0 0 0 2px var(--eh-dark-grey-faded);
+    border-radius: 7px;
+
+}
+
+.question-card {
+    border: 1px solid black; 
+    border-radius: 15px;
+    background-color: var(--eh-light-grey);
+    cursor: pointer;
+}
+
+.medical-remark-card {
+    border: 1px solid black; 
+    border-radius: 15px;
+    background-color: var(--eh-light-grey);
+    cursor: pointer;
+}
+
+.generate-final-report-card {
+    border: 1px solid var(--eh-blue-primary); 
+    border-radius: 15px;
+}
+
+
+.visit-card {
+    background-color: white;
+    box-shadow: 0 0 0 2px var(--eh-dark-grey-faded);
+    border-radius: 15px;
+
+}
+
+.visit-card-eh-hr {
+    color: var(--eh-dark-grey);
+}
+
+.eh-key {
+    color: var(--eh-blue-primary);
+    font-weight: 600;
+}
+
+.eh-value {
+    color: black;
+    font-weight: 500;
+}
+
+.eh-small{
+    font-weight: 800;
+    color: var(--eh-blue-primary);
+}
+
+.eh-small-white{
+    font-weight: 800;
+    color: white;
+}
+
+
+.dashboard-scroll-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    position: relative;
+    scroll-snap-type: x mandatory;
+}
+
+.dashboard-scroll-container::-webkit-scrollbar {
+    display: none; /* Hide the default scrollbar */
+}
+
+.dashboard-main-card {
+    display: inline-block;
+    margin-right: 0.25rem;
+    scroll-snap-align: start; /* Ensure cards snap to position */
+}
+
+/* Flexbox layout for larger screens */
+@media (min-width: 550px) {
+    .dashboard-scroll-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        overflow-x: hidden;
+    }
+
+    .dashboard-main-card {
+        flex: 1;
+        max-width: calc(100% / 5); /* Adjust the number of visible cards */
+    }
+
+    .dashboard-dots-container {
+        display: none;
+    }
+
+    .dashboard-dot {
+        display: none;
+    }
+}
+
+.dashboard-dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.dashboard-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    /* background-color: #ccc; */
+    background-color: var(--eh-blue-primary-faded);
+    transition: background-color 0.3s;
+}
+
+.dashboard-dot.active {
+    background-color: var(--eh-blue-primary);
+}
+
+.dashboard-card {
+    box-shadow: 0 0 0 2px var(--eh-dark-grey-faded);
+    background-color: white;
+    /* border: 2px solid black; */
+    border-radius: 20px;
+}
+
+.case-list-card {
+    box-shadow: 0 0 0 2px var(--eh-light-grey);
+    background-color: white;
+    /* border: 2px solid black; */
+    border-radius: 15px;   
+}
+
+.case-list-card--temp {
+    box-shadow: 0 0 0 2px var(--eh-light-grey);
+    background-color: var(--eh-blue-primary-faded);
+    color: white;
+    border: 3px solid var(--eh-blue-primary);
+    border-radius: 15px;
+}
+
+.remark-text-area {
+    background-color: white;
+    border: 2px solid var(--eh-blue-primary);
+}
+
+.remark-text-area:focus {
+    border-color: var(--eh-blue-primary);
+    box-shadow: 0 0 0px 3px var(--eh-blue-primary-faded);
+}
+
+.pdf-viewer-container {
+    width: 100%;
+    height: 500px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* PDF Viewer Canvas Styling */
+#document-viewer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    max-height: 80vh; /* Restrict the height to fit within the modal */
+}
+
+#pdf-render {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd; /* Optional border for clarity */
+    margin-top: 10px;
+}
+
+#pdf-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* #pdf-controls button {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+} */
+
+#pdf-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#current-page, #total-pages {
+    font-weight: 800;
+    color: var(--eh-blue-primary);
+}
+
+#page-info {
+    font-weight: 700;
+    color: var(--eh-dark-grey);
+}
+
+.hidden-important {
+    display: none !important;
+}
