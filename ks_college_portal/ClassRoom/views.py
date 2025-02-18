@@ -32,7 +32,7 @@ class TeacherTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -45,7 +45,7 @@ class TeacherTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -71,7 +71,7 @@ class TeacherTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -87,7 +87,7 @@ class StudentTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -100,7 +100,7 @@ class StudentTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -126,7 +126,7 @@ class StudentTemplateViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -143,7 +143,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -156,7 +156,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -175,7 +175,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": 'Subject or college year is not acceptable.'
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -196,7 +196,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":None,
+                        "data": None,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -210,7 +210,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -231,7 +231,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -244,7 +244,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -276,7 +276,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -292,7 +292,7 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -305,7 +305,7 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -337,13 +337,13 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-class TeacherAnnouncementViewSet(viewsets.ViewSet):
+class AnnouncementViewSet(viewsets.ViewSet):
     def list(self, request):
         try:
             user = request.user
@@ -353,7 +353,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -366,18 +366,41 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": "Subject Id required."
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
-            all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
+            user_role = user.role
+            if user_role == 'student':
+                subject_is_valid = Subject.objects.filter(subject_id=subject_id, college_year=user.year).exists()
+                if subject_is_valid:
+                    all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
+                    all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
+                else:
+                    return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            else:
+                all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
+                all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
+
+            subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
+            subject_data = SubjectSerializer(subject_data_obj).data
 
             data = {
-                'all_announcements': all_announcements,
+                'all_announcements': all_announcements[::-1],
                 'total_announcements': len(all_announcements),
+                'subject_data': subject_data,
             }
             return Response(
                     {
@@ -398,7 +421,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -414,7 +437,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": True,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -427,7 +450,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": True,                            
-                            "data":None,
+                            "data": None,
                             "error": None
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -440,7 +463,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": "Text Content not provided."
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -453,7 +476,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": "Subject Id required."
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -491,7 +514,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":None,
+                        "data": None,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -504,7 +527,7 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
                             "success": False,
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
-                            "data":None,
+                            "data": None,
                             "error": str(ex)
                         },
                         status=status.HTTP_400_BAD_REQUEST
@@ -577,3 +600,87 @@ class TeacherAnnouncementViewSet(viewsets.ViewSet):
     def decrypt(self, b64_text):
         # Decode the Base64 string back to bytes, then to text
         return base64.b64decode(b64_text.encode()).decode()
+
+class CommentViewSet(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            announcement_id = request.data.get('announcement_id')
+            if not announcement_id:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Announcement Id required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            comment_content = request.data.get('comment_content')
+            if not comment_content:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Comment content not provided."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            comment_id = self.generate_comment_id()
+
+            new_comment = Comment(
+                comment_id=comment_id,
+                announcement_id=announcement_id,
+                user_id=user,
+                comment_content=comment_content,
+            )
+            new_comment.save()
+
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":None,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def generate_comment_id(self):
+        while True:
+            comment_id = ''.join(random.choices(string.digits, k=10))
+            if not Comment.objects.filter(comment_id=comment_id).exists():
+                return comment_id
+

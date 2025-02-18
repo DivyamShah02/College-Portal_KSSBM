@@ -31,5 +31,5 @@ class SingleSubjectViewSet(viewsets.ViewSet):
             if request.user.role == 'teacher':
                 return render(request, "Teacher/single_subject.html")
             elif request.user.role == 'student':
-                return render(request, "Student/student_dashboard.html")
+                return render(request, "Student/single_subject.html")
         return HttpResponse('Not Authorised')

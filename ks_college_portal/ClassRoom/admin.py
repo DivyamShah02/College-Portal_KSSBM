@@ -15,7 +15,7 @@ class AnnouncementAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'comment_id', 'announcement_id', 'student_id', 'comment_content')
+    list_display = ('id', 'comment_id', 'announcement_id', 'user_id', 'comment_content')
     search_fields = ('comment_content',)
 
 @admin.register(Assignment)

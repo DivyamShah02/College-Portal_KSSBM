@@ -125,7 +125,7 @@
                 // Create the button
                 const button = document.createElement('a');
                 button.classList.add('btn', 'btn-primary');
-                button.href = '#';
+                button.href = `{% url 'single-subject-list' %}?subject_id=${subject.subject_id}`;
                 button.textContent = 'Handle Subject';
 
                 // Append all elements to the card body

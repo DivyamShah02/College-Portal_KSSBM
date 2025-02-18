@@ -34,66 +34,13 @@
                 <div class="col text-center">
                     <p class="mb-0" style="font-size: larger;">Name: <b>{{user.name}}</b></p>
                 </div>
-            </div>
-        </div>
-        <div class="container p-3 pb-0">
-            <h3 class="text-primary" id="subject_name"></h3>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
-                Create new Announcement
-            </button>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="newAnnouncementModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newAnnouncementModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="newAnnouncementModalLabel">Create new Announcement</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="add_announcement_form">
-                            <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
-                                Unexpected Error occured!
-                            </div>
-                            <div class="row">
-                                <div class="mb-2 col-12 mb-2">
-                                    <label for="text_content" class="py-2 pb-1 text-primary">Announcement</label>
-                                    <textarea class="form-control dark-input" id="text_content"
-                                        placeholder="Enter the announcement" required rows="4"></textarea>
-                                </div>
-        
-                                <div class="mb-2 col-12 mb-2">
-                                    <label for="upload_box" class="py-2 pb-1 text-primary">Upload Document</label>
-                                    <!-- <label for="file_upload_id" class="form-label eh-label">File Upload</label> -->
-                                    <div class="p-5 text-center dark-input" id="upload_box"
-                                        onclick="document.getElementById('announcementDoc').click()"
-                                        style="border-radius: 10px; cursor: pointer; background-color: #EBEDED;">
-        
-                                        <i class="fa fa-cloud-arrow-up fa-xl"></i>
-                                        <p class="p-0 m-0" id="upload_input_text">Click to upload</p>
-                                        <input type="file" id="announcementDoc" hidden multiple>
-        
-                                    </div>
-                                </div>
-        
-                                <div class="mb-2 mt-4">
-                                    <button type="submit"
-                                        class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
-                                        <b class="mx-auto">Create Announcement</b>
-                                        <i class="fa fa-plus fa-xl"></i>
-                                    </button>
-                                </div>
-        
-                            </div>
-                        </form>
-                    </div>                    
-                </div>
+                <div class="col text-center">
+                    <p class="mb-0" style="font-size: larger;">Year: <b>{{user.year}}</b></p>
                 </div>
             </div>
         </div>
-
         <div class="container p-3 pt-0">
+            <h3 class="text-primary" id="subject_name"></h3>
             <div class="p-3">
                 <h5 class="text-primary">All Announcements</h5>
 
@@ -132,46 +79,6 @@
             await getAnnouncements();
         }
 
-        document.getElementById("add_announcement_form").addEventListener("submit", async (event) => {
-            const form = event.target;
-
-            // Prevent the form from submitting
-            event.preventDefault();
-
-            // Check form validity
-            if (!form.checkValidity()) {
-                // Trigger the browser's built-in validation tooltips
-                form.reportValidity();
-                return;
-            }
-            const formData = new FormData();
-
-            selectedFiles.forEach((file, index) => {
-                formData.append(`files[${index}]`, file);
-            });
-
-            // formData.append(`files`, selectedFiles);
-            formData.append(`text_content`, document.getElementById('text_content').value);
-            formData.append(`subject_id`, subject_id);
-
-            const url = "{% url 'announcements-api-list' %}";
-            const [success, result] = await callApi("POST", url, formData, "{{csrf_token}}", true);
-
-            console.log(result);
-            if (success) {
-                if (result.success) {
-                    location.reload();
-                }
-            }
-
-            window.scrollTo({
-                top: 0, // Set the scroll position to the top
-                behavior: 'smooth' // Optional: Adds smooth scrolling
-            });
-
-
-        });
-
         async function getAnnouncements() {
             const Params = {
                 subject_id: subject_id
@@ -186,6 +93,7 @@
                     createAnnouncementCards(result.data.all_announcements);
                 }
                 else {
+                    window.location = `{% url 'subjects-list' %}`;
                 }
             } else {
             }
@@ -287,28 +195,6 @@
             });
         }
 
-        let selectedFiles = [];
-
-        document.getElementById('announcementDoc').addEventListener('change', function (event) {
-            handleFiles(event.target.files);
-        });
-
-        function handleFiles(files) {
-            const allowedExtensions = ['mp3', 'wav', 'ogg', 'mp4', 'webm', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'];
-
-            for (let file of files) {
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-
-                if (!allowedExtensions.includes(fileExtension)) {
-                    alert(`Unsupported file type: ${file.name}`);
-                    continue;
-                }
-
-                selectedFiles.push(file);
-            }
-            console.log("Selected files:", selectedFiles);
-        }
-
         async function addComment(index, announcement_id) {
             console.log(document.getElementById(`announcement-${index}-comment-input`))
             let comment_content = document.getElementById(`announcement-${index}-comment-input`).value;
@@ -337,7 +223,7 @@
                 }            
             }
         }
-    
+
     </script>
 
 </body>
