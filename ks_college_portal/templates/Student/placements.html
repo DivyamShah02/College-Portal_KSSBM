@@ -34,22 +34,11 @@
                 <p class="mb-0" style="font-size: larger;">Name: <b>{{user.name}}</b></p>
             </div>            
         </div>
-        <div class="container p-3 pb-0">
+        <div class="container p-3 pt-0">
             <div class="p-3">
-                <h1 class="text-primary">All Subjects</h1>
+                <h1 class="text-primary">All Companies</h1>
 
-                <div class="row" id="all_subjects">
-                    <!-- <div class="col-md-4" id="subject-1">
-                        <div class="card my-3" id="subject-1-card">
-                            <h5 class="card-header" id="subject-1-header">First Year - A</h5>
-                            <div class="card-body">
-                                <h5 class="card-title" id="subject-1-title">Subject Name</h5>
-                                <p class="card-text" id="subject-1-text">With supporting text below as a natural lead-in to additional
-                                    content.</p>
-                                <a href="#" class="btn btn-primary">Handle Subject</a>
-                            </div>
-                        </div>
-                    </div> -->
+                <div class="row" id="all_companies">                    
                 </div>
             </div>
         </div>
@@ -67,16 +56,16 @@
 
     <script>
         window.onload = async function () {
-            await getSubjects();
+            await getCompanies();
         }
 
-        async function getSubjects() {
-            const url = "{% url 'student-subjects-api-list' %}?";
+        async function getCompanies() {
+            const url = "{% url 'student-placements-api-list' %}?";
             const [success, result] = await callApi("GET", url);
             console.log(result);
             if (success) {
                 if (result.success) {
-                    createSubjectCards(result.data.all_subjects);                 
+                    createCompaniesCards(result.data.all_companies);                 
                 }
                 else {                    
                 }
@@ -84,27 +73,25 @@
             }
         }
 
-        function createSubjectCards(subjects) {
-            // Get the parent element where all subjects will be appended
-            const allSubjectsContainer = document.getElementById('all_subjects');
+        function createCompaniesCards(companies) {
+            const allCompaniesContainer = document.getElementById('all_companies');
             
-            // Loop through each subject in the subjects array
-            subjects.forEach((subject, index) => {
+            companies.forEach((company, index) => {
                 // Create the outer div for the column
                 const colDiv = document.createElement('div');
                 colDiv.classList.add('col-md-4');
-                colDiv.id = `subject-${index + 1}`;
+                colDiv.id = `company-${index + 1}`;
                 
                 // Create the card container
                 const cardDiv = document.createElement('div');
                 cardDiv.classList.add('card', 'my-3');
-                cardDiv.id = `subject-${index + 1}-card`;
+                cardDiv.id = `company-${index + 1}-card`;
 
                 // Create the card header
                 const cardHeader = document.createElement('h5');
                 cardHeader.classList.add('card-header');
-                cardHeader.id = `subject-${index + 1}-header`;
-                cardHeader.textContent = `${subject.college_year} - ${subject.class_division}`;
+                cardHeader.id = `company-${index + 1}-header`;
+                cardHeader.textContent = `${company.company_name}`;
 
                 // Create the card body
                 const cardBody = document.createElement('div');
@@ -113,20 +100,31 @@
                 // Create the card title
                 const cardTitle = document.createElement('h5');
                 cardTitle.classList.add('card-title');
-                cardTitle.id = `subject-${index + 1}-title`;
-                cardTitle.textContent = subject.subject_name;
+                cardTitle.id = `company-${index + 1}-title`;
+                cardTitle.textContent = company.job_role;
 
                 // Create the card text
                 const cardText = document.createElement('p');
                 cardText.classList.add('card-text');
-                cardText.id = `subject-${index + 1}-text`;
+                cardText.id = `company-${index + 1}-text`;
                 cardText.textContent = 'With supporting text below as a natural lead-in to additional content.';
+                cardText.innerHTML = `
+                <ul>
+                <li><b>description: </b>${company.description}</li>
+                <li><b>website: </b>${company.website}</li>
+                <li><b>job_role: </b>${company.job_role}</li>
+                <li><b>notes: </b>${company.notes}</li>
+                <li><b>internship_duration: </b>${company.internship_duration}</li>
+                <li><b>internship_stipend: </b>${company.internship_stipend}</li>
+                <li><b>estimated_package: </b>${company.estimated_package}</li>
+                </ul>
+                `
 
                 // Create the button
                 const button = document.createElement('a');
                 button.classList.add('btn', 'btn-primary');
-                button.href = `{% url 'subject-detail-list' %}?subject_id=${subject.subject_id}`;
-                button.textContent = 'Handle Subject';
+                button.href = `{% url 'placement-detail-list' %}?company_id=${company.company_id}`;
+                button.textContent = 'Handle Company';
 
                 // Append all elements to the card body
                 cardBody.appendChild(cardTitle);
@@ -141,19 +139,9 @@
                 colDiv.appendChild(cardDiv);
 
                 // Append the column div to the container
-                allSubjectsContainer.appendChild(colDiv);
+                allCompaniesContainer.appendChild(colDiv);
             });
         }
-
-        // Example JSON data
-        // const subjects = [
-        //     { year: 'First Year', section: 'A', name: 'Math', description: 'Mathematics basics' },
-        //     { year: 'Second Year', section: 'B', name: 'Physics', description: 'Fundamentals of physics' },
-        //     { year: 'Third Year', section: 'C', name: 'Chemistry', description: 'Organic and inorganic chemistry' }
-        // ];
-
-        // // Call the function with the sample data
-        // createSubjectCards(subjects);
 
     </script>
 

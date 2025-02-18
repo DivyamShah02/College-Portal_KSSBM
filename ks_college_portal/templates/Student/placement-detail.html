@@ -34,13 +34,14 @@
                 <div class="col text-center">
                     <p class="mb-0" style="font-size: larger;">Name: <b>{{user.name}}</b></p>
                 </div>
-                <div class="col text-center">
-                    <p class="mb-0" style="font-size: larger;">Year: <b>{{user.year}}</b></p>
-                </div>
             </div>
         </div>
+        <div class="container p-3 pb-0">
+            <h3 class="text-primary" id="company_name"></h3>
+            <div id="company_details"></div>
+        </div>
+
         <div class="container p-3 pt-0">
-            <h3 class="text-primary" id="subject_name"></h3>
             <div class="p-3">
                 <h5 class="text-primary">All Announcements</h5>
 
@@ -73,33 +74,44 @@
     <script src="../static/js/api_caller.js"></script>
 
     <script>
-        const subject_id = new URLSearchParams(window.location.search).get('subject_id');
+        const company_id = new URLSearchParams(window.location.search).get('company_id');
 
         window.onload = async function () {
-            await getAnnouncements();
+            await getCompanyAnnouncements();
         }
 
-        async function getAnnouncements() {
+        async function getCompanyAnnouncements() {
             const Params = {
-                subject_id: subject_id
+                company_id: company_id
             };
 
-            const url = "{% url 'announcements-api-list' %}?" + toQueryString(Params);
+            const url = "{% url 'company-announcements-api-list' %}?" + toQueryString(Params);
             const [success, result] = await callApi("GET", url);
             console.log(result);
             if (success) {
                 if (result.success) {
-                    document.getElementById('subject_name').innerText = `${result.data.subject_data.subject_name} | ${result.data.subject_data.college_year} - ${result.data.subject_data.class_division}`
-                    createAnnouncementCards(result.data.all_announcements);
+                    document.getElementById('company_name').innerText = result.data.company_data.company_name;
+                    document.getElementById('company_details').innerHTML = `
+                    <ul>
+                <li><b>description: </b>${result.data.company_data.description}</li>
+                <li><b>website: </b>${result.data.company_data.website}</li>
+                <li><b>job_role: </b>${result.data.company_data.job_role}</li>
+                <li><b>notes: </b>${result.data.company_data.notes}</li>
+                <li><b>internship_duration: </b>${result.data.company_data.internship_duration}</li>
+                <li><b>internship_stipend: </b>${result.data.company_data.internship_stipend}</li>
+                <li><b>estimated_package: </b>${result.data.company_data.estimated_package}</li>
+                </ul>
+                    `
+
+                    createCompanyAnnouncementCards(result.data.all_company_announcements, result.data.company_data);
                 }
                 else {
-                    window.location = `{% url 'subjects-list' %}`;
                 }
             } else {
             }
         }
 
-        function createAnnouncementCards(announcements) {
+        function createCompanyAnnouncementCards(announcements, company_data) {
             const allAnnouncementsContainer = document.getElementById('all_announcements');
 
             announcements.forEach((announcement, index) => {
@@ -117,7 +129,7 @@
                 const cardHeader = document.createElement('h5');
                 cardHeader.classList.add('card-header');
                 cardHeader.id = `announcement-${index + 1}-header`;
-                cardHeader.textContent = `${announcement.teacher_name}`;
+                cardHeader.textContent = `${company_data.teacher_name}`;
 
                 // Create the card body
                 const cardBody = document.createElement('div');
@@ -133,21 +145,10 @@
                 const cardText = document.createElement('p');
                 cardText.classList.add('card-text');
                 cardText.id = `announcement-${index + 1}-text`;
-                cardText.textContent = announcement.text_content;
+                cardText.textContent = announcement.announcement_content;
 
                 // cardBody.appendChild(cardTitle);
                 cardBody.appendChild(cardText);
-
-                // Create the button
-                announcement.document_paths.forEach((doc, ind) => {
-                    const doc_link = document.createElement('a');
-                    doc_link.href = `\\media\\${doc}`;
-                    doc_link.textContent = doc;
-                    cardBody.appendChild(doc_link);
-                    const breaker = document.createElement('br');
-                    cardBody.appendChild(breaker);
-                    
-                })
 
                 const cardFooter = document.createElement('p');
                 cardFooter.classList.add('card-footer');
@@ -159,69 +160,12 @@
                 cardDiv.appendChild(cardBody);
                 cardDiv.appendChild(cardFooter);
 
-                announcement.comment_data.forEach((comment, ind) => {
-                    const commentText = document.createElement('div');
-                    commentText.className = 'p-3' ;                   
-                    commentText.innerHTML = `
-                        <h5>${comment.user_name}</h5> - ${comment.created_at}<br>
-                        ${comment.comment_content}
-                    `;
-                    cardDiv.appendChild(commentText);
-                    // const breaker = document.createElement('br');
-                    // cardBody.appendChild(breaker);
-                    
-                })
-
-                const commentBox = document.createElement('input');
-                commentBox.placeholder = 'Add a class comment';
-                commentBox.className = 'form-control';
-                commentBox.id = `announcement-${index + 1}-comment-input`;
-
-                const submitComment = document.createElement('button');
-                submitComment.className = 'btn btn-secondary w-100 mt-2';
-                submitComment.textContent = 'Submit comment';
-                submitComment.setAttribute('onclick', `addComment('${index+1}', '${announcement.announcement_id}')`)
-                submitComment.id = `announcement-${index + 1}-comment-submit`;
-
-                cardDiv.appendChild(commentBox);
-                cardDiv.appendChild(submitComment);
-
-
                 // Append the card to the column div
                 colDiv.appendChild(cardDiv);
 
                 // Append the column div to the container
                 allAnnouncementsContainer.appendChild(colDiv);
             });
-        }
-
-        async function addComment(index, announcement_id) {
-            console.log(document.getElementById(`announcement-${index}-comment-input`))
-            let comment_content = document.getElementById(`announcement-${index}-comment-input`).value;
-            console.log(index);
-            console.log(comment_content);
-            if (comment_content != '') {
-                let bodyData = {
-                    announcement_id: announcement_id,
-                    comment_content: comment_content
-                }
-
-                const url = "{% url 'comment-api-list' %}";
-                const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
-                if (success) {
-                    console.log("Login User Success:", result);
-    
-                    if (result.success) {
-                        location.reload();
-                    }
-    
-                    else {                        
-                    }
-    
-                } else {
-                    
-                }            
-            }
         }
 
     </script>

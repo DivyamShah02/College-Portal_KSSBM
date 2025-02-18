@@ -211,7 +211,7 @@
             const url = "{% url 'user-list' %}";
             const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
             if (success) {
-                console.log("Login User Success:", result);
+                console.log("Result:", result);
 
                 if (result.success){
                     document.getElementById('user-created-success').style.display = '';

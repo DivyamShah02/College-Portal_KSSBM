@@ -7,9 +7,12 @@ router = DefaultRouter()
 
 router.register(r'login', LoginViewSet, basename='login')
 router.register(r'register', UserRegisterViewSet, basename='register')
-router.register(r'subjects', SubjectsViewSet, basename='subjects')
-router.register(r'single-subject', SingleSubjectViewSet, basename='single-subject')
 
+router.register(r'subjects', SubjectsViewSet, basename='subjects')
+router.register(r'subject-detail', SubjectDetailViewSet, basename='subject-detail')
+
+router.register(r'placements', PlacementViewSet, basename='placements')
+router.register(r'placement-detail', PlacementDetailViewSet, basename='placement-detail')
 
 urlpatterns = [
     path('', include(router.urls)),

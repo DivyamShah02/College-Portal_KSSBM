@@ -83,7 +83,7 @@ async function exampleApiCallerPOST() {
     const url = "{% url 'login-api-list' %}";
     const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
     if (success) {
-        console.log("Login User Success:", result);
+        console.log("Result:", result);
     } else {
         console.error("Login User Failed:", result);
     }

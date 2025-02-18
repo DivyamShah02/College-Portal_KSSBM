@@ -25,11 +25,29 @@ class SubjectsViewSet(viewsets.ViewSet):
                 return render(request, "Student/subjects.html")
         return HttpResponse('Not Authorised')
 
-class SingleSubjectViewSet(viewsets.ViewSet):
+class SubjectDetailViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
             if request.user.role == 'teacher':
-                return render(request, "Teacher/single_subject.html")
+                return render(request, "Teacher/subject-detail.html")
             elif request.user.role == 'student':
-                return render(request, "Student/single_subject.html")
+                return render(request, "Student/subject-detail.html")
+        return HttpResponse('Not Authorised')
+
+class PlacementViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/placements.html")
+            elif request.user.role == 'student':
+                return render(request, "Student/placements.html")
+        return HttpResponse('Not Authorised')
+
+class PlacementDetailViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/placement-detail.html")
+            elif request.user.role == 'student':
+                return render(request, "Student/placement-detail.html")
         return HttpResponse('Not Authorised')

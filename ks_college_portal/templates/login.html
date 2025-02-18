@@ -98,7 +98,7 @@
             const url = "{% url 'login-api-list' %}";
             const [success, result] = await callApi("POST", url, loginUserData, "{{csrf_token}}");
             if (success) {
-                console.log("Login User Success:", result);
+                console.log("Result:", result);
 
                 if (result.success){
                     let user_id = result.data.user_id;

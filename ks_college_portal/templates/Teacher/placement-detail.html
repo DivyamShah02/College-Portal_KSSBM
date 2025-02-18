@@ -37,7 +37,8 @@
             </div>
         </div>
         <div class="container p-3 pb-0">
-            <h3 class="text-primary" id="subject_name"></h3>
+            <h3 class="text-primary" id="company_name"></h3>
+            <div id="company_details"></div>
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
                 Create new Announcement
@@ -52,35 +53,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="add_announcement_form">
+                        <form id="add_company_announcement_form">
                             <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
                                 Unexpected Error occured!
                             </div>
                             <div class="row">
                                 <div class="mb-2 col-12 mb-2">
-                                    <label for="text_content" class="py-2 pb-1 text-primary">Announcement</label>
-                                    <textarea class="form-control dark-input" id="text_content"
+                                    <label for="announcement_content" class="py-2 pb-1 text-primary">Announcement</label>
+                                    <textarea class="form-control dark-input" id="announcement_content"
                                         placeholder="Enter the announcement" required rows="4"></textarea>
                                 </div>
-        
-                                <div class="mb-2 col-12 mb-2">
-                                    <label for="upload_box" class="py-2 pb-1 text-primary">Upload Document</label>
-                                    <!-- <label for="file_upload_id" class="form-label eh-label">File Upload</label> -->
-                                    <div class="p-5 text-center dark-input" id="upload_box"
-                                        onclick="document.getElementById('announcementDoc').click()"
-                                        style="border-radius: 10px; cursor: pointer; background-color: #EBEDED;">
-        
-                                        <i class="fa fa-cloud-arrow-up fa-xl"></i>
-                                        <p class="p-0 m-0" id="upload_input_text">Click to upload</p>
-                                        <input type="file" id="announcementDoc" hidden multiple>
-        
-                                    </div>
-                                </div>
-        
+
                                 <div class="mb-2 mt-4">
                                     <button type="submit"
                                         class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
-                                        <b class="mx-auto">Create Announcement</b>
+                                        <b class="mx-auto">Add Announcement</b>
                                         <i class="fa fa-plus fa-xl"></i>
                                     </button>
                                 </div>
@@ -126,13 +113,13 @@
     <script src="../static/js/api_caller.js"></script>
 
     <script>
-        const subject_id = new URLSearchParams(window.location.search).get('subject_id');
+        const company_id = new URLSearchParams(window.location.search).get('company_id');
 
         window.onload = async function () {
-            await getAnnouncements();
+            await getCompanyAnnouncements();
         }
 
-        document.getElementById("add_announcement_form").addEventListener("submit", async (event) => {
+        document.getElementById("add_company_announcement_form").addEventListener("submit", async (event) => {
             const form = event.target;
 
             // Prevent the form from submitting
@@ -144,24 +131,27 @@
                 form.reportValidity();
                 return;
             }
-            const formData = new FormData();
-
-            selectedFiles.forEach((file, index) => {
-                formData.append(`files[${index}]`, file);
-            });
-
-            // formData.append(`files`, selectedFiles);
-            formData.append(`text_content`, document.getElementById('text_content').value);
-            formData.append(`subject_id`, subject_id);
-
-            const url = "{% url 'announcements-api-list' %}";
-            const [success, result] = await callApi("POST", url, formData, "{{csrf_token}}", true);
-
-            console.log(result);
+            let bodyData = {
+                announcement_content: document.getElementById('announcement_content').value,
+                company_id: company_id
+                
+            }
+            const url = "{% url 'company-announcements-api-list' %}";
+            const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
             if (success) {
+                console.log("Result:", result);
+
                 if (result.success) {
                     location.reload();
                 }
+
+                else {
+                    document.getElementById('error-unexpected').innerText = result.error;
+                    document.getElementById('error-unexpected').style.display = '';
+                }
+
+            } else {
+                document.getElementById('error-unexpected').style.display = '';
             }
 
             window.scrollTo({
@@ -172,18 +162,30 @@
 
         });
 
-        async function getAnnouncements() {
+        async function getCompanyAnnouncements() {
             const Params = {
-                subject_id: subject_id
+                company_id: company_id
             };
 
-            const url = "{% url 'announcements-api-list' %}?" + toQueryString(Params);
+            const url = "{% url 'company-announcements-api-list' %}?" + toQueryString(Params);
             const [success, result] = await callApi("GET", url);
             console.log(result);
             if (success) {
                 if (result.success) {
-                    document.getElementById('subject_name').innerText = `${result.data.subject_data.subject_name} | ${result.data.subject_data.college_year} - ${result.data.subject_data.class_division}`
-                    createAnnouncementCards(result.data.all_announcements);
+                    document.getElementById('company_name').innerText = result.data.company_data.company_name;
+                    document.getElementById('company_details').innerHTML = `
+                    <ul>
+                <li><b>description: </b>${result.data.company_data.description}</li>
+                <li><b>website: </b>${result.data.company_data.website}</li>
+                <li><b>job_role: </b>${result.data.company_data.job_role}</li>
+                <li><b>notes: </b>${result.data.company_data.notes}</li>
+                <li><b>internship_duration: </b>${result.data.company_data.internship_duration}</li>
+                <li><b>internship_stipend: </b>${result.data.company_data.internship_stipend}</li>
+                <li><b>estimated_package: </b>${result.data.company_data.estimated_package}</li>
+                </ul>
+                    `
+
+                    createCompanyAnnouncementCards(result.data.all_company_announcements, result.data.company_data);
                 }
                 else {
                 }
@@ -191,7 +193,7 @@
             }
         }
 
-        function createAnnouncementCards(announcements) {
+        function createCompanyAnnouncementCards(announcements, company_data) {
             const allAnnouncementsContainer = document.getElementById('all_announcements');
 
             announcements.forEach((announcement, index) => {
@@ -209,7 +211,7 @@
                 const cardHeader = document.createElement('h5');
                 cardHeader.classList.add('card-header');
                 cardHeader.id = `announcement-${index + 1}-header`;
-                cardHeader.textContent = `${announcement.teacher_name}`;
+                cardHeader.textContent = `${company_data.teacher_name}`;
 
                 // Create the card body
                 const cardBody = document.createElement('div');
@@ -225,21 +227,10 @@
                 const cardText = document.createElement('p');
                 cardText.classList.add('card-text');
                 cardText.id = `announcement-${index + 1}-text`;
-                cardText.textContent = announcement.text_content;
+                cardText.textContent = announcement.announcement_content;
 
                 // cardBody.appendChild(cardTitle);
                 cardBody.appendChild(cardText);
-
-                // Create the button
-                announcement.document_paths.forEach((doc, ind) => {
-                    const doc_link = document.createElement('a');
-                    doc_link.href = `\\media\\${doc}`;
-                    doc_link.textContent = doc;
-                    cardBody.appendChild(doc_link);
-                    const breaker = document.createElement('br');
-                    cardBody.appendChild(breaker);
-                    
-                })
 
                 const cardFooter = document.createElement('p');
                 cardFooter.classList.add('card-footer');
@@ -251,34 +242,6 @@
                 cardDiv.appendChild(cardBody);
                 cardDiv.appendChild(cardFooter);
 
-                announcement.comment_data.forEach((comment, ind) => {
-                    const commentText = document.createElement('div');
-                    commentText.className = 'p-3' ;                   
-                    commentText.innerHTML = `
-                        <h5>${comment.user_name}</h5> - ${comment.created_at}<br>
-                        ${comment.comment_content}
-                    `;
-                    cardDiv.appendChild(commentText);
-                    // const breaker = document.createElement('br');
-                    // cardBody.appendChild(breaker);
-                    
-                })
-
-                const commentBox = document.createElement('input');
-                commentBox.placeholder = 'Add a class comment';
-                commentBox.className = 'form-control';
-                commentBox.id = `announcement-${index + 1}-comment-input`;
-
-                const submitComment = document.createElement('button');
-                submitComment.className = 'btn btn-secondary w-100 mt-2';
-                submitComment.textContent = 'Submit comment';
-                submitComment.setAttribute('onclick', `addComment('${index+1}', '${announcement.announcement_id}')`)
-                submitComment.id = `announcement-${index + 1}-comment-submit`;
-
-                cardDiv.appendChild(commentBox);
-                cardDiv.appendChild(submitComment);
-
-
                 // Append the card to the column div
                 colDiv.appendChild(cardDiv);
 
@@ -287,57 +250,6 @@
             });
         }
 
-        let selectedFiles = [];
-
-        document.getElementById('announcementDoc').addEventListener('change', function (event) {
-            handleFiles(event.target.files);
-        });
-
-        function handleFiles(files) {
-            const allowedExtensions = ['mp3', 'wav', 'ogg', 'mp4', 'webm', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'];
-
-            for (let file of files) {
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-
-                if (!allowedExtensions.includes(fileExtension)) {
-                    alert(`Unsupported file type: ${file.name}`);
-                    continue;
-                }
-
-                selectedFiles.push(file);
-            }
-            console.log("Selected files:", selectedFiles);
-        }
-
-        async function addComment(index, announcement_id) {
-            console.log(document.getElementById(`announcement-${index}-comment-input`))
-            let comment_content = document.getElementById(`announcement-${index}-comment-input`).value;
-            console.log(index);
-            console.log(comment_content);
-            if (comment_content != '') {
-                let bodyData = {
-                    announcement_id: announcement_id,
-                    comment_content: comment_content
-                }
-
-                const url = "{% url 'comment-api-list' %}";
-                const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
-                if (success) {
-                    console.log("Login User Success:", result);
-    
-                    if (result.success) {
-                        location.reload();
-                    }
-    
-                    else {                        
-                    }
-    
-                } else {
-                    
-                }            
-            }
-        }
-    
     </script>
 
 </body>
