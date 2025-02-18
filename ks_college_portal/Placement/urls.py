@@ -7,7 +7,10 @@ router = DefaultRouter()
 
 router.register(r'teacher-placements-api', TeacherPlacementViewSet, basename='teacher-placements-api')
 router.register(r'student-placements-api', StudentPlacementViewSet, basename='student-placements-api')
+
 router.register(r'company-announcements-api', CompanyAnnouncementViewSet, basename='company-announcements-api')
+
+router.register(r'placement-registrations-api', PlacementRegistrationViewSet, basename='placement-registrations-api')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -12,7 +12,7 @@ class SubjectSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        # Apply the transformation to 'college_year'
+        
         if 'college_year' in representation:
             representation['college_year'] = representation['college_year'].replace('_', ' ').title()
         
@@ -27,7 +27,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        # Apply the transformation to 'college_year'
+        
         if 'subject_id' in representation:
             subject_data = Subject.objects.filter(subject_id=representation['subject_id']).first()
             teacher_id = subject_data.teacher_id
@@ -51,7 +51,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        # Apply the transformation to 'college_year'
+        
         if 'user_id' in representation:
             user_data = User.objects.filter(user_id=representation['user_id']).first()
             user_name = user_data.name

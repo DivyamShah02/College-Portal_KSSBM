@@ -40,7 +40,9 @@
             <h3 class="text-primary" id="company_name"></h3>
             <div id="company_details"></div>
         </div>
-
+        <div class="container p-3 pb-0">
+        <button class="btn btn-primary w-100" id="register_company_button" type="button" onclick="placement_register()">Register</button>
+        </div>
         <div class="container p-3 pt-0">
             <div class="p-3">
                 <h5 class="text-primary">All Announcements</h5>
@@ -90,6 +92,12 @@
             console.log(result);
             if (success) {
                 if (result.success) {
+                    if (result.data.user_registered) {
+                        document.getElementById('register_company_button').style.display = 'none';
+                    }
+                    else {
+                        document.getElementById('all_announcements').style.display = 'none';
+                    }
                     document.getElementById('company_name').innerText = result.data.company_data.company_name;
                     document.getElementById('company_details').innerHTML = `
                     <ul>
@@ -168,6 +176,26 @@
             });
         }
 
+        async function placement_register() {
+            let bodyData = {
+                company_id: company_id
+            }
+            const url = "{% url 'placement-registrations-api-list' %}";
+            const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
+            if (success) {
+                console.log("Result:", result);
+
+                if (result.success) {
+                    location.reload();
+                }
+
+                else {
+                }
+
+            } else {
+            }
+
+        }
     </script>
 
 </body>

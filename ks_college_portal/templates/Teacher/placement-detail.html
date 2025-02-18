@@ -100,6 +100,16 @@
                 </div>
             </div>
         </div>
+
+        <div class="container p-3 pt-0">
+            <div class="p-3">
+                <h5 class="text-primary">All Students</h5>
+
+                <div class="row" id="all_students">
+                    
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Import BootStrap JavaScript Library -->
@@ -117,6 +127,7 @@
 
         window.onload = async function () {
             await getCompanyAnnouncements();
+            await getPlacementRegistrations();
         }
 
         document.getElementById("add_company_announcement_form").addEventListener("submit", async (event) => {
@@ -240,6 +251,61 @@
 
                 cardDiv.appendChild(cardHeader);
                 cardDiv.appendChild(cardBody);
+                cardDiv.appendChild(cardFooter);
+
+                // Append the card to the column div
+                colDiv.appendChild(cardDiv);
+
+                // Append the column div to the container
+                allAnnouncementsContainer.appendChild(colDiv);
+            });
+        }
+
+        async function getPlacementRegistrations() {
+            const Params = {
+                company_id: company_id
+            };
+
+            const url = "{% url 'placement-registrations-api-list' %}?" + toQueryString(Params);
+            const [success, result] = await callApi("GET", url);
+            console.log(result);
+            if (success) {
+                if (result.success) {
+                    createStudentCards(result.data.all_placement_registrations);
+                }
+                else {
+                }
+            } else {
+            }
+        }
+
+        function createStudentCards(student_details) {
+            const allAnnouncementsContainer = document.getElementById('all_students');
+
+            student_details.forEach((student, index) => {
+                // Create the outer div for the column
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('col-md-4');
+                colDiv.id = `registered-student-${index + 1}`;
+
+                // Create the card container
+                const cardDiv = document.createElement('div');
+                cardDiv.classList.add('card', 'my-3');
+                cardDiv.id = `registered-student-${index + 1}-card`;
+
+                // Create the card header
+                const cardHeader = document.createElement('h5');
+                cardHeader.classList.add('card-header');
+                cardHeader.id = `registered-student-${index + 1}-header`;
+                cardHeader.textContent = `${student.student_data.name} - ${student.student_data.email}`;
+
+                const cardFooter = document.createElement('p');
+                cardFooter.classList.add('card-footer');
+                cardFooter.id = `registered-student-${index + 1}-footer`;
+                // cardFooter.textContent = `18:02 | 18-02-2025`;
+                cardFooter.textContent = `${student.created_at}`;
+
+                cardDiv.appendChild(cardHeader);
                 cardDiv.appendChild(cardFooter);
 
                 // Append the card to the column div

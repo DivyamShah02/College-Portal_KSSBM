@@ -273,10 +273,15 @@ class CompanyAnnouncementViewSet(viewsets.ViewSet):
             company_data_obj = Company.objects.filter(company_id=company_id).first()
             company_data = CompanySerializer(company_data_obj).data
 
+            user_registered = True
+            if user.role == 'student':
+                user_registered = PlacmentRegistration.objects.filter(company_id=company_id, student_id=user).exists()
+
             data = {
                 'all_company_announcements': all_company_announcements[::-1],
                 'total_company_announcements': len(all_company_announcements),
                 'company_data': company_data,
+                'user_registered': user_registered,
             }
 
             return Response(
@@ -397,4 +402,160 @@ class CompanyAnnouncementViewSet(viewsets.ViewSet):
             company_announcement_id = ''.join(random.choices(string.digits, k=10))
             if not CompanyAnnouncement.objects.filter(company_announcement_id=company_announcement_id).exists():
                 return company_announcement_id
+
+class PlacementRegistrationViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            company_id = request.GET.get('company_id')
+            if not company_id:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Company Announcement Id required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_placement_registrations_obj = PlacmentRegistration.objects.filter(company_id=company_id)
+            all_placement_registrations = PlacmentRegistrationSerializer(all_placement_registrations_obj, many=True).data
+
+            data = {
+                'all_placement_registrations': all_placement_registrations[::-1],
+                'total_placement_registrations': len(all_placement_registrations),
+            }
+
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def create(self, request):
+        try:
+            user = request.user
+
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'student':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            company_id = request.data.get('company_id')
+            if not company_id:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Company Id required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_registered = PlacmentRegistration.objects.filter(company_id=company_id, student_id=user).exists()
+            if user_registered:
+                return Response(
+                    {
+                        "success": False,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": None,
+                        "error": 'Student already registered to this company.'
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+            registration_id = self.generate_registration_id()
+
+            new_placement_registrations = PlacmentRegistration(
+                registration_id=registration_id,
+                company_id=company_id,
+                student_id=user
+            )
+            new_placement_registrations.save()
+           
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": None,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def generate_registration_id(self):
+        while True:
+            registration_id = ''.join(random.choices(string.digits, k=10))
+            if not PlacmentRegistration.objects.filter(registration_id=registration_id).exists():
+                return registration_id
 

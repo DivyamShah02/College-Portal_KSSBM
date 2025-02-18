@@ -37,17 +37,19 @@ class SubjectDetailViewSet(viewsets.ViewSet):
 class PlacementViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
-            if request.user.role == 'teacher':
-                return render(request, "Teacher/placements.html")
-            elif request.user.role == 'student':
-                return render(request, "Student/placements.html")
+            if request.user.year == 'fifth_year':
+                if request.user.role == 'teacher':
+                    return render(request, "Teacher/placements.html")
+                elif request.user.role == 'student':
+                    return render(request, "Student/placements.html")
         return HttpResponse('Not Authorised')
 
 class PlacementDetailViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
-            if request.user.role == 'teacher':
-                return render(request, "Teacher/placement-detail.html")
-            elif request.user.role == 'student':
-                return render(request, "Student/placement-detail.html")
+            if request.user.year == 'fifth_year':
+                if request.user.role == 'teacher':
+                    return render(request, "Teacher/placement-detail.html")
+                elif request.user.role == 'student':
+                    return render(request, "Student/placement-detail.html")
         return HttpResponse('Not Authorised')
