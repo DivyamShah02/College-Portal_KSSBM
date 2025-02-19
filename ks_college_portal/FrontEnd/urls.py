@@ -5,8 +5,12 @@ from .views import *
 
 router = DefaultRouter()
 
-router.register(r'login', LoginViewSet, basename='login')
+router.register(r'', DashboardViewSet, basename='home')
+
 router.register(r'register', UserRegisterViewSet, basename='register')
+router.register(r'login', LoginViewSet, basename='login')
+
+router.register(r'dashboard', DashboardViewSet, basename='dashboard')
 
 router.register(r'subjects', SubjectsViewSet, basename='subjects')
 router.register(r'subject-detail', SubjectDetailViewSet, basename='subject-detail')

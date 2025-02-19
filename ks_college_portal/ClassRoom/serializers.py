@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from UserDetail.models import User
+from UserDetail.serializers import UserSerializer
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -70,3 +71,30 @@ class AttendanceSerializer(serializers.ModelSerializer):
         model = Attendance
         fields = '__all__'
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        if 'attendance_id' in representation:
+            attendance_data_obj = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'])
+            attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
+
+            representation['attendance_data'] = attendance_data
+
+        return representation
+
+class MarkedAttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarkedAttendance
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        if 'student_id' in representation:
+            user_data_obj = User.objects.filter(user_id=representation['student_id'])
+            user_data = UserSerializer(user_data_obj, many=True).data
+
+            representation['student_name'] = user_data.name
+            representation['user_data'] = user_data
+
+        return representation

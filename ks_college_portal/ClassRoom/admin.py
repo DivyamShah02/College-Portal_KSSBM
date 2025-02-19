@@ -26,6 +26,11 @@ class AssignmentAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'attendance_id', 'subject_id', 'code', 'attendance')
+    list_display = ('id', 'attendance_id', 'subject_id', 'code')
     search_fields = ('code',)
     list_filter = ('subject_id',)
+
+@admin.register(MarkedAttendance)
+class MarkedAttendanceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'attendance_id', 'student_id')
+    search_fields = ('attendance_id',)

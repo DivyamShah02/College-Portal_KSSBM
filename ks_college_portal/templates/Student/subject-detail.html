@@ -224,6 +224,24 @@
             }
         }
 
+        async function getAttendances() {
+            const Params = {
+                subject_id: subject_id
+            };
+
+            const url = "{% url 'attendance-api-list' %}?" + toQueryString(Params);
+            const [success, result] = await callApi("GET", url);
+            console.log(result);
+            if (success) {
+                if (result.success) {
+                    
+                }
+                else {
+                }
+            } else {
+            }
+        }
+
     </script>
 
 </body>

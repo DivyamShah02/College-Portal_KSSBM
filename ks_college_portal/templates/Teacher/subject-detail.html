@@ -35,9 +35,16 @@
                     <p class="mb-0" style="font-size: larger;">Name: <b>{{user.name}}</b></p>
                 </div>
             </div>
+            <h3 class="text-primary" id="subject_name"></h3>
+
+        </div>
+        <div class="container p-3 mt-3">
+            <button type="button" class="btn btn-primary w-100" onclick="createAttendance()">
+                Create new Attendance
+            </button>
+
         </div>
         <div class="container p-3 pb-0">
-            <h3 class="text-primary" id="subject_name"></h3>
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
                 Create new Announcement
@@ -92,7 +99,6 @@
                 </div>
             </div>
         </div>
-
         <div class="container p-3 pt-0">
             <div class="p-3">
                 <h5 class="text-primary">All Announcements</h5>
@@ -130,6 +136,7 @@
 
         window.onload = async function () {
             await getAnnouncements();
+            await getAttendances();
         }
 
         document.getElementById("add_announcement_form").addEventListener("submit", async (event) => {
@@ -338,6 +345,46 @@
             }
         }
     
+        async function createAttendance() {            
+            let bodyData = {
+                subject_id: subject_id                    
+                }
+            const url = "{% url 'attendance-api-list' %}";
+            const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
+            if (success) {
+                console.log("Result:", result);
+
+                if (result.success) {
+                    console.log(result.data.unique_code);
+                }
+
+                else {                        
+                }
+
+            } else {
+                
+            }            
+        
+        }
+    
+        async function getAttendances() {
+            const Params = {
+                subject_id: subject_id
+            };
+
+            const url = "{% url 'attendance-api-list' %}?" + toQueryString(Params);
+            const [success, result] = await callApi("GET", url);
+            console.log(result);
+            if (success) {
+                if (result.success) {
+                    
+                }
+                else {
+                }
+            } else {
+            }
+        }
+
     </script>
 
 </body>

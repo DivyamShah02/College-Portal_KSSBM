@@ -684,3 +684,360 @@ class CommentViewSet(viewsets.ViewSet):
             if not Comment.objects.filter(comment_id=comment_id).exists():
                 return comment_id
 
+class AttendanceViewSet(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'teacher':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                       
+            subject_id = request.data.get('subject_id')           
+            if subject_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Subject id not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            attendance_id, unique_code = self.generate_attendance_details()
+            new_attendance = Attendance(
+                attendance_id=attendance_id,
+                subject_id=subject_id,
+                code=unique_code                
+            )
+            new_attendance.save()
+
+            data = {
+                "unique_code": unique_code
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'teacher':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            subject_id = request.GET.get('subject_id')           
+            if subject_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Subject id not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
+            all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
+
+            data = {
+                'all_attendance': all_attendance,
+                'total_attendances': len(all_attendance),
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def generate_attendance_details(self):
+        while True:
+            # Generate a 10-digit numeric announcement ID
+            attendance_id = ''.join(random.choices(string.digits, k=10))
+
+            # Generate a 6-character unique code (2 letters, 2 numbers, 2 letters)
+            unique_code = (
+                random.choice(string.ascii_uppercase) +
+                random.choice(string.ascii_uppercase) +
+                random.choice(string.digits) +
+                random.choice(string.digits) +
+                random.choice(string.ascii_uppercase) +
+                random.choice(string.ascii_uppercase)
+            )
+
+            # Ensure both are unique and not in the same row
+            if not Attendance.objects.filter(
+                attendance_id=attendance_id,
+                code=unique_code
+            ).exists():
+                return attendance_id, unique_code
+
+class MarkedAttendanceViewSet(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'student':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            unique_code = request.data.get('unique_code')
+            if unique_code is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'unique code not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            attendance_id = request.data.get('attendance_id')           
+            if attendance_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Attendance id not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            attendance_details = Attendance.objects.filter(attendance_id=attendance_id).first()
+            if not attendance_details:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Attendance id is not valid.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            attendance_marked = MarkedAttendance.objects.filter(attendance_id=attendance_id, student_id=user).exists()
+            if attendance_marked:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Attendance already marked.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            mark_new_attendance = MarkedAttendance(
+                attendance_id=attendance_id,
+                student_id=user
+            )
+            mark_new_attendance.save()
+
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": None,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'teacher':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            attendance_id = request.data.get('attendance_id')           
+            if attendance_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'Subject id not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_attendance_obj = MarkedAttendance.objects.filter(attendance_id=attendance_id)
+            all_attendance = MarkedAttendanceSerializer(all_attendance_obj, many=True).data
+
+            data = {
+                'all_attendance': all_attendance,
+                'total_subjects': len(all_attendance),
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )

@@ -43,5 +43,8 @@ class Attendance(models.Model):
     attendance_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)
     code = models.CharField(max_length=6)
-    attendance = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+class MarkedAttendance(models.Model):
+    attendance_id = models.CharField(max_length=12)
+    student_id = models.CharField(max_length=12)
