@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | College Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar text-nowrap" id="sidebar">
+            <div class="p-3">
+                <div class="d-flex align-items-center mb-4 mt-2">
+                    <img src="https://www.reviewadda.com/assets/uploads/college/logo/LOGO_80105.png" alt="College Logo" class="me-2" style="height: 40px;">
+                    <h5 class="mb-0">College Portal</h5>
+                </div>
+                
+                <div class="text-center mb-4">
+                    <img src="../images/teacher-avatar.jpg" alt="Teacher Avatar" class="avatar avatar-lg mb-2">
+                    <h6 class="mb-0">Prof. Sarah Johnson</h6>
+                    <small class="text-light">Computer Science Department</small>
+                </div>
+                
+                <hr>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link active">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="subjects.html" class="nav-link">
+                            <i class="bi bi-book"></i> Subjects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="announcements.html" class="nav-link">
+                            <i class="bi bi-megaphone"></i> Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="assignments.html" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i> Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="attendance.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i> Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="students.html" class="nav-link">
+                            <i class="bi bi-people"></i> Students
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="placements.html" class="nav-link">
+                            <i class="bi bi-briefcase"></i> Placements
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a href="../index.html" class="nav-link text-danger">
+                            <i class="bi bi-box-arrow-left"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Dashboard Content -->
+            <div class="container-fluid fade-in">
+                <div class="row mb-4">
+                    <div class="col-md-6 text-start">
+                        <h2 class="mb-0">Teacher Dashboard</h2>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="dark-mode-toggle me-3" title="Toggle Dark Mode">
+                            <i class="bi bi-moon"></i>
+                        </div>
+                        <span class="text-muted me-2">Today:</span>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+                <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Teacher Dashboard</h2>
+                    <div>
+                        <span class="text-muted me-2">Today:</span>
+                        <span id="currentDate"></span>
+                    </div>
+                </div> -->
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stats-card blue">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Total Subjects</h6>
+                                        <h3 class="mb-0">8</h3>
+                                    </div>
+                                    <i class="bi bi-book text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card stats-card green">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Active Students</h6>
+                                        <h3 class="mb-0">156</h3>
+                                    </div>
+                                    <i class="bi bi-people text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card stats-card orange">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Pending Assignments</h6>
+                                        <h3 class="mb-0">12</h3>
+                                    </div>
+                                    <i class="bi bi-file-earmark-text text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card stats-card red">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="text-muted mb-1">Upcoming Classes</h6>
+                                        <h3 class="mb-0">4</h3>
+                                    </div>
+                                    <i class="bi bi-calendar-event text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Recent Subjects -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Recent Subjects</h5>
+                                <a href="subjects.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-dark table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-white">Subject</th>
+                                                <th class="text-white">Year</th>
+                                                <th class="text-white">Division</th>
+                                                <th class="text-white">Students</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentSubjectsTable">
+                                            <!-- Dynamically populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Attendance -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Recent Attendance</h5>
+                                <a href="attendance.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-dark table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-white">Subject</th>
+                                                <th class="text-white">Date</th>
+                                                <th class="text-white">Present</th>
+                                                <th class="text-white">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentAttendanceTable">
+                                            <!-- Dynamically populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Recent Announcements -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Recent Announcements</h5>
+                                <a href="announcements.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div id="recentAnnouncementsList">
+                                    <!-- Dynamically populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Placements -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Upcoming Placements</h5>
+                                <a href="placements.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div id="upcomingPlacementsList">
+                                    <!-- Dynamically populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/teacher-dashboard.js"></script>
+</body>
+</html>
+
