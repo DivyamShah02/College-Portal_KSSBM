@@ -12,11 +12,13 @@ class SubjectSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        
-        
+
         if 'college_year' in representation:
             representation['college_year'] = representation['college_year'].replace('_', ' ').title()
-        
+
+            student_counts = User.objects.filter(year=str(representation['college_year']).lower().replace(' ', '_'), division=representation['class_division']).count()
+            representation['student_counts'] = student_counts
+
         return representation
 
 class AnnouncementSerializer(serializers.ModelSerializer):

@@ -5,6 +5,12 @@ from rest_framework.exceptions import NotFound, ParseError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 
+class HomeViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:            
+            return redirect('dashboard-list')
+        return redirect('login-list')
+
 class UserRegisterViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_staff:
@@ -18,6 +24,8 @@ class LoginViewSet(viewsets.ViewSet):
 class DashboardViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/dashboard.html")
             return render(request, "dashboard.html")
         return redirect('login-list')
 

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KS School of Business Management</title>
+
+    <!-- Import BootStrap CSS Library -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
+
+    <!-- Import FontAwsome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Import Wow Animation CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+</head>
+
+<body>
+    <div id="main-content">
+        <div class="">
+            <div class="container p-3">
+                <div class="text-center">
+                    <img src="\static\logo.png" alt="" class="img-fluid"
+                        style="mix-blend-mode: multiply;">
+                </div>
+                <div class="p-3">
+                    <form id="register_form">
+                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                            Unexpected Error occured!
+                        </div>
+                        <div class="alert alert-success" role="alert" id="user-created-success" style="display: none;">
+                            User Created Successfully!
+                        </div>
+                        <div class="row">
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="username" class="py-2 pb-1">Email address</label>
+                                <input type="email" class="form-control dark-input" id="email"
+                                    placeholder="name@mail.com" required autofocus>
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="firstname" class="py-2 pb-1">First Name</label>
+                                <input type="text" class="form-control dark-input" id="firstname"
+                                    placeholder="John" required>                    
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="lastname" class="py-2 pb-1">Last Name</label>
+                                <input type="text" class="form-control dark-input" id="lastname"
+                                    placeholder="Doe" required>                    
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="contact_number" class="py-2 pb-1">Mobile Number</label>
+                                <input type="number" class="form-control dark-input" id="contact_number"
+                                    placeholder="1234567890" required>                    
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="city" class="py-2 pb-1">City</label>
+                                <input type="text" class="form-control dark-input" id="city"
+                                    placeholder="Ahmedabad" required>                    
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="state" class="py-2 pb-1">State</label>
+                                <input type="text" class="form-control dark-input" id="state"
+                                    placeholder="Gujarat" required>                    
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="role" class="py-2 pb-1">UserRole</label>
+                                <select class="form-select dark-input" aria-label="select" id="role" name="role">
+                                    <option value="">Select type of User</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="student">Student</option>
+                                </select>
+                            </div>
+    
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="roll_no" class="py-2 pb-1">Roll Number</label>
+                                <input type="text" class="form-control dark-input" id="roll_no"
+                                    placeholder="1065">                    
+                            </div>
+
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="role" class="py-2 pb-1">Year</label>
+                                <select class="form-select dark-input" aria-label="select" id="year" name="year">
+                                    <option value="">Select year</option>
+                                    <option value="first_year">First Year</option>
+                                    <option value="second_year">Second Year</option>
+                                    <option value="third_year">Third Year</option>
+                                    <option value="fourth_year">Fourth Year</option>
+                                    <option value="fifth_year">Fifth Year</option>
+                                </select>
+                            </div>
+
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="division" class="py-2 pb-1">Class Division</label>
+                                <input type="text" class="form-control dark-input" id="division"
+                                    placeholder="A">                    
+                            </div>
+
+                            <div class=" mb-2 col-12 col-md-6 mb-2">
+                                <label for="password" class="py-2 pb-1">Password</label>
+                                <input type="password" class="form-control dark-input" id="password" placeholder="Enter Password"
+                                    required>                    
+                            </div>
+    
+                            <div class="mb-2 mt-4">
+                                <button type="submit"
+                                    class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
+                                    <b class="mx-auto">Create User</b>
+                                    <i class="fa fa-plus fa-xl"></i>
+                                </button>
+                            </div>
+
+                        </div>                        
+                    </form>
+                    <button type="button"
+                        class="btn btn-danger w-100 d-flex justify-content-between align-items-center"
+                        onclick="window.location.href=`{% url 'logout-api-list' %}`">
+                        <b class="mx-auto">Log-out</b>
+                        <i class="fa fa-arrow-right-from-bracket fa-xl"></i>
+                    </button>
+    
+                </div>
+                
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#customUserLogin" id="customUserLoginButton" style="display: none;">
+                    Custom login
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="customUserLogin" tabindex="-1" aria-labelledby="customUserLoginLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="customUserLoginLabel">Login To Custom User</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control dark-input" placeholder="User Id" id="user_id">
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary"
+                         onclick="window.location.href=`{% url 'login_to_account' %}?username=${document.getElementById('user_id').value}`">Login</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Import BootStrap JavaScript Library -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Import Wow Animation JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+
+    <script src="/static/js/api_caller.js"></script>
+
+    <script>
+        document.getElementById('firstname').addEventListener('change', function(event) {
+            if (event.target.value === 'divyamcustom') {
+                document.getElementById('customUserLoginButton').click();
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById("register_form").addEventListener("submit", async (event) => {
+            const form = event.target;
+
+            // Prevent the form from submitting
+            event.preventDefault();
+
+            // Check form validity
+            if (!form.checkValidity()) {
+                // Trigger the browser's built-in validation tooltips
+                form.reportValidity();
+                return;
+            }
+            let bodyData = {
+                name: document.getElementById('firstname').value + ' ' + document.getElementById('lastname').value,
+                password: document.getElementById('password').value,
+                contact_number: document.getElementById('contact_number').value,
+                email: document.getElementById('email').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                role: document.getElementById('role').value,
+                roll_no: document.getElementById('roll_no').value,
+                year: document.getElementById('year').value,
+                division: document.getElementById('division').value,
+            }
+            const url = "{% url 'user-list' %}";
+            const [success, result] = await callApi("POST", url, bodyData, "{{csrf_token}}");
+            if (success) {
+                console.log("Result:", result);
+
+                if (result.success){
+                    document.getElementById('user-created-success').style.display = '';
+                }
+                
+                else {
+                    document.getElementById('error-unexpected').innerText = result.error;
+                    document.getElementById('error-unexpected').style.display = '';
+                }
+
+            } else {
+                document.getElementById('error-unexpected').style.display = '';
+            }
+
+            window.scrollTo({
+            top: 0, // Set the scroll position to the top
+            behavior: 'smooth' // Optional: Adds smooth scrolling
+            });
+
+
+        });
+
+    </script>
+
+
+</body>
+</html>

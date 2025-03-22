@@ -1,14 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Toggle sidebar on mobile
-  const sidebarToggle = document.getElementById("sidebarToggle")
-  const sidebar = document.getElementById("sidebar")
-
-  if (sidebarToggle && sidebar) {
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("show")
-    })
-  }
-
   // Set current date
   const currentDateElement = document.getElementById("currentDate")
   if (currentDateElement) {

@@ -254,7 +254,7 @@ function loadSubjectDetails(subjectId) {
   document.getElementById("announcementsCount").textContent = subject.announcements
   document.getElementById("assignmentsCount").textContent = subject.assignments
   document.getElementById("attendanceSessions").textContent = subject.attendanceSessions
-  document.getElementById("subjectImage").src = subject.image
+  // document.getElementById("subjectImage").src = subject.image
 
   // Update subject badges
   const subjectBadges = document.getElementById("subjectBadges")
@@ -287,7 +287,7 @@ function loadAnnouncements(subjectId) {
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title mb-0">${announcement.title}</h5>
-                            <span class="badge bg-light text-dark">${new Date(announcement.date).toLocaleDateString()}</span>
+                            <span class="badge bg-primary text-white">${new Date(announcement.date).toLocaleDateString()}</span>
                         </div>
                         <p class="card-text">${announcement.content}</p>
                         ${

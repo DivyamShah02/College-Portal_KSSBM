@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'UserDetail',
     'ClassRoom',
     'Placement',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

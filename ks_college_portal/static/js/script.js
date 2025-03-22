@@ -53,3 +53,60 @@ function setFormValues(data) {
     }
 
 }
+
+
+try {
+    const currentDateElement = document.getElementById("currentDate")
+    if (currentDateElement) {
+        const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
+        const today = new Date()
+        currentDateElement.textContent = today.toLocaleDateString("en-US", options)
+    }
+}
+catch (error) {
+    console.log(error);
+}
+
+
+const sidebarToggle = document.getElementById("sidebarToggle")
+const sidebar = document.getElementById("sidebar")
+
+if (sidebarToggle && sidebar) {
+sidebarToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("show")
+})
+}
+
+function logPageLoadUrl() {
+    const currentUrl = window.location.href;
+    console.log(`Page loaded from URL: ${currentUrl}`);
+
+    if (currentUrl.includes('dashboard')) {
+        document.getElementById('Dashboard-nav').className = 'nav-link active';
+    }
+
+    else if (currentUrl.includes('subjects')) {
+        document.getElementById('Subjects-nav').className = 'nav-link active';
+    }
+    else if (currentUrl.includes('placements')) {
+        document.getElementById('Placements-nav').className = 'nav-link active';
+    }
+    else if (currentUrl.includes('announcements')) {
+        document.getElementById('Announcements-nav').className = 'nav-link active';
+    }
+
+    else if (currentUrl.includes('assignments')) {
+        document.getElementById('Assignments-nav').className = 'nav-link active';
+    }
+
+    else if (currentUrl.includes('attendance')) {
+        document.getElementById('Attendance-nav').className = 'nav-link active';
+    }
+    
+    else if (currentUrl.includes('students')) {
+        document.getElementById('Students-nav').className = 'nav-link active';
+    }
+
+}
+
+logPageLoadUrl();

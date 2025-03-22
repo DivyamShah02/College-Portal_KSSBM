@@ -1,162 +1,286 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>KS School of Business Management</title>
-
-    <!-- Import BootStrap CSS Library -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <!-- Import Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
-
-    <!-- Import FontAwsome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Import Wow Animation CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects | Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
-
 <body>
-    <div id="main-content">
-        <div class="row mx-5">
-            <div class="col">
-                <p class="mb-0" style="font-size: larger;">Email: <b>{{user.email}}</b></p>
-            </div>
-            <div class="col">
-                <p class="mb-0" style="font-size: larger;">Name: <b>{{user.name}}</b></p>
-            </div>            
-        </div>
-        <div class="container p-3 pb-0">
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
             <div class="p-3">
-                <h1 class="text-primary">All Subjects</h1>
-
-                <div class="row" id="all_subjects">
-                    <!-- <div class="col-md-4" id="subject-1">
-                        <div class="card my-3" id="subject-1-card">
-                            <h5 class="card-header" id="subject-1-header">First Year - A</h5>
-                            <div class="card-body">
-                                <h5 class="card-title" id="subject-1-title">Subject Name</h5>
-                                <p class="card-text" id="subject-1-text">With supporting text below as a natural lead-in to additional
-                                    content.</p>
-                                <a href="#" class="btn btn-primary">Handle Subject</a>
+                <div class="d-flex align-items-center mb-4 mt-2">
+                    <img src="../images/logo.png" alt="College Logo" class="me-2" style="height: 40px;">
+                    <h5 class="mb-0">College Portal</h5>
+                </div>
+                
+                <div class="text-center mb-4">
+                    <img src="../images/student-avatar.jpg" alt="Student Avatar" class="avatar avatar-lg mb-2">
+                    <h6 class="mb-0">John Smith</h6>
+                    <small class="text-light">Computer Science, Year 3</small>
+                </div>
+                
+                <hr>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="subjects.html" class="nav-link active">
+                            <i class="bi bi-book"></i> Subjects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="announcements.html" class="nav-link">
+                            <i class="bi bi-megaphone"></i> Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="assignments.html" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i> Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="attendance.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i> Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="placements.html" class="nav-link">
+                            <i class="bi bi-briefcase"></i> Placements
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a href="../index.html" class="nav-link text-danger">
+                            <i class="bi bi-box-arrow-left"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+                <div class="container-fluid">
+                    <button class="btn btn-outline-secondary border-0" id="sidebarToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    
+                    <div class="d-flex align-items-center ms-auto">
+                        <div class="dark-mode-toggle me-3" title="Toggle Dark Mode">
+                            <i class="bi bi-moon"></i>
+                        </div>
+                        
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-bell position-relative">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        5
+                                    </span>
+                                </i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                                <li><h6 class="dropdown-header">Notifications</h6></li>
+                                <li><a class="dropdown-item" href="#">New assignment posted</a></li>
+                                <li><a class="dropdown-item" href="#">Attendance marked</a></li>
+                                <li><a class="dropdown-item" href="#">Exam schedule announced</a></li>
+                                <li><a class="dropdown-item" href="#">Assignment graded</a></li>
+                                <li><a class="dropdown-item" href="#">New placement opportunity</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-primary" href="#">View all notifications</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dropdown ms-3">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../images/student-avatar.jpg" alt="Student Avatar" class="avatar me-2">
+                                <span class="d-none d-sm-inline">John Smith</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="../index.html"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            
+            <!-- Subjects Content -->
+            <div class="container-fluid fade-in">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">My Subjects</h2>
+                    <div>
+                        <span class="badge bg-info me-2">Year 3</span>
+                        <span class="badge bg-secondary">Division B</span>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="semesterFilter" class="form-label">Semester</label>
+                                <select class="form-select" id="semesterFilter">
+                                    <option value="">All Semesters</option>
+                                    <option value="current" selected>Current Semester</option>
+                                    <option value="previous">Previous Semesters</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="searchSubject" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="searchSubject" placeholder="Search subjects...">
                             </div>
                         </div>
-                    </div> -->
+                    </div>
+                </div>
+                
+                <!-- Subjects List -->
+                <div class="row" id="subjectsList">
+                    <!-- Subject Card 1 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Data Structures and Algorithms">
+                            <div class="card-body">
+                                <h5 class="card-title">Data Structures and Algorithms</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Study of fundamental data structures, algorithms, and their applications.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. Sarah Johnson</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=1" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Card 2 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Web Development">
+                            <div class="card-body">
+                                <h5 class="card-title">Web Development</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Introduction to web technologies including HTML, CSS, JavaScript, and modern frameworks.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. Michael Brown</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=2" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Card 3 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Database Management Systems">
+                            <div class="card-body">
+                                <h5 class="card-title">Database Management Systems</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Fundamentals of database design, SQL, and database management systems.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. Emily Davis</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=3" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Card 4 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Artificial Intelligence">
+                            <div class="card-body">
+                                <h5 class="card-title">Artificial Intelligence</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Introduction to AI concepts, machine learning, and neural networks.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. Robert Wilson</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=4" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Card 5 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Computer Networks">
+                            <div class="card-body">
+                                <h5 class="card-title">Computer Networks</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Study of network protocols, architecture, and security principles.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. David Clark</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=5" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Card 6 -->
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card subject-card h-100">
+                            <img src="/placeholder.svg?height=150&width=300" class="card-img-top" alt="Software Engineering">
+                            <div class="card-body">
+                                <h5 class="card-title">Software Engineering</h5>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge bg-info">Year 3</span>
+                                    <span class="badge bg-secondary">Division B</span>
+                                </div>
+                                <p class="card-text">Software development lifecycle, project management, and quality assurance.</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <small class="text-muted">Prof. Jennifer Lee</small>
+                                    </div>
+                                    <a href="subject-detail.html?id=6" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Import BootStrap JavaScript Library -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-
-    <!-- Import Wow Animation JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
-
-    <script src="../static/js/api_caller.js"></script>
-
-    <script>
-        window.onload = async function () {
-            await getSubjects();
-        }
-
-        async function getSubjects() {
-            const url = "{% url 'student-subjects-api-list' %}?";
-            const [success, result] = await callApi("GET", url);
-            console.log(result);
-            if (success) {
-                if (result.success) {
-                    createSubjectCards(result.data.all_subjects);                 
-                }
-                else {                    
-                }
-            } else {                
-            }
-        }
-
-        function createSubjectCards(subjects) {
-            // Get the parent element where all subjects will be appended
-            const allSubjectsContainer = document.getElementById('all_subjects');
-            
-            // Loop through each subject in the subjects array
-            subjects.forEach((subject, index) => {
-                // Create the outer div for the column
-                const colDiv = document.createElement('div');
-                colDiv.classList.add('col-md-4');
-                colDiv.id = `subject-${index + 1}`;
-                
-                // Create the card container
-                const cardDiv = document.createElement('div');
-                cardDiv.classList.add('card', 'my-3');
-                cardDiv.id = `subject-${index + 1}-card`;
-
-                // Create the card header
-                const cardHeader = document.createElement('h5');
-                cardHeader.classList.add('card-header');
-                cardHeader.id = `subject-${index + 1}-header`;
-                cardHeader.textContent = `${subject.college_year} - ${subject.class_division}`;
-
-                // Create the card body
-                const cardBody = document.createElement('div');
-                cardBody.classList.add('card-body');
-
-                // Create the card title
-                const cardTitle = document.createElement('h5');
-                cardTitle.classList.add('card-title');
-                cardTitle.id = `subject-${index + 1}-title`;
-                cardTitle.textContent = subject.subject_name;
-
-                // Create the card text
-                const cardText = document.createElement('p');
-                cardText.classList.add('card-text');
-                cardText.id = `subject-${index + 1}-text`;
-                cardText.textContent = 'With supporting text below as a natural lead-in to additional content.';
-
-                // Create the button
-                const button = document.createElement('a');
-                button.classList.add('btn', 'btn-primary');
-                button.href = `{% url 'subject-detail-list' %}?subject_id=${subject.subject_id}`;
-                button.textContent = 'Handle Subject';
-
-                // Append all elements to the card body
-                cardBody.appendChild(cardTitle);
-                cardBody.appendChild(cardText);
-                cardBody.appendChild(button);
-
-                // Append the card header and body to the card container
-                cardDiv.appendChild(cardHeader);
-                cardDiv.appendChild(cardBody);
-
-                // Append the card to the column div
-                colDiv.appendChild(cardDiv);
-
-                // Append the column div to the container
-                allSubjectsContainer.appendChild(colDiv);
-            });
-        }
-
-        // Example JSON data
-        // const subjects = [
-        //     { year: 'First Year', section: 'A', name: 'Math', description: 'Mathematics basics' },
-        //     { year: 'Second Year', section: 'B', name: 'Physics', description: 'Fundamentals of physics' },
-        //     { year: 'Third Year', section: 'C', name: 'Chemistry', description: 'Organic and inorganic chemistry' }
-        // ];
-
-        // // Call the function with the sample data
-        // createSubjectCards(subjects);
-
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/student-subjects.js"></script>
 </body>
-
 </html>
+

@@ -48,6 +48,7 @@ body {
 /* Login Page Styles */
 .login-page {
   background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+  /* background: linear-gradient(135deg, #dd0000 0%, #502c2c 100%); */
   background-size: cover;
   min-height: 100vh;
 }

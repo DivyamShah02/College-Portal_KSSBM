@@ -28,15 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchAnnouncement) {
     searchAnnouncement.addEventListener("input", filterAnnouncements)
   }
-
-  // Setup file upload listeners
-  setupFileUploadListeners()
-
-  // Add event listener for save announcement button
-  const saveAnnouncementBtn = document.getElementById("saveAnnouncementBtn")
-  if (saveAnnouncementBtn) {
-    saveAnnouncementBtn.addEventListener("click", saveAnnouncement)
-  }
 })
 
 // Mock data for announcements
@@ -91,6 +82,36 @@ const announcements = [
     date: "2023-03-15",
     attachment: "ai_workshop.pdf",
   },
+  {
+    id: 6,
+    subjectId: 5,
+    subjectName: "Computer Networks",
+    title: "Network Lab Setup",
+    content:
+      "The network lab has been set up with new equipment. Students can now access the lab for practical sessions starting from March 20th, 2023.",
+    date: "2023-03-16",
+    attachment: null,
+  },
+  {
+    id: 7,
+    subjectId: 6,
+    subjectName: "Software Engineering",
+    title: "Industry Visit",
+    content:
+      "We have arranged an industry visit to Microsoft Development Center on March 28th, 2023. All students interested in participating should register by March 22nd.",
+    date: "2023-03-17",
+    attachment: "industry_visit_details.pdf",
+  },
+  {
+    id: 8,
+    subjectId: 0,
+    subjectName: "College Administration",
+    title: "Holiday Notice",
+    content:
+      "The college will remain closed on March 30th, 2023 on account of the annual function. Regular classes will resume from March 31st.",
+    date: "2023-03-18",
+    attachment: null,
+  },
 ]
 
 // Function to load announcements
@@ -118,7 +139,7 @@ function renderAnnouncements(announcementsToRender) {
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="card-title mb-0">${announcement.title}</h5>
-                        <span class="badge bg-primary text-white">${new Date(announcement.date).toLocaleDateString()}</span>
+                        <span class="badge bg-light text-dark">${new Date(announcement.date).toLocaleDateString()}</span>
                     </div>
                     <h6 class="card-subtitle mb-2 text-muted">${announcement.subjectName}</h6>
                     <p class="card-text">${announcement.content}</p>
@@ -133,14 +154,6 @@ function renderAnnouncements(announcementsToRender) {
                     `
                         : ""
                     }
-                    <div class="mt-3 d-flex justify-content-end">
-                        <button class="btn btn-sm btn-outline-primary me-2">
-                            <i class="bi bi-pencil me-1"></i>Edit
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash me-1"></i>Delete
-                        </button>
-                    </div>
                 </div>
             </div>
         `
@@ -198,72 +211,5 @@ function filterAnnouncements() {
   })
 
   renderAnnouncements(filteredAnnouncements)
-}
-
-// Function to setup file upload listeners
-function setupFileUploadListeners() {
-  // Announcement file upload
-  const announcementFile = document.getElementById("announcementFile")
-  const selectedAnnouncementFile = document.getElementById("selectedAnnouncementFile")
-  const announcementFileName = document.getElementById("announcementFileName")
-  const removeAnnouncementFile = document.getElementById("removeAnnouncementFile")
-
-  if (announcementFile && selectedAnnouncementFile && announcementFileName && removeAnnouncementFile) {
-    announcementFile.addEventListener("change", function () {
-      if (this.files.length > 0) {
-        announcementFileName.textContent = this.files[0].name
-        selectedAnnouncementFile.classList.remove("d-none")
-      }
-    })
-
-    removeAnnouncementFile.addEventListener("click", () => {
-      announcementFile.value = ""
-      selectedAnnouncementFile.classList.add("d-none")
-    })
-  }
-}
-
-// Function to save a new announcement
-function saveAnnouncement() {
-  const subjectId = document.getElementById("announcementSubject").value
-  const title = document.getElementById("announcementTitle").value
-  const content = document.getElementById("announcementContent").value
-  const file = document.getElementById("announcementFile").files[0]
-
-  if (!subjectId || !title || !content) {
-    alert("Please fill in all required fields")
-    return
-  }
-
-  // Get subject name
-  const subjectSelect = document.getElementById("announcementSubject")
-  const subjectName = subjectSelect.options[subjectSelect.selectedIndex].text
-
-  // Create new announcement object
-  const newAnnouncement = {
-    id: announcements.length + 1,
-    subjectId: Number.parseInt(subjectId),
-    subjectName: subjectName,
-    title: title,
-    content: content,
-    date: new Date().toISOString().split("T")[0],
-    attachment: file ? file.name : null,
-  }
-
-  // Add to announcements array
-  announcements.unshift(newAnnouncement)
-
-  // Refresh the announcements list
-  renderAnnouncements(announcements)
-
-  // Close the modal
-  const addAnnouncementModal = document.getElementById("addAnnouncementModal")
-  const modalElement = document.getElementById("addAnnouncementModal")
-  const modal = bootstrap.Modal.getInstance(modalElement)
-  modal.hide()
-
-  // Reset the form
-  document.getElementById("addAnnouncementForm").reset()
-  document.getElementById("selectedAnnouncementFile").classList.add("d-none")
 }
 
