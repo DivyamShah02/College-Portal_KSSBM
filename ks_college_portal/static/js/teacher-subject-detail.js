@@ -1,16 +1,23 @@
 let csrf_token = null;
+let teacher_subject_details_url = null;
 let teacher_subject_announcements_url = null;
 let teacher_subject_announcements_comments_url = null;
 let teacher_subject_assignments_url = null;
+let teacher_subject_attendance_url = null;
 let subjectId = null;
+let student_counts = null;
+let announcementSelectedFiles = [];
+let assignmentSelectedFiles = [];
+let subject = null;
 
-async function HandleSubjectDetail(csrf_token_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param) {
+async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param, teacher_subject_attendance_url_param) {
 	csrf_token = csrf_token_param;
+	teacher_subject_details_url = teacher_subject_details_url_param;
 	teacher_subject_announcements_url = teacher_subject_announcements_url_param;
 	teacher_subject_announcements_comments_url = teacher_subject_announcements_comments_url_param;
 	teacher_subject_assignments_url = teacher_subject_assignments_url_param;
+	teacher_subject_attendance_url = teacher_subject_attendance_url_param;
 
-	// Get subject ID from URL
 	const urlParams = new URLSearchParams(window.location.search);
 	subjectId = urlParams.get("subject_id");
 
@@ -20,125 +27,10 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_announcemen
 		return;
 	}
 
-	// Load subject details
 	await loadSubjectDetails(subjectId);
 
 }
 
-let subject = null;
-
-// Mock data for subjects
-const subjects = [
-	{
-		id: 1,
-		name: "Data Structures and Algorithms",
-		year: 2,
-		division: "A",
-		students: 42,
-		description:
-			"Study of fundamental data structures, algorithms, and their applications. This course covers arrays, linked lists, stacks, queues, trees, graphs, sorting algorithms, and searching algorithms. Students will learn to analyze algorithm efficiency and implement various data structures.",
-		image: "/placeholder.svg?height=200&width=200",
-		announcements: 5,
-		assignments: 3,
-		attendanceSessions: 8,
-	},
-	{
-		id: 2,
-		name: "Web Development",
-		year: 3,
-		division: "B",
-		students: 38,
-		description:
-			"Introduction to web technologies including HTML, CSS, JavaScript, and modern frameworks. Students will learn to build responsive and interactive web applications using current industry standards and best practices.",
-		image: "/placeholder.svg?height=200&width=200",
-		announcements: 7,
-		assignments: 4,
-		attendanceSessions: 10,
-	},
-	{
-		id: 3,
-		name: "Database Management Systems",
-		year: 2,
-		division: "C",
-		students: 45,
-		description:
-			"Fundamentals of database design, SQL, and database management systems. This course covers relational database concepts, normalization, query optimization, transaction management, and database security.",
-		image: "/placeholder.svg?height=200&width=200",
-		announcements: 4,
-		assignments: 2,
-		attendanceSessions: 6,
-	},
-	{
-		id: 4,
-		name: "Artificial Intelligence",
-		year: 4,
-		division: "A",
-		students: 31,
-		description:
-			"Introduction to AI concepts, machine learning, and neural networks. Students will explore problem-solving methods, knowledge representation, reasoning, planning, and machine learning algorithms.",
-		image: "/placeholder.svg?height=200&width=200",
-		announcements: 6,
-		assignments: 5,
-		attendanceSessions: 9,
-	},
-]
-
-// Mock data for announcements
-const announcements = [
-	{
-		id: 1,
-		subjectId: 1,
-		title: "Mid-term Exam Schedule",
-		content:
-			"The mid-term exam for Data Structures will be held on March 25th, 2023. The exam will cover all topics discussed up to Week 6. Please prepare accordingly and bring your ID cards.",
-		date: "2023-03-10",
-		attachment: null,
-	},
-	{
-		id: 2,
-		subjectId: 1,
-		title: "Guest Lecture on Advanced Algorithms",
-		content:
-			'We will have a guest lecture by Dr. Robert Chen from Stanford University on "Advanced Algorithms in Industry" on March 18th, 2023. Attendance is mandatory for all students.',
-		date: "2023-03-12",
-		attachment: "guest_lecture_details.pdf",
-	},
-	{
-		id: 3,
-		subjectId: 1,
-		title: "Lab Session Rescheduled",
-		content:
-			"The lab session scheduled for March 15th has been rescheduled to March 17th due to maintenance work in the computer lab. Same time and same lab number.",
-		date: "2023-03-14",
-		attachment: null,
-	},
-]
-
-// Mock data for assignments
-const assignments = [
-	{
-		id: 1,
-		subjectId: 1,
-		title: "Implementation of Sorting Algorithms",
-		description:
-			"Implement the following sorting algorithms in a language of your choice: Bubble Sort, Insertion Sort, Selection Sort, Merge Sort, and Quick Sort. Compare their performance with different input sizes.",
-		dueDate: "2023-03-25",
-		dueTime: "23:59",
-		attachment: "sorting_algorithms_assignment.pdf",
-		submissions: 28,
-	},
-	{
-		id: 2,
-		subjectId: 1,
-		title: "Binary Search Tree Operations",
-		description:
-			"Implement a Binary Search Tree with the following operations: insert, delete, search, traversal (in-order, pre-order, post-order). Write test cases to verify your implementation.",
-		dueDate: "2023-04-05",
-		dueTime: "23:59",
-		attachment: "bst_assignment.pdf",
-		submissions: 15,
-	},
-]
 
 // Mock data for attendance
 const attendance = [
@@ -225,7 +117,7 @@ async function loadSubjectDetails(subjectId) {
 		subject_id: subjectId
 	};
 
-	const url = `${teacher_subject_announcements_url}?` + toQueryString(Params);
+	const url = `${teacher_subject_details_url}?` + toQueryString(Params);
 	const [success, result] = await callApi("GET", url);
 	console.log(result);
 	if (success) {
@@ -244,13 +136,15 @@ async function loadSubjectDetails(subjectId) {
 	// Update page title
 	document.title = `${subject.subject_data.subject_name} | Teacher Dashboard`
 
+	student_counts = subject.subject_data.student_counts
+
 	// Update subject details
 	document.getElementById("subjectTitle").textContent = subject.subject_data.subject_name
 	// document.getElementById("subjectDescriptionText").textContent = subject.subject_data.description
 	document.getElementById("studentsEnrolled").textContent = subject.subject_data.student_counts
 	document.getElementById("announcementsCount").textContent = subject.total_announcements
-	document.getElementById("assignmentsCount").textContent = subject.total_announcements
-	document.getElementById("attendanceSessions").textContent = subject.total_announcements
+	document.getElementById("assignmentsCount").textContent = subject.total_assignments
+	document.getElementById("attendanceSessions").textContent = subject.total_attendances
 	// document.getElementById("subjectImage").src = subject.image
 
 	// Update subject badges
@@ -262,7 +156,7 @@ async function loadSubjectDetails(subjectId) {
 
 	loadAnnouncements(subject.all_announcements);
 	loadAssignments(subject.all_assignments);
-	// loadAttendance(subjectId);
+	loadAttendance(subject.all_attendance);
 
 	// Load students list
 	// loadStudentsList()
@@ -369,30 +263,44 @@ function loadAssignments(subjectAssignments) {
 
 		let html = ""
 		subjectAssignments.forEach((assignment) => {
-			const dueDateTime = new Date(`${assignment.dueDate}T${assignment.dueTime}`)
+			let doc_html = ""
+
+			if (assignment.document_paths.length === 0) {
+				doc_html = "";
+			}
+			else {
+				assignment.document_paths.forEach((doc) => {
+					doc_html += `<a href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2">
+            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+          </a>`
+				});
+			}
+
+			const dueDateTime = new Date(`${assignment.deadline_date}`)
 			const isOverdue = dueDateTime < new Date()
+
+			// <h5 class="card-title mb-0">${assignment.title}</h5>
 
 			html += `
                 <div class="card assignment-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="card-title mb-0">${assignment.title}</h5>
                             <span class="badge ${isOverdue ? "bg-danger" : "bg-warning"} text-white">
-                                Due: ${new Date(assignment.dueDate).toLocaleDateString()} at ${assignment.dueTime}
+                                Due: ${new Date(assignment.deadline_date).toLocaleDateString()} at ${new Date(assignment.deadline_date).toLocaleTimeString()}
                             </span>
                         </div>
-                        <p class="card-text">${assignment.description}</p>
+                        <p class="card-text">${assignment.text_content}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            ${assignment.attachment
-					? `
-                                <a href="#" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-file-earmark me-2"></i>${assignment.attachment}
-                                </a>
-                            `
-					: "<span></span>"
-				}
-                            <span class="text-muted">${assignment.submissions} / ${subjects.find((s) => s.id == subjectId).students} submissions</span>
+						${doc_html
+							? `
+											<div class="mt-3 text-wrap text-break">
+												${doc_html}
+											</div>
+										`
+							: ""
+						}
                         </div>
+						<span class="text-muted">${assignment.all_submits.length} / ${student_counts} submissions</span>   
                     </div>
                 </div>
             `
@@ -403,12 +311,7 @@ function loadAssignments(subjectAssignments) {
 }
 
 // Function to load attendance
-function loadAttendance(subjectId) {
-	const attendanceList = document.getElementById("attendanceList")
-
-	// Filter attendance by subject ID
-	const subjectAttendance = attendance.filter((a) => a.subjectId == subjectId)
-
+function loadAttendance(subjectAttendance) {
 	setTimeout(() => {
 		if (subjectAttendance.length === 0) {
 			attendanceList.innerHTML = '<div class="text-center py-4"><p>No attendance sessions yet</p></div>'
@@ -417,34 +320,43 @@ function loadAttendance(subjectId) {
 
 		let html = ""
 		subjectAttendance.forEach((session) => {
-			const attendanceDate = new Date(`${session.date}T${session.time}`)
-			const attendancePercentage = Math.round((session.present / session.total) * 100)
+			const attendanceDate = new Date(`${session.created_at}`)
+			const attendancePercentage = Math.round((session.attendance_data.length / student_counts) * 100)
+			const now = new Date()
+			let attendanceEndDate = attendanceDate
+			attendanceEndDate.setHours(attendanceDate.getHours() + 1);
+			let attendance_completed = "In Progress";
+			
+			if (attendanceEndDate <= now) {
+				attendance_completed = "Completed";
+			}
 
 			html += `
                 <div class="card attendance-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="card-title mb-0">${session.title}</h5>
-                            <span class="badge bg-${session.status === "Completed" ? "success" : "primary"} text-white">
-                                ${session.status}
+                            <h6 class="card-title mb-0">${attendanceDate.toLocaleString()}</h6>
+                            <span class="badge bg-${attendance_completed === "Completed" ? "success" : "primary"} text-white">
+                                ${attendance_completed}
                             </span>
                         </div>
                         <div class="row g-3">
-                            <div class="col-md-6">
+							<div class="col-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-calendar text-primary me-2"></i>
                                     <div>
-                                        <small class="text-muted d-block">Date & Time</small>
-                                        <span>${attendanceDate.toLocaleString()}</span>
+                                        <small class="text-muted d-block">Unique Code</small>
+                                        <span>${session.code}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+
+                            <div class="col-6">
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-people text-success me-2"></i>
                                     <div>
                                         <small class="text-muted d-block">Attendance</small>
-                                        <span>${session.present} / ${session.total} (${attendancePercentage}%)</span>
+                                        <span>${session.attendance_data.length} / ${student_counts} (${attendancePercentage}%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -510,18 +422,14 @@ async function addComment(index, announcement_id) {
 				location.reload();
 			}
 
-			else {                        
+			else {
 			}
 
 		} else {
-			
-		}            
+
+		}
 	}
 }
-
-
-let announcementSelectedFiles = [];
-let assignmentSelectedFiles = [];
 
 document.getElementById('announcementDoc_announcement').addEventListener('change', function (event) {
 	handleFiles(event.target.files, "announcement");
@@ -616,6 +524,12 @@ document.getElementById("add_assignment_form").addEventListener("submit", async 
 	formData.append(`text_content`, document.getElementById('text_content_assignment').value);
 	formData.append(`subject_id`, subjectId);
 
+	const deadlineDate = dateInput.value
+	const deadlineTime = timeInput.value
+	// const deadline = new Date(`${deadlineDate}T${deadlineTime}`)
+	const deadline = `${deadlineDate} ${deadlineTime}`
+	formData.append(`deadline_date`, deadline);
+
 	const url = teacher_subject_assignments_url;
 	const [success, result] = await callApi("POST", url, formData, csrf_token, true);
 
@@ -634,3 +548,125 @@ document.getElementById("add_assignment_form").addEventListener("submit", async 
 
 });
 
+const dateInput = document.getElementById("assignment_deadline_date")
+const timeInput = document.getElementById("assignment_deadline_time")
+
+const setDefaultDeadline = () => {
+	const tomorrow = new Date()
+	tomorrow.setDate(tomorrow.getDate() + 1)
+
+	if (dateInput) {
+		// Format date as YYYY-MM-DD for the input
+		const year = tomorrow.getFullYear()
+		const month = String(tomorrow.getMonth() + 1).padStart(2, "0")
+		const day = String(tomorrow.getDate()).padStart(2, "0")
+		dateInput.value = `${year}-${month}-${day}`
+	}
+
+	if (timeInput) {
+		timeInput.value = "23:59"
+	}
+}
+
+setDefaultDeadline()
+
+function validateDeadline() {
+	const selectedDate = dateInput.value
+	const selectedTime = timeInput.value
+
+	if (!selectedDate || !selectedTime) return true // Skip validation if fields are empty
+
+	const now = new Date()
+	const deadlineDate = new Date(`${selectedDate}T${selectedTime}`)
+
+	// Check if the deadline is in the past
+	if (deadlineDate <= now) {
+		// Show error message
+		const errorElement = document.createElement("div")
+		errorElement.className = "invalid-feedback"
+		errorElement.textContent = "Deadline must be in the future"
+		errorElement.id = "deadline-error"
+
+		// Remove any existing error message first
+		const existingError = document.getElementById("deadline-error")
+		if (existingError) existingError.remove()
+
+		// Add error styling
+		dateInput.classList.add("is-invalid")
+		timeInput.classList.add("is-invalid")
+
+		// Append error message after the time input
+		timeInput.parentNode.appendChild(errorElement)
+
+		document.getElementById('submit_new_assignment_btn').disabled = true;
+
+		return false
+	} else {
+		// Remove error styling if validation passes
+		dateInput.classList.remove("is-invalid")
+		timeInput.classList.remove("is-invalid")
+
+		// Remove any existing error message
+		const existingError = document.getElementById("deadline-error")
+		if (existingError) existingError.remove()
+
+		document.getElementById('submit_new_assignment_btn').disabled = false;
+
+
+		return true
+	}
+}
+
+if (dateInput && timeInput) {
+	dateInput.addEventListener("change", validateDeadline)
+	timeInput.addEventListener("change", validateDeadline)
+}
+
+async function createAttendance() {
+	let bodyData = {
+		subject_id: subjectId                    
+		}
+	const url = teacher_subject_attendance_url;
+	const [success, result] = await callApi("POST", url, bodyData, csrf_token);
+	if (success) {
+		console.log("Result:", result);
+
+		if (result.success) {
+			console.log(result.data.unique_code);
+			const modal = bootstrap.Modal.getInstance(document.getElementById("createAttendanceModal"))
+      		modal.hide()
+
+			document.getElementById('unique_code').innerText = String(result.data.unique_code);
+			startAttendanceTimer(60 * 60);
+			const attendanceCodeModal = new bootstrap.Modal(document.getElementById("createdAttendanceModal"))
+			attendanceCodeModal.show();
+		}
+
+		else {                        
+		}
+
+	} else {
+		
+	}            
+
+}
+
+function startAttendanceTimer(duration) {
+	let timer = duration
+	const timerElement = document.getElementById("codeTimer")
+  
+	if (!timerElement) return
+  
+	const interval = setInterval(() => {
+	  const minutes = Math.floor(timer / 60)
+	  const seconds = timer % 60
+  
+	  timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  
+	  if (--timer < 0) {
+		clearInterval(interval)
+		timerElement.textContent = "Expired"
+	  }
+	}, 1000)
+  }
+  

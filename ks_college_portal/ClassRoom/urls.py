@@ -8,6 +8,8 @@ router = DefaultRouter()
 router.register(r'teacher-subjects-api', TeacherSubjectViewSet, basename='teacher-subjects-api')
 router.register(r'student-subjects-api', StudentSubjectViewSet, basename='student-subjects-api')
 
+router.register(r'teacher-subject-detail-api', TeacherSubjectDetailViewSet, basename='teacher-subject-detail-api')
+
 router.register(r'announcements-api', AnnouncementViewSet, basename='announcements-api')
 router.register(r'assignments-api', AssignmentViewSet, basename='assignments-api')
 

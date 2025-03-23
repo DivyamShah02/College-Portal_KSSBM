@@ -38,6 +38,7 @@ class Assignment(models.Model):
     attached_docs = models.BooleanField(default=False)
     document_paths = models.JSONField()
     all_submits = models.JSONField()
+    deadline_date = models.DateTimeField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Attendance(models.Model):
