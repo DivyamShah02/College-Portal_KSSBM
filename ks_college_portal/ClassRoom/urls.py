@@ -9,6 +9,7 @@ router.register(r'teacher-subjects-api', TeacherSubjectViewSet, basename='teache
 router.register(r'student-subjects-api', StudentSubjectViewSet, basename='student-subjects-api')
 
 router.register(r'announcements-api', AnnouncementViewSet, basename='announcements-api')
+router.register(r'assignments-api', AssignmentViewSet, basename='assignments-api')
 
 router.register(r'comment-api', CommentViewSet, basename='comment-api')
 

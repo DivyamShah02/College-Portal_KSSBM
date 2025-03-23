@@ -34,8 +34,9 @@ class Comment(models.Model):
 class Assignment(models.Model):
     assignment_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)
-    document_paths = models.JSONField()
     text_content = models.TextField()
+    attached_docs = models.BooleanField(default=False)
+    document_paths = models.JSONField()
     all_submits = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
 

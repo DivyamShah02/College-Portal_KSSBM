@@ -1,12 +1,14 @@
 let csrf_token = null;
 let teacher_subject_announcements_url = null;
 let teacher_subject_announcements_comments_url = null;
+let teacher_subject_assignments_url = null;
 let subjectId = null;
 
-async function HandleSubjectDetail(csrf_token_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param) {
+async function HandleSubjectDetail(csrf_token_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param) {
 	csrf_token = csrf_token_param;
 	teacher_subject_announcements_url = teacher_subject_announcements_url_param;
 	teacher_subject_announcements_comments_url = teacher_subject_announcements_comments_url_param;
+	teacher_subject_assignments_url = teacher_subject_assignments_url_param;
 
 	// Get subject ID from URL
 	const urlParams = new URLSearchParams(window.location.search);
@@ -259,7 +261,7 @@ async function loadSubjectDetails(subjectId) {
     `
 
 	loadAnnouncements(subject.all_announcements);
-	// loadAssignments(subjectId);
+	loadAssignments(subject.all_assignments);
 	// loadAttendance(subjectId);
 
 	// Load students list
@@ -358,12 +360,7 @@ function loadAnnouncements(subjectAnnouncements) {
 }
 
 // Function to load assignments
-function loadAssignments(subjectId) {
-	const assignmentsList = document.getElementById("assignmentsList")
-
-	// Filter assignments by subject ID
-	const subjectAssignments = assignments.filter((a) => a.subjectId == subjectId)
-
+function loadAssignments(subjectAssignments) {
 	setTimeout(() => {
 		if (subjectAssignments.length === 0) {
 			assignmentsList.innerHTML = '<div class="text-center py-4"><p>No assignments yet</p></div>'
@@ -523,13 +520,18 @@ async function addComment(index, announcement_id) {
 }
 
 
-let selectedFiles = [];
+let announcementSelectedFiles = [];
+let assignmentSelectedFiles = [];
 
-document.getElementById('announcementDoc').addEventListener('change', function (event) {
-	handleFiles(event.target.files);
+document.getElementById('announcementDoc_announcement').addEventListener('change', function (event) {
+	handleFiles(event.target.files, "announcement");
 });
 
-function handleFiles(files) {
+document.getElementById('announcementDoc_assignment').addEventListener('change', function (event) {
+	handleFiles(event.target.files, "assignment");
+});
+
+function handleFiles(files, action_name) {
 	const allowedExtensions = ['mp3', 'wav', 'ogg', 'mp4', 'webm', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'docx'];
 
 	for (let file of files) {
@@ -539,13 +541,17 @@ function handleFiles(files) {
 			alert(`Unsupported file type: ${file.name}`);
 			continue;
 		}
-		document.getElementById('upload_input_text').style.display = 'none';
-		document.getElementById('upload_input_file_text').style.display = '';
-		document.getElementById('upload_input_file_text').innerText = file.name + ", " + document.getElementById('upload_input_file_text').innerText;
-		document.getElementById('announcementDocUploadIcon').className = 'bi bi-cloud-check fa-xl';
-		selectedFiles.push(file);
+		document.getElementById(`upload_input_text_${action_name}`).style.display = 'none';
+		document.getElementById(`upload_input_file_text_${action_name}`).style.display = '';
+		document.getElementById(`upload_input_file_text_${action_name}`).innerText = file.name + ", " + document.getElementById(`upload_input_file_text_${action_name}`).innerText;
+		document.getElementById(`announcementDocUploadIcon_${action_name}`).className = 'bi bi-cloud-check fa-xl';
+		if (action_name == "announcement") {
+			announcementSelectedFiles.push(file);
+		}
+		else if (action_name == "assignment") {
+			assignmentSelectedFiles.push(file);
+		}
 	}
-	console.log("Selected files:", selectedFiles);
 }
 
 document.getElementById("add_announcement_form").addEventListener("submit", async (event) => {
@@ -562,12 +568,12 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 	}
 	const formData = new FormData();
 
-	selectedFiles.forEach((file, index) => {
+	announcementSelectedFiles.forEach((file, index) => {
 		formData.append(`files[${index}]`, file);
 	});
 
 	// formData.append(`files`, selectedFiles);
-	formData.append(`text_content`, document.getElementById('text_content').value);
+	formData.append(`text_content`, document.getElementById('text_content_announcement').value);
 	formData.append(`subject_id`, subjectId);
 
 	const url = teacher_subject_announcements_url;
@@ -587,3 +593,44 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 
 
 });
+
+document.getElementById("add_assignment_form").addEventListener("submit", async (event) => {
+	const form = event.target;
+
+	// Prevent the form from submitting
+	event.preventDefault();
+
+	// Check form validity
+	if (!form.checkValidity()) {
+		// Trigger the browser's built-in validation tooltips
+		form.reportValidity();
+		return;
+	}
+	const formData = new FormData();
+
+	assignmentSelectedFiles.forEach((file, index) => {
+		formData.append(`files[${index}]`, file);
+	});
+
+	// formData.append(`files`, selectedFiles);
+	formData.append(`text_content`, document.getElementById('text_content_assignment').value);
+	formData.append(`subject_id`, subjectId);
+
+	const url = teacher_subject_assignments_url;
+	const [success, result] = await callApi("POST", url, formData, csrf_token, true);
+
+	console.log(result);
+	if (success) {
+		if (result.success) {
+			location.reload();
+		}
+	}
+
+	window.scrollTo({
+		top: 0, // Set the scroll position to the top
+		behavior: 'smooth' // Optional: Adds smooth scrolling
+	});
+
+
+});
+
