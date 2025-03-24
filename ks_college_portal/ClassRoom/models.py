@@ -19,6 +19,7 @@ class Subject(models.Model):
 class Announcement(models.Model):
     announcement_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)
+    teacher_id = models.CharField(max_length=12)
     text_content = models.TextField()
     attached_docs = models.BooleanField(default=False)
     document_paths = models.JSONField()
@@ -34,6 +35,7 @@ class Comment(models.Model):
 class Assignment(models.Model):
     assignment_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)
+    teacher_id = models.CharField(max_length=12)
     text_content = models.TextField()
     attached_docs = models.BooleanField(default=False)
     document_paths = models.JSONField()
@@ -44,6 +46,7 @@ class Assignment(models.Model):
 class Attendance(models.Model):
     attendance_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)
+    teacher_id = models.CharField(max_length=12)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -24,20 +24,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/loader_logo.css">
+    <link rel="stylesheet" href="/static/css/loader.css">
     <link rel="stylesheet" href="/static/css/styles.css">
 
 </head>
 <body>
-    <div id="spinner" class="spinner-container p-2">
-        <div class="spinner"></div>
-        <!-- <div id="spinner-text" class="loading-text text-center">loading!</div> -->
-    </div>
-
     <!-- Navbar -->
     {% include "Teacher/navbar.html" %}
 
-    <div class="d-flex blur" id="main-content">
+    <div class="d-flex">
         <!-- Sidebar -->
         {% include "Teacher/sidebar.html" %}
 
@@ -72,7 +67,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="text-muted mb-1">Total Subjects</h6>
-                                        <h3 class="mb-0" id="total_subjects">Loading...</h3>
+                                        <h3 class="mb-0">8</h3>
                                     </div>
                                     <i class="bi bi-book text-info"></i>
                                 </div>
@@ -86,7 +81,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="text-muted mb-1">Active Students</h6>
-                                        <h3 class="mb-0" id="active_students">Loading...</h3>
+                                        <h3 class="mb-0">156</h3>
                                     </div>
                                     <i class="bi bi-people text-success"></i>
                                 </div>
@@ -99,10 +94,10 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-muted mb-1">Total Announcements</h6>
-                                        <h3 class="mb-0" id="total_announcements">Loading...</h3>
+                                        <h6 class="text-muted mb-1">Pending Assignments</h6>
+                                        <h3 class="mb-0">12</h3>
                                     </div>
-                                    <i class="bi bi-megaphone text-warning"></i>
+                                    <i class="bi bi-file-earmark-text text-warning"></i>
                                 </div>
                             </div>
                         </div>
@@ -113,10 +108,10 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="text-muted mb-1">Attendance Sessions</h6>
-                                        <h3 class="mb-0" id="attendance_sessions">Loading...</h3>
+                                        <h6 class="text-muted mb-1">Upcoming Classes</h6>
+                                        <h3 class="mb-0">4</h3>
                                     </div>
-                                    <i class="bi bi-calendar-check text-danger"></i>
+                                    <i class="bi bi-calendar-event text-danger"></i>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +126,7 @@
                                 <h5 class="mb-0">Recent Subjects</h5>
                                 <a href="subjects.html" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
-                            <div class="card-body" id="recentSubjects">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-striped">
                                         <thead>
@@ -143,7 +138,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="recentSubjectsTable">
-                                            <!-- <div class="text-center py-5"><h5>Loading...</h5></div> -->
                                             <!-- Dynamically populated by JS -->
                                         </tbody>
                                     </table>
@@ -159,7 +153,7 @@
                                 <h5 class="mb-0">Recent Attendance</h5>
                                 <a href="attendance.html" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
-                            <div class="card-body" id="recentAttendance">
+                            <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-striped">
                                         <thead>
@@ -171,7 +165,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="recentAttendanceTable">
-                                            <!-- <div class="text-center py-5"><h5>Loading...</h5></div> -->
                                             <!-- Dynamically populated by JS -->
                                         </tbody>
                                     </table>
@@ -189,9 +182,8 @@
                                 <h5 class="mb-0">Recent Announcements</h5>
                                 <a href="announcements.html" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
-                            <div class="card-body" id="recentAnnouncements">
+                            <div class="card-body">
                                 <div id="recentAnnouncementsList">
-                                    <div class="text-center py-5"><h5>Loading...</h5></div>
                                     <!-- Dynamically populated by JS -->
                                 </div>
                             </div>
@@ -205,9 +197,8 @@
                                 <h5 class="mb-0">Upcoming Placements</h5>
                                 <a href="placements.html" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
-                            <div class="card-body" id="upcomingPlacements">
+                            <div class="card-body">
                                 <div id="upcomingPlacementsList">
-                                    <div class="text-center py-5"><h5>Loading...</h5></div>
                                     <!-- Dynamically populated by JS -->
                                 </div>
                             </div>
@@ -233,13 +224,6 @@
     <script src="/static/js/Teacher/teacher-dashboard.js"></script>
     <script src="/static/js/api_caller.js"></script>
     <script src="/static/js/script.js"></script>
-    <script src="/static/js/loader.js"></script>
 
-    <script>
-        window.onload = async function () {
-            await TeacherDashboard("{{csrf_token}}", "{% url 'teacher-dashboard-api-list' %}");
-            toggle_loader();
-        }
-    </script>
 </body>
 </html>

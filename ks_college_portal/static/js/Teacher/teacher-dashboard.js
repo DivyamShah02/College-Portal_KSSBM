@@ -1,5 +1,35 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Set current date
+let csrf_token = null;
+let teacher_dashboard_url = null;
+let dashboard_data = null;
+
+async function TeacherDashboard(csrf_token_param, teacher_dashboard_url_param) {
+  csrf_token = csrf_token_param;
+  teacher_dashboard_url = teacher_dashboard_url_param;
+
+  const url = teacher_dashboard_url;
+  const [success, result] = await callApi("GET", url);
+  console.log(result);
+  if (success) {
+    if (result.success) {
+      dashboard_data = result.data;
+      console.log(dashboard_data);
+
+      document.getElementById("total_subjects").innerText = dashboard_data.total_subjects
+      document.getElementById("active_students").innerText = dashboard_data.total_students;
+      document.getElementById("total_announcements").innerText = dashboard_data.total_announcement;
+      document.getElementById("attendance_sessions").innerText = dashboard_data.total_attendance;
+
+      // Load data
+      loadRecentSubjects(dashboard_data.all_subjects);
+      loadRecentAttendance(dashboard_data.all_attendance);
+      loadRecentAnnouncements(dashboard_data.all_announcement);
+      loadUpcomingPlacements(dashboard_data.all_company);
+    }
+    else {
+    }
+  } else {
+  }
+
   const currentDateElement = document.getElementById("currentDate")
   if (currentDateElement) {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
@@ -7,34 +37,27 @@ document.addEventListener("DOMContentLoaded", () => {
     currentDateElement.textContent = today.toLocaleDateString("en-US", options)
   }
 
-  // Load mock data
-  loadRecentSubjects()
-  loadRecentAttendance()
-  loadRecentAnnouncements()
-  loadUpcomingPlacements()
-})
+}
+
 
 // Mock data functions
-function loadRecentSubjects() {
-  const recentSubjectsTable = document.getElementById("recentSubjectsTable")
+function loadRecentSubjects(subjects) {
+  const recentSubjectsTable = document.getElementById("recentSubjectsTable");
+  const recentSubjects = document.getElementById("recentSubjects");
   if (!recentSubjectsTable) return
 
-  // Mock data for recent subjects
-  const subjects = [
-    { name: "Data Structures", year: 2, division: "A", students: 42 },
-    { name: "Web Development", year: 3, division: "B", students: 38 },
-    { name: "Database Management", year: 2, division: "C", students: 45 },
-    { name: "Artificial Intelligence", year: 4, division: "A", students: 31 },
-  ]
-
+  if (subjects.length === 0) {
+    recentSubjects.innerHTML = '<div class="text-center py-5"><h5>No subjects found</h5></div>'
+    return
+  }
   let html = ""
   subjects.forEach((subject) => {
     html += `
             <tr>
-                <td>${subject.name}</td>
-                <td><span class="badge bg-info">Year ${subject.year}</span></td>
-                <td><span class="badge bg-secondary">Division ${subject.division}</span></td>
-                <td>${subject.students}</td>
+                <td>${subject.subject_name}</td>
+                <td><span class="badge bg-info">${subject.college_year}</span></td>
+                <td><span class="badge bg-secondary">Division ${subject.class_division}</span></td>
+                <td>${subject.student_counts}</td>
             </tr>
         `
   })
@@ -42,26 +65,35 @@ function loadRecentSubjects() {
   recentSubjectsTable.innerHTML = html
 }
 
-function loadRecentAttendance() {
-  const recentAttendanceTable = document.getElementById("recentAttendanceTable")
+function loadRecentAttendance(attendances) {
+  const recentAttendanceTable = document.getElementById("recentAttendanceTable");
+  const recentAttendance = document.getElementById("recentAttendance");
+
   if (!recentAttendanceTable) return
 
-  // Mock data for recent attendance
-  const attendances = [
-    { subject: "Data Structures", date: "2023-03-15", present: "38/42", status: "Completed" },
-    { subject: "Web Development", date: "2023-03-14", present: "35/38", status: "Completed" },
-    { subject: "Database Management", date: "2023-03-14", present: "40/45", status: "Completed" },
-    { subject: "Artificial Intelligence", date: "2023-03-13", present: "28/31", status: "Completed" },
-  ]
+  if (attendances.length === 0) {
+    recentAttendance.innerHTML = '<div class="text-center py-5"><h5>No attendance found</h5></div>'
+    return
+  }
 
   let html = ""
   attendances.forEach((attendance) => {
+    const now = new Date()
+    const attendanceDate = new Date(`${attendance.created_at}`)
+    let attendanceEndDate = attendanceDate
+    attendanceEndDate.setHours(attendanceDate.getHours() + 1);
+    let attendance_completed = "In Progress";
+
+    if (attendanceEndDate <= now) {
+      attendance_completed = "Completed";
+    }
+
     html += `
             <tr>
-                <td>${attendance.subject}</td>
-                <td>${new Date(attendance.date).toLocaleDateString()}</td>
-                <td>${attendance.present}</td>
-                <td><span class="badge bg-success">${attendance.status}</span></td>
+                <td class="text-nowrap">${attendance.subject_name}</td>
+                <td>${new Date(attendance.created_at).toLocaleDateString()}</td>
+                <td>${attendance.attendance_data.length}/${attendance.student_counts}</td>
+                <td><span class="badge bg-${attendance_completed === "Completed" ? "success" : "primary"}">${attendance_completed}</span></td>
             </tr>
         `
   })
@@ -69,42 +101,46 @@ function loadRecentAttendance() {
   recentAttendanceTable.innerHTML = html
 }
 
-function loadRecentAnnouncements() {
+function loadRecentAnnouncements(announcements) {
   const recentAnnouncementsList = document.getElementById("recentAnnouncementsList")
+  const recentAnnouncements = document.getElementById("recentAnnouncements");
+  
   if (!recentAnnouncementsList) return
 
-  // Mock data for recent announcements
-  const announcements = [
-    {
-      subject: "Data Structures",
-      title: "Mid-term Exam Schedule",
-      content: "The mid-term exam for Data Structures will be held on March 25th, 2023. Please prepare accordingly.",
-      date: "2023-03-10",
-    },
-    {
-      subject: "Web Development",
-      title: "Project Submission Deadline",
-      content: "The deadline for the final project submission has been extended to April 5th, 2023.",
-      date: "2023-03-12",
-    },
-    {
-      subject: "Database Management",
-      title: "Guest Lecture",
-      content: "There will be a guest lecture on Advanced SQL by Dr. James Wilson on March 20th, 2023.",
-      date: "2023-03-14",
-    },
-  ]
+  if (announcements.length === 0) {
+    recentAnnouncements.innerHTML = '<div class="text-center py-5"><h5>No announcement found</h5></div>'
+    return
+  }
 
   let html = ""
   announcements.forEach((announcement) => {
+    let doc_html = ""
+    if (announcement.document_paths.length === 0) {
+      doc_html = "";
+    }
+    else {
+      announcement.document_paths.forEach((doc) => {
+
+        doc_html += `<a href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2">
+          <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+        </a>`
+      });
+    }
     html += `
             <div class="announcement-card p-3 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0">${announcement.title}</h6>
-                    <span class="badge bg-primary text-white">${announcement.subject}</span>
+                    <h6 class="mb-0">${announcement.subject_name}</h6>
+                    <span class="badge bg-primary text-white">${announcement.created_at}</span>
                 </div>
-                <p class="mb-1">${announcement.content}</p>
-                <small class="text-muted">Posted on ${new Date(announcement.date).toLocaleDateString()}</small>
+                <p class="mb-1">${announcement.text_content}</p>  
+                ${doc_html
+        ? `
+                                    <div class="mt-3 text-wrap text-break">
+                                        ${doc_html}
+                                    </div>
+                                `
+        : ""
+      }              
             </div>
         `
   })
@@ -112,47 +148,29 @@ function loadRecentAnnouncements() {
   recentAnnouncementsList.innerHTML = html
 }
 
-function loadUpcomingPlacements() {
+function loadUpcomingPlacements(placements) {
   const upcomingPlacementsList = document.getElementById("upcomingPlacementsList")
+  const upcomingPlacements = document.getElementById("upcomingPlacements");
+  
   if (!upcomingPlacementsList) return
 
-  // Mock data for upcoming placements
-  const placements = [
-    {
-      company: "TechCorp",
-      position: "Software Engineer",
-      package: "₹12 LPA",
-      date: "2023-03-25",
-      registrations: 45,
-    },
-    {
-      company: "DataSystems",
-      position: "Data Analyst",
-      package: "₹10 LPA",
-      date: "2023-04-02",
-      registrations: 32,
-    },
-    {
-      company: "WebSolutions",
-      position: "Frontend Developer",
-      package: "₹8 LPA",
-      date: "2023-04-10",
-      registrations: 28,
-    },
-  ]
+  if (placements.length === 0) {
+    upcomingPlacements.innerHTML = '<div class="text-center py-5"><h5>No company found</h5></div>'
+    return
+  }
 
   let html = ""
   placements.forEach((placement) => {
     html += `
             <div class="placement-card p-3 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0">${placement.company}</h6>
-                    <span class="badge bg-success">${placement.package}</span>
+                    <h6 class="mb-0">${placement.company_name}</h6>
+                    <span class="badge bg-success">${placement.estimated_package} LPA</span>
                 </div>
-                <p class="mb-1">${placement.position}</p>
+                <p class="mb-1">${placement.job_role}</p>
                 <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">Drive on ${new Date(placement.date).toLocaleDateString()}</small>
-                    <span class="badge bg-primary text-light">${placement.registrations} registrations</span>
+                    <small class="text-muted">${placement.created_at}</small>
+                    <span class="badge bg-primary text-light">5 registrations</span>
                 </div>
             </div>
         `

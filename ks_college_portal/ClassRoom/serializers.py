@@ -37,6 +37,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
             teacher_data = User.objects.filter(user_id=teacher_id).first()
             teacher_name = teacher_data.name
             representation['teacher_name'] = teacher_name
+            representation['subject_name'] = subject_data.subject_name
         
         if 'announcement_id' in representation:
             comment_data_obj = Comment.objects.filter(announcement_id=representation['announcement_id'])
@@ -75,7 +76,31 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+
+        if 'attendance_id' in representation:
+            attendance_data_obj = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'])
+            attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
+
+            representation['attendance_data'] = attendance_data
+
+        return representation
+
+class FullDetailsAttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
         
+        if 'subject_id' in representation:
+            subject_obj = Subject.objects.filter(subject_id=representation['subject_id']).first()
+            subject_name = subject_obj.subject_name
+            representation['subject_name'] = subject_name
+
+            student_counts = User.objects.filter(year=str(subject_obj.college_year).lower().replace(' ', '_'), division=subject_obj.class_division).count()
+            representation['student_counts'] = student_counts
+
         if 'attendance_id' in representation:
             attendance_data_obj = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'])
             attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
