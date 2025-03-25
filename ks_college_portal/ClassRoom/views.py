@@ -175,7 +175,7 @@ class TeacherDashboardViewSet(viewsets.ViewSet):
             all_subjects_obj = Subject.objects.filter(teacher_id=user)
             total_subjects = len(all_subjects_obj)
             all_subjects_obj = all_subjects_obj[::-1][0:5]
-            all_subjects = SubjectSerializer(all_subjects_obj, many=True).data
+            all_subjects = TeacherSubjectSerializer(all_subjects_obj, many=True).data
 
             # Get Attendance details
             all_attendance_obj = Attendance.objects.filter(teacher_id=user)
@@ -355,7 +355,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                     )
 
             all_subjects_obj = Subject.objects.filter(teacher_id=user)
-            all_subjects = SubjectSerializer(all_subjects_obj, many=True).data
+            all_subjects = TeacherSubjectSerializer(all_subjects_obj, many=True).data
 
             data = {
                 'all_subjects': all_subjects,
@@ -416,7 +416,7 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                     )
 
             all_subjects_obj = Subject.objects.filter(college_year=user.year, class_division=user.division)
-            all_subjects = SubjectSerializer(all_subjects_obj, many=True).data
+            all_subjects = StudentSubjectSerializer(all_subjects_obj, many=True).data
 
             data = {
                 'all_subjects': all_subjects,
@@ -447,7 +447,7 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-class TeacherSubjectDetailViewSet(viewsets.ViewSet):
+class SubjectDetailViewSet(viewsets.ViewSet):
     def list(self, request):
         try:
             user = request.user
@@ -488,6 +488,9 @@ class TeacherSubjectDetailViewSet(viewsets.ViewSet):
 
                     all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
                     all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
+                    
+                    subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
+                    subject_data = StudentSubjectSerializer(subject_data_obj).data
 
                 else:
                     return Response(
@@ -511,8 +514,8 @@ class TeacherSubjectDetailViewSet(viewsets.ViewSet):
                 all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
                 all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
 
-            subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
-            subject_data = SubjectSerializer(subject_data_obj).data
+                subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
+                subject_data = TeacherSubjectSerializer(subject_data_obj).data
 
             data = {
                 'all_announcements': all_announcements[::-1],

@@ -26,6 +26,8 @@ class DashboardViewSet(viewsets.ViewSet):
         if request.user.is_authenticated:
             if request.user.role == 'teacher':
                 return render(request, "Teacher/dashboard.html")
+            elif request.user.role == 'student':
+                return render(request, "Student/dashboard.html")
             return render(request, "dashboard.html")
         return redirect('login-list')
 

@@ -1,56 +1,102 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Toggle sidebar on mobile
-  const sidebarToggle = document.getElementById("sidebarToggle")
-  const sidebar = document.getElementById("sidebar")
+let csrf_token = null;
+let student_subject_url = null;
+let student_subject_detail_url = null;
 
-  if (sidebarToggle && sidebar) {
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("show")
-    })
+async function StudentSubjects(csrf_token_param, student_subject_url_param, student_subject_detail_url_param) {
+  csrf_token = csrf_token_param;
+  student_subject_url = student_subject_url_param;
+  student_subject_detail_url = student_subject_detail_url_param;
+
+  const currentDateElement = document.getElementById("currentDate");
+  if (currentDateElement) {
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
+    const today = new Date()
+    currentDateElement.textContent = today.toLocaleDateString("en-US", options)
   }
 
-  // Add event listeners for filters
-  const semesterFilter = document.getElementById("semesterFilter")
+  // Load subjects
+  await loadSubjects();
+
+  // Add event listeners for filters  
   const searchSubject = document.getElementById("searchSubject")
-
-  if (semesterFilter) {
-    semesterFilter.addEventListener("change", filterSubjects)
-  }
 
   if (searchSubject) {
     searchSubject.addEventListener("input", filterSubjects)
   }
-})
-
-// Function to filter subjects
-function filterSubjects() {
-  const semesterFilter = document.getElementById("semesterFilter").value
-  const searchFilter = document.getElementById("searchSubject").value.toLowerCase()
-
-  const subjectCards = document.querySelectorAll(".subject-card")
-
-  subjectCards.forEach((card) => {
-    const cardTitle = card.querySelector(".card-title").textContent.toLowerCase()
-    const cardText = card.querySelector(".card-text").textContent.toLowerCase()
-
-    let showCard = true
-
-    // Filter by semester
-    if (semesterFilter === "current") {
-      // For demo purposes, all cards are considered current semester
-      showCard = true
-    } else if (semesterFilter === "previous") {
-      // For demo purposes, no cards are considered previous semester
-      showCard = false
-    }
-
-    // Filter by search term
-    if (searchFilter && !cardTitle.includes(searchFilter) && !cardText.includes(searchFilter)) {
-      showCard = false
-    }
-
-    // Show or hide the card
-    card.closest(".col-md-6").style.display = showCard ? "block" : "none"
-  })
 }
 
+let subjects = []
+
+async function loadSubjects() {
+  const subjectsList = document.getElementById("subjectsList")
+  if (!subjectsList) return
+
+  const url = student_subject_url;
+  const [success, result] = await callApi("GET", url);
+  console.log(result);
+  if (success) {
+    if (result.success) {
+      // createSubjectCards(result.data.all_subjects);
+      renderSubjects(result.data.all_subjects);
+      subjects = result.data.all_subjects;
+    }
+    else {
+    }
+  } else {
+  }
+}
+
+function renderSubjects(subjectsToRender) {
+  const subjectsList = document.getElementById("subjectsList")
+  if (!subjectsList) return
+
+  let html = ""
+
+  if (subjectsToRender.length === 0) {
+    subjectsList.innerHTML = '<div class="col-12 text-center py-5"><h5>No subjects found</h5></div>'
+    return
+  }
+
+  // <p class="card-text">${subject.description}</p>
+
+  subjectsToRender.forEach((subject) => {
+    console.log(subject);
+    html += `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card subject-card h-100" style="border-top: 5px solid var(--secondary);">
+                    
+                    <div class="card-body pb-0">
+                        <h5 class="card-title">${subject.subject_name}</h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-info">${subject.college_year}</span>
+                            <span class="badge bg-secondary">Division ${subject.class_division}</span>
+                        </div>                        
+                    </div>
+                    <div class="card-footer bg-secondary">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-white">Prof. ${subject.teacher_name}</small>
+                            <a href="${student_subject_detail_url}?subject_id=${subject.subject_id}" class="btn btn-sm btn-outline-light">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+  })
+
+  subjectsList.innerHTML = html
+}
+
+function filterSubjects() {    
+  const searchFilter = document.getElementById("searchSubject").value.toLowerCase()
+
+  const filteredSubjects = subjects.filter((subject) => {
+    // Filter by search term
+    if (searchFilter && !subject.subject_name.toLowerCase().includes(searchFilter)) {
+      return false
+    }
+
+    return true
+  })
+
+  renderSubjects(filteredSubjects)
+}

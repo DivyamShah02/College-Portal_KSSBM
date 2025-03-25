@@ -486,7 +486,7 @@
 
     <script>
         window.onload = async function () {
-            await HandleSubjectDetail("{{csrf_token}}", "{% url 'teacher-subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}");
+            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}");
             toggle_loader();
         }
     </script>

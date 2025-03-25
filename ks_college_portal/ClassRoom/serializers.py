@@ -4,7 +4,7 @@ from UserDetail.models import User
 from UserDetail.serializers import UserSerializer
 
 
-class SubjectSerializer(serializers.ModelSerializer):
+class TeacherSubjectSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y')
     class Meta:
         model = Subject
@@ -18,6 +18,27 @@ class SubjectSerializer(serializers.ModelSerializer):
 
             student_counts = User.objects.filter(year=str(representation['college_year']).lower().replace(' ', '_'), division=representation['class_division']).count()
             representation['student_counts'] = student_counts
+
+        return representation
+
+class StudentSubjectSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y')
+    class Meta:
+        model = Subject
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        if 'college_year' in representation:
+            representation['college_year'] = representation['college_year'].replace('_', ' ').title()
+
+            student_counts = User.objects.filter(year=str(representation['college_year']).lower().replace(' ', '_'), division=representation['class_division']).count()
+            representation['student_counts'] = student_counts
+
+        if 'teacher_id' in representation:
+            teacher_data = User.objects.filter(user_id=representation['teacher_id']).first()
+            representation['teacher_name'] = teacher_data.name
 
         return representation
 
