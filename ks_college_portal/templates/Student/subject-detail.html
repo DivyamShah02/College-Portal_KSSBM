@@ -16,6 +16,9 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
 
+    <!-- Import the official PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <!-- Import FontAwsome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -57,7 +60,7 @@
                         <div class="d-flex gap-2 mt-2" id="subjectBadges">
                             <!-- Dynamically populated by JS -->
                         </div>
-                    </div>                    
+                    </div>
                 </div>
 
                 <!-- Subject Info Card -->
@@ -150,7 +153,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <h4>Announcements</h4>
-                            </div>                            
+                            </div>
                         </div>
 
                         <div id="announcementsList">
@@ -166,7 +169,7 @@
                     <!-- Assignments Tab -->
                     <div class="tab-pane fade" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4>Assignments</h4>                            
+                            <h4>Assignments</h4>
                         </div>
 
                         <div id="assignmentsList">
@@ -182,7 +185,7 @@
                     <!-- Attendance Tab -->
                     <div class="tab-pane fade" id="attendance" role="tabpanel" aria-labelledby="attendance-tab">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4>Attendance</h4>                            
+                            <h4>Attendance</h4>
                         </div>
 
                         <div id="attendanceList">
@@ -198,6 +201,129 @@
             </div>
         </div>
     </div>
+
+    <!-- Submit Assignment Modal -->
+    <div class="modal fade" id="submitAssignmentModal" tabindex="-1" aria-labelledby="submitAssignmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submitAssignmentModalLabel">Submit Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="submit_assignment_form">
+                        <input type="hidden" name="assignment_id" id="assignment_id">
+                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                            Unexpected Error occured!
+                        </div>
+                        <!-- <div class="mb-3">
+                            <label for="announcementTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="announcementTitle" required>
+                        </div> -->
+                        <div class="mb-3">
+                            <label for="text_content" class="form-label">Content (Optional)</label>
+                            <textarea class="form-control" id="text_content" rows="4"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="announcementFile" class="form-label">Attachment</label>
+                            <!-- <label for="file_upload_id" class="form-label eh-label">File Upload</label> -->
+                            <div class="p-5 text-center border" id="upload_box"
+                                onclick="document.getElementById('announcementDoc').click()"
+                                style="border-radius: 10px; cursor: pointer; background-color: transparent;">
+
+                                <i class="bi bi-cloud-arrow-up fa-xl" id="announcementDocUploadIcon"></i>
+                                <p class="p-0 m-0" id="upload_input_text">Click to upload</p>
+                                <p class="p-0 m-0" id="upload_input_file_text" style="display: none;"></p>
+                                <input type="file" id="announcementDoc" hidden multiple>
+
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="submit_new_assignment_btn">Post
+                            Assignment</button>
+
+                        <!-- <div class="mb-3">
+                            <label for="announcementFile" class="form-label">Attachment (Optional)</label>
+                            <div class="file-upload">
+                                <label for="announcementFile" class="file-upload-label">
+                                    <i class="bi bi-cloud-upload"></i>
+                                    <span>Click to upload file</span>
+                                </label>
+                                <input type="file" class="file-upload-input" id="announcementFile">
+                            </div>
+                            <div id="selectedAnnouncementFile" class="mt-2 d-none">
+                                <div class="d-flex align-items-center p-2 border rounded">
+                                    <i class="bi bi-file-earmark me-2"></i>
+                                    <span id="announcementFileName">filename.pdf</span>
+                                    <button type="button" class="btn btn-sm btn-link text-danger ms-auto"
+                                        id="removeAnnouncementFile">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div> -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <!-- <button type="button" class="btn btn-primary" id="saveAnnouncementBtn">Post Announcement</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submitted Assignment Modal -->
+    <div class="modal fade" id="submittedAssignmentModal" tabindex="-1" aria-labelledby="submittedAssignmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submittedAssignmentModalLabel">Your Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="document_list_div">
+                        <div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
+                            onclick="openDocModal('https://pdfobject.com/pdf/sample.pdf', 'sample.pdf')">
+                            <i class="fa fa-file-pdf fa-xl"></i>&nbsp;&nbsp;&nbsp; <u>sample.pdf</u>
+                            <div class="ms-auto"><i class="fa fa-download fa-xl mx-2"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
+                        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5 text-wrap text-break"
+                                        id="viewDocumentModalLabel">View Document</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="document-viewer" class="viewer"></div>
+                                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
+                                <canvas id="pdf-renderer"></canvas>
+                            </div> -->
+                                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
+                                style="border: none;"></iframe> -->
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Overlay for sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -218,7 +344,7 @@
 
     <script>
         window.onload = async function () {
-            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}");
+            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{{user.user_id}}");
             toggle_loader();
         }
     </script>

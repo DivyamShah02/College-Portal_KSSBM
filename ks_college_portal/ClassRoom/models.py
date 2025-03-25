@@ -43,6 +43,13 @@ class Assignment(models.Model):
     deadline_date = models.DateTimeField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class SubmittedAssignment(models.Model):
+    assignment_id = models.CharField(max_length=12)
+    student_id = models.CharField(max_length=12)
+    text_content = models.TextField(null=True, blank=True)
+    document_paths = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class Attendance(models.Model):
     attendance_id = models.CharField(max_length=12, unique=True)
     subject_id = models.CharField(max_length=12)

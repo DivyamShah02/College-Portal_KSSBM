@@ -300,7 +300,7 @@ function loadAssignments(subjectAssignments) {
 							: ""
 						}
                         </div>
-						<span class="text-muted">${assignment.all_submits.length} / ${student_counts} submissions</span>   
+						<span class="text-muted">${assignment.total_assignment_submitted} / ${student_counts} submissions</span>   
                     </div>
                 </div>
             `

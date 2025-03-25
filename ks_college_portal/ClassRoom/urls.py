@@ -13,8 +13,11 @@ router.register(r'student-subjects-api', StudentSubjectViewSet, basename='studen
 router.register(r'subject-detail-api', SubjectDetailViewSet, basename='subject-detail-api')
 
 router.register(r'announcements-api', AnnouncementViewSet, basename='announcements-api')
-router.register(r'assignments-api', AssignmentViewSet, basename='assignments-api')
 router.register(r'comment-api', CommentViewSet, basename='comment-api')
+
+router.register(r'assignments-api', AssignmentViewSet, basename='assignments-api')
+router.register(r'submit-assignments-api', SubmittedAssignmentViewSet, basename='submit-assignments-api')
+
 router.register(r'attendance-api', AttendanceViewSet, basename='attendance-api')
 
 

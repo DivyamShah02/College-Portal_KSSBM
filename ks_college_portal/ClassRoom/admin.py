@@ -24,6 +24,11 @@ class AssignmentAdmin(admin.ModelAdmin):
     search_fields = ('text_content',)
     list_filter = ('subject_id',)
 
+@admin.register(SubmittedAssignment)
+class SubmittedAssignmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'assignment_id', 'student_id', 'text_content', 'document_paths', 'created_at')
+    search_fields = ('text_content', 'student_id', 'assignment_id')
+
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'attendance_id', 'subject_id', 'code')

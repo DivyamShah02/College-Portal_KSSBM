@@ -484,7 +484,7 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                     all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
                     
                     all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
-                    all_assignments = AssignmentSerializer(all_assignments_obj, many=True).data
+                    all_assignments = StudentAssignmentSerializer(all_assignments_obj, many=True, context={'student_id': user}).data
 
                     all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
                     all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
@@ -509,7 +509,7 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                 all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
 
                 all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
-                all_assignments = AssignmentSerializer(all_assignments_obj, many=True).data
+                all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
 
                 all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
                 all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
@@ -912,9 +912,9 @@ class AssignmentViewSet(viewsets.ViewSet):
 
             number_of_records = request.GET.get('number_of_records')           
             if number_of_records is None:
-                all_assignments = AssignmentSerializer(all_assignments_obj, many=True).data
+                all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
             else:
-                all_assignments = AssignmentSerializer(all_assignments_obj[0:int(number_of_records)], many=True).data
+                all_assignments = TeacherAssignmentSerializer(all_assignments_obj[0:int(number_of_records)], many=True).data
 
             data = {
                 'all_assignments': all_assignments,
@@ -1076,6 +1076,240 @@ class AssignmentViewSet(viewsets.ViewSet):
     def save_file(self, uploaded_file):
         # Define the base directory to save the files
         upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads/')
+        os.makedirs(upload_dir, exist_ok=True)
+
+        # Generate a unique filename if a file with the same name exists
+        base_name, extension = os.path.splitext(uploaded_file.name)
+        file_name = uploaded_file.name
+        counter = 1
+
+        while os.path.exists(os.path.join(upload_dir, file_name)):
+            file_name = f"{base_name}({counter}){extension}"
+            counter += 1
+
+        # Save the file
+        file_path = os.path.join(upload_dir, file_name)
+        with open(file_path, 'wb') as f:
+            for chunk in uploaded_file.chunks():
+                f.write(chunk)
+
+        # Return the relative file path
+        return os.path.relpath(file_path, settings.MEDIA_ROOT)
+
+    def upload_file_to_s3(self, uploaded_file):
+        """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
+        region_name = "eu-north-1"
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
+            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            region_name = region_name
+        )
+        
+        bucket_name = "ehunt"
+        base_name, extension = os.path.splitext(uploaded_file.name)
+        file_name = uploaded_file.name
+        s3_key = f"uploads/{file_name}"
+        counter = 1
+
+        # Check if file exists and rename if necessary
+        while True:
+            try:
+                s3_client.head_object(Bucket=bucket_name, Key=s3_key)
+                # If file exists, update the filename
+                file_name = f"{base_name}({counter}){extension}"
+                s3_key = f"uploads/{file_name}"
+                counter += 1
+            except s3_client.exceptions.ClientError:
+                break  # File does not exist, proceed with upload
+
+        # Upload file
+        s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
+
+        # Generate file URL
+        file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
+
+        return file_url
+
+    def decrypt(self, b64_text):
+        # Decode the Base64 string back to bytes, then to text
+        return base64.b64decode(b64_text.encode()).decode()
+
+class SubmittedAssignmentViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            student_id = request.GET.get('student_id')
+            if student_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": 'Student Id required',
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            assignment_id = request.GET.get('assignment_id')
+            if assignment_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": 'Student Id required',
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            submitted_assignment_obj = SubmittedAssignment.objects.filter(assignment_id=assignment_id, student_id=student_id).first()
+            submitted_assignment = SubmittedAssignmentSerializer(submitted_assignment_obj).data
+
+            data = {
+                'submitted_assignment': submitted_assignment
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'student':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            text_content = request.data.get('text_content')
+
+            assignment_id = request.data.get('assignment_id')
+            if not assignment_id:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Subject Id required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            ind = 0
+            document_paths = []
+
+            already_submitted = SubmittedAssignment.objects.filter(assignment_id=assignment_id, student_id=user).exists()
+            if already_submitted:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "Assignment already submitted."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            while True:
+                if f'files[{ind}]' in request.FILES:
+                    file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    document_paths.append(file_path)
+                    ind+=1
+
+                else:
+                    break
+
+            new_assignment_submission = SubmittedAssignment(
+                assignment_id=assignment_id,
+                student_id=user,
+                text_content=text_content,
+                document_paths=document_paths
+            )
+            new_assignment_submission.save()
+
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": None,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def save_file(self, uploaded_file):
+        # Define the base directory to save the files
+        upload_dir = os.path.join(settings.MEDIA_ROOT, 'students_assignments/')
         os.makedirs(upload_dir, exist_ok=True)
 
         # Generate a unique filename if a file with the same name exists

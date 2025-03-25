@@ -84,10 +84,39 @@ class CommentSerializer(serializers.ModelSerializer):
 
         return representation
 
-class AssignmentSerializer(serializers.ModelSerializer):
+class TeacherAssignmentSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y')
     class Meta:
         model = Assignment
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if 'assignment_id' in representation:
+            total_assignment_submitted = SubmittedAssignment.objects.filter(assignment_id=representation['assignment_id']).count()
+            representation['total_assignment_submitted'] = total_assignment_submitted
+
+        return representation
+
+class StudentAssignmentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y')
+    class Meta:
+        model = Assignment
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        student_id = self.context.get('student_id', None)
+        if 'assignment_id' in representation:
+            assignment_submitted = SubmittedAssignment.objects.filter(assignment_id=representation['assignment_id'], student_id=student_id).exists()
+            representation['assignment_submitted'] = assignment_submitted
+
+        return representation
+
+class SubmittedAssignmentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y')
+    class Meta:
+        model = SubmittedAssignment
         fields = '__all__'
 
 class AttendanceSerializer(serializers.ModelSerializer):
