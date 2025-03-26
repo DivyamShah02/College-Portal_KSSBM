@@ -13,6 +13,7 @@ from Placement.models import *
 from Placement.serializers import *
 
 import os
+import time
 import random
 import string
 import boto3
@@ -358,7 +359,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
             all_subjects = TeacherSubjectSerializer(all_subjects_obj, many=True).data
 
             data = {
-                'all_subjects': all_subjects,
+                'all_subjects': all_subjects[::-1],
                 'total_subjects': len(all_subjects),
             }
             return Response(
@@ -1369,6 +1370,102 @@ class SubmittedAssignmentViewSet(viewsets.ViewSet):
         # Decode the Base64 string back to bytes, then to text
         return base64.b64decode(b64_text.encode()).decode()
 
+class AllSubmittedAssignmentViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'teacher':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            assignment_id = request.GET.get('assignment_id')
+            if assignment_id is None:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": 'Assignment Id required',
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            assignment_data = Assignment.objects.filter(assignment_id=assignment_id).first()
+            if not assignment_data:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": 'Assignment not found',
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            subject_data = Subject.objects.filter(subject_id=assignment_data.subject_id).first()
+            all_students = User.objects.filter(year=str(subject_data.college_year).lower().replace(' ', '_'), division=subject_data.class_division)
+
+            all_assignments_submitted = []
+            for student in all_students:
+                assignment_submitted = SubmittedAssignment.objects.filter(assignment_id=assignment_id, student_id=student.user_id).exists()
+                all_assignments_submitted.append({
+                    "assignment_submitted": assignment_submitted,
+                    "student_name": student.name,
+                    "student_id": student.user_id,
+                    "student_roll_no": student.roll_no
+                })
+
+            data = {
+                'all_assignments_submitted': all_assignments_submitted
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
 class AttendanceViewSet(viewsets.ViewSet):
     def create(self, request):
         try:
@@ -1397,7 +1494,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
-                       
+
             subject_id = request.data.get('subject_id')           
             if subject_id is None:
                 return Response(

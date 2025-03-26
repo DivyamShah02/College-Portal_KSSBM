@@ -430,6 +430,16 @@ document.getElementById("submit_assignment_form").addEventListener("submit", asy
 });
 
 async function view_submitted_assignment(student_id, assignment_id) {
+  const submittedAssignmentModal = new bootstrap.Modal(document.getElementById("submittedAssignmentModal"));
+  submittedAssignmentModal.show();
+  const container = document.getElementById('document_list_div');
+  container.innerHTML = ''
+  container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';  
+  await get_submitted_assignment(student_id, assignment_id);
+
+}
+
+async function get_submitted_assignment(student_id, assignment_id) {
   const Params = {
     student_id: student_id,
     assignment_id: assignment_id
@@ -442,8 +452,7 @@ async function view_submitted_assignment(student_id, assignment_id) {
     if (result.success) {
       console.log(result.data);
       createDocumentList(result.data.submitted_assignment.document_paths);
-      const submittedAssignmentModal = new bootstrap.Modal(document.getElementById("submittedAssignmentModal"))
-      submittedAssignmentModal.show();
+
     }
     else {
 
@@ -457,20 +466,29 @@ async function view_submitted_assignment(student_id, assignment_id) {
 
 function createDocumentList(documentList) {
   const container = document.getElementById('document_list_div');
-  container.innerHTML = '';
-  let doc_index = -1;
+  
+  let doc_index = 0;
   let doc_html = "";
   documentList.forEach((doc) => {
-    console.log(doc);
-    console.log(String(doc).replace('students_assignments\\', ''));
+    doc_index += 1;
     doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
                             onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
-                            <i class="fa fa-file-pdf fa-xl"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
-                            <div class="ms-auto"><i class="fa fa-download fa-xl mx-2"></i></div>
+                            <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
+                            <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
     </div>`
 
   });
+  
+  container.innerHTML = '';
   container.innerHTML = doc_html;
+  
+  doc_index = 0;
+  documentList.forEach((doc) => {
+    doc_index += 1;
+    document.getElementById(`doc-${doc_index}-downloader`).addEventListener('click', (event) => {
+      event.stopPropagation();
+  });
+  });
 
 }
 
