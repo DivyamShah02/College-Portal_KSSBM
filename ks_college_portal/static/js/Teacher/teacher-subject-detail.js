@@ -108,9 +108,9 @@ function loadAnnouncements(subjectAnnouncements) {
 			else {
 				announcement.document_paths.forEach((doc) => {
 
-					doc_html += `<a href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2">
+					doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
-          </a>`
+          </button>`
 				});
 			}
 			html += `
@@ -194,9 +194,9 @@ function loadAssignments(subjectAssignments) {
 			}
 			else {
 				assignment.document_paths.forEach((doc) => {
-					doc_html += `<a href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2">
+					doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
-          </a>`
+          </button>`
 				});
 			}
 
@@ -686,7 +686,7 @@ function createDocumentList(documentList, created_at, text_content) {
 		doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
 							  onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
 							  <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
-							  <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
+							  <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="/media/${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
 	  </div>`
 
 	});

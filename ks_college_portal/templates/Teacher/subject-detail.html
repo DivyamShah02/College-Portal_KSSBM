@@ -502,8 +502,8 @@
         </div>
     </div>
 
-        <!-- Submitted Assignment Modal -->
-        <div class="modal fade" id="submittedAssignmentModal" tabindex="-1" aria-labelledby="submittedAssignmentModalLabel"
+    <!-- Submitted Assignment Modal -->
+    <div class="modal fade" id="submittedAssignmentModal" tabindex="-1" aria-labelledby="submittedAssignmentModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -520,33 +520,35 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
-                        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-wrap text-break"
-                                        id="viewDocumentModalLabel">View Document</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="document-viewer" class="viewer"></div>
-                                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
-                                <canvas id="pdf-renderer"></canvas>
-                            </div> -->
-                                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
-                                style="border: none;"></iframe> -->
-                                </div>
-                                <div class="modal-footer">
-                                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document viewer modal -->
+    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
+        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-wrap text-break"
+                        id="viewDocumentModalLabel">View Document</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="document-viewer" class="viewer"></div>
+                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
+                <canvas id="pdf-renderer"></canvas>
+            </div> -->
+                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
+                style="border: none;"></iframe> -->
+                </div>
+                <div class="modal-footer">
+                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
                 </div>
             </div>
         </div>
