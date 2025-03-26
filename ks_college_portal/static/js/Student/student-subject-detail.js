@@ -218,7 +218,6 @@ function loadAssignments(subjectAssignments) {
       }
 
       // <h5 class="card-title mb-0">${assignment.title}</h5>
-      console.log(assignment);
       html += `
                 <div class="card assignment-card mb-3">
                     <div class="card-body">
@@ -451,7 +450,7 @@ async function get_submitted_assignment(student_id, assignment_id) {
   if (success) {
     if (result.success) {
       console.log(result.data);
-      createDocumentList(result.data.submitted_assignment.document_paths);
+      createDocumentList(result.data.submitted_assignment.document_paths, result.data.submitted_assignment.created_at, result.data.submitted_assignment.text_content);
 
     }
     else {
@@ -464,11 +463,13 @@ async function get_submitted_assignment(student_id, assignment_id) {
   }
 }
 
-function createDocumentList(documentList) {
+function createDocumentList(documentList, created_at, text_content) {
   const container = document.getElementById('document_list_div');
   
   let doc_index = 0;
   let doc_html = "";
+  doc_html += `<p class="my-0"><b>Submitted on:</b> ${created_at}</p>`;
+	doc_html += `<p><b>Text Content:</b> ${text_content}</p>`;
   documentList.forEach((doc) => {
     doc_index += 1;
     doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"

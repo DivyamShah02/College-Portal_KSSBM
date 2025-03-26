@@ -4,19 +4,23 @@ let teacher_subject_announcements_url = null;
 let teacher_subject_announcements_comments_url = null;
 let teacher_subject_assignments_url = null;
 let teacher_subject_attendance_url = null;
+let teacher_all_assignment_url = null;
+let teacher_subject_submit_assignments_url = null;
 let subjectId = null;
 let student_counts = null;
 let announcementSelectedFiles = [];
 let assignmentSelectedFiles = [];
 let subject = null;
 
-async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param, teacher_subject_attendance_url_param) {
+async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param, teacher_subject_attendance_url_param, teacher_all_assignment_url_param, teacher_subject_submit_assignments_url_param) {
 	csrf_token = csrf_token_param;
 	teacher_subject_details_url = teacher_subject_details_url_param;
 	teacher_subject_announcements_url = teacher_subject_announcements_url_param;
 	teacher_subject_announcements_comments_url = teacher_subject_announcements_comments_url_param;
 	teacher_subject_assignments_url = teacher_subject_assignments_url_param;
 	teacher_subject_attendance_url = teacher_subject_attendance_url_param;
+	teacher_all_assignment_url = teacher_all_assignment_url_param;
+	teacher_subject_submit_assignments_url = teacher_subject_submit_assignments_url_param;
 
 	const urlParams = new URLSearchParams(window.location.search);
 	subjectId = urlParams.get("subject_id");
@@ -30,86 +34,6 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 	await loadSubjectDetails(subjectId);
 
 }
-
-
-// Mock data for attendance
-const attendance = [
-	{
-		id: 1,
-		subjectId: 1,
-		title: "Lecture - Introduction to Trees",
-		date: "2023-03-10",
-		time: "10:00",
-		code: "123456",
-		duration: 30,
-		status: "Completed",
-		present: 38,
-		total: 42,
-	},
-	{
-		id: 2,
-		subjectId: 1,
-		title: "Lab Session - Implementing Binary Trees",
-		date: "2023-03-12",
-		time: "14:00",
-		code: "789012",
-		duration: 45,
-		status: "Completed",
-		present: 40,
-		total: 42,
-	},
-	{
-		id: 3,
-		subjectId: 1,
-		title: "Lecture - Graph Algorithms",
-		date: "2023-03-15",
-		time: "10:00",
-		code: "345678",
-		duration: 30,
-		status: "Completed",
-		present: 36,
-		total: 42,
-	},
-]
-
-// Mock data for students
-const students = [
-	{
-		id: "S2001",
-		name: "John Smith",
-		year: 2,
-		division: "A",
-		email: "john.smith@college.edu",
-	},
-	{
-		id: "S2002",
-		name: "Emily Johnson",
-		year: 2,
-		division: "A",
-		email: "emily.johnson@college.edu",
-	},
-	{
-		id: "S2003",
-		name: "Michael Brown",
-		year: 2,
-		division: "A",
-		email: "michael.brown@college.edu",
-	},
-	{
-		id: "S2004",
-		name: "Jessica Davis",
-		year: 2,
-		division: "A",
-		email: "jessica.davis@college.edu",
-	},
-	{
-		id: "S2005",
-		name: "David Wilson",
-		year: 2,
-		division: "A",
-		email: "david.wilson@college.edu",
-	},
-]
 
 // Function to load subject details
 async function loadSubjectDetails(subjectId) {
@@ -292,15 +216,20 @@ function loadAssignments(subjectAssignments) {
                         <p class="card-text">${assignment.text_content}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
 						${doc_html
-							? `
+					? `
 											<div class="mt-3 text-wrap text-break">
 												${doc_html}
 											</div>
 										`
-							: ""
-						}
-                        </div>
-						<span class="text-muted">${assignment.total_assignment_submitted} / ${student_counts} submissions</span>   
+					: ""
+				}
+                        </div>					
+						<div class="d-flex justify-content-between align-items-center mt-3">
+							<span class="text-muted">${assignment.total_assignment_submitted} / ${student_counts} submissions</span>
+							<button class="btn btn-sm btn-primary" onclick="view_submitted_students_assignment('${assignment.assignment_id}')">
+								<i class="bi bi-eye me-2"></i>View Submissions
+							</button>
+						</div>
                     </div>
                 </div>
             `
@@ -326,7 +255,7 @@ function loadAttendance(subjectAttendance) {
 			let attendanceEndDate = attendanceDate
 			attendanceEndDate.setHours(attendanceDate.getHours() + 1);
 			let attendance_completed = "In Progress";
-			
+
 			if (attendanceEndDate <= now) {
 				attendance_completed = "Completed";
 			}
@@ -380,27 +309,6 @@ function loadAttendance(subjectAttendance) {
 	}, 1000) // Simulate loading delay
 }
 
-// Function to load students list
-function loadStudentsList() {
-	const studentsListTable = document.getElementById("studentsListTable")
-
-	if (!studentsListTable) return
-
-	let html = ""
-	students.forEach((student) => {
-		html += `
-            <tr>
-                <td>${student.id}</td>
-                <td>${student.name}</td>
-                <td>Year ${student.year}</td>
-                <td>Division ${student.division}</td>
-                <td>${student.email}</td>
-            </tr>
-        `
-	})
-
-	studentsListTable.innerHTML = html
-}
 
 async function addComment(index, announcement_id) {
 	console.log(document.getElementById(`announcement-${index}-comment-input`))
@@ -624,8 +532,8 @@ if (dateInput && timeInput) {
 
 async function createAttendance() {
 	let bodyData = {
-		subject_id: subjectId                    
-		}
+		subject_id: subjectId
+	}
 	const url = teacher_subject_attendance_url;
 	const [success, result] = await callApi("POST", url, bodyData, csrf_token);
 	if (success) {
@@ -634,7 +542,7 @@ async function createAttendance() {
 		if (result.success) {
 			console.log(result.data.unique_code);
 			const modal = bootstrap.Modal.getInstance(document.getElementById("createAttendanceModal"))
-      		modal.hide()
+			modal.hide()
 
 			document.getElementById('unique_code').innerText = String(result.data.unique_code);
 			startAttendanceTimer(60 * 60);
@@ -642,31 +550,163 @@ async function createAttendance() {
 			attendanceCodeModal.show();
 		}
 
-		else {                        
+		else {
 		}
 
 	} else {
-		
-	}            
+
+	}
 
 }
 
 function startAttendanceTimer(duration) {
 	let timer = duration
 	const timerElement = document.getElementById("codeTimer")
-  
+
 	if (!timerElement) return
-  
+
 	const interval = setInterval(() => {
-	  const minutes = Math.floor(timer / 60)
-	  const seconds = timer % 60
-  
-	  timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-  
-	  if (--timer < 0) {
-		clearInterval(interval)
-		timerElement.textContent = "Expired"
-	  }
+		const minutes = Math.floor(timer / 60)
+		const seconds = timer % 60
+
+		timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+
+		if (--timer < 0) {
+			clearInterval(interval)
+			timerElement.textContent = "Expired"
+		}
 	}, 1000)
-  }
-  
+}
+
+
+async function view_submitted_students_assignment(assignment_id) {
+	const AssignmentStudentsListModal = new bootstrap.Modal(document.getElementById("AssignmentStudentsListModal"));
+	AssignmentStudentsListModal.show();
+	const container = document.getElementById('AssignmentStudentsListTable');
+	container.innerHTML = ''
+	container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';
+	await get_submitted_assignment_assignment(assignment_id);
+
+}
+
+async function get_submitted_assignment_assignment(assignment_id) {
+	const Params = {
+		assignment_id: assignment_id
+	};
+
+	const url = `${teacher_all_assignment_url}?` + toQueryString(Params);
+	const [success, result] = await callApi("GET", url);
+	console.log(result);
+	if (success) {
+		if (result.success) {
+			console.log(result.data);
+			loadAssignmentStudentsList(result.data.all_assignments_submitted, assignment_id);
+
+		}
+		else {
+
+			return;
+		}
+	} else {
+
+		return;
+	}
+}
+
+// Function to load students list
+function loadAssignmentStudentsList(AssignmentStudent, assignment_id) {
+	const AssignmentStudentsListTable = document.getElementById("AssignmentStudentsListTable")
+
+	if (!AssignmentStudentsListTable) return
+
+	let html = ""
+	AssignmentStudent.forEach((student) => {
+		html += `
+            <tr>
+                <td class="text-nowrap text-center">${student.student_roll_no}</td>
+                <td class="text-nowrap text-center">${student.student_name}</td>
+                <td class="text-nowrap text-center">${student.assignment_submitted ? '<i class="bi bi-check2"></i>' : '<i class="bi bi-x"></i>'}</td>
+                <td class="text-nowrap text-center">
+				${student.assignment_submitted ? `<button class="btn btn-sm btn-primary" onclick="view_submitted_assignment('${student.student_id}', '${assignment_id}', '${student.student_name}')">
+						<i class="bi bi-eye bi-xl me-2"></i>View Assignment
+					</button>` : `<b class="text-danger">Not Submitted</b>`}
+				</td>
+            </tr>
+        `
+	})
+
+	AssignmentStudentsListTable.innerHTML = html
+}
+
+async function view_submitted_assignment(student_id, assignment_id, student_name) {
+	document.getElementById('submittedAssignmentModalLabel').innerText = `${student_name}'s Assignment`
+	const submittedAssignmentModal = new bootstrap.Modal(document.getElementById("submittedAssignmentModal"));
+	submittedAssignmentModal.show();
+	const container = document.getElementById('document_list_div');
+	container.innerHTML = ''
+	container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';
+	await get_submitted_assignment(student_id, assignment_id);
+
+}
+
+async function get_submitted_assignment(student_id, assignment_id) {
+	const Params = {
+		student_id: student_id,
+		assignment_id: assignment_id
+	};
+
+	const url = `${teacher_subject_submit_assignments_url}?` + toQueryString(Params);
+	const [success, result] = await callApi("GET", url);
+	console.log(result);
+	if (success) {
+		if (result.success) {
+			console.log(result.data);
+			createDocumentList(result.data.submitted_assignment.document_paths, result.data.submitted_assignment.created_at, result.data.submitted_assignment.text_content);
+
+		}
+		else {
+
+			return;
+		}
+	} else {
+
+		return;
+	}
+}
+
+function createDocumentList(documentList, created_at, text_content) {
+	const container = document.getElementById('document_list_div');
+
+	let doc_index = 0;
+	let doc_html = "";
+	doc_html += `<p class="my-0"><b>Submitted on:</b> ${created_at}</p>`;
+	doc_html += `<p><b>Text Content:</b> ${text_content}</p>`;
+	documentList.forEach((doc) => {
+		doc_index += 1;
+		doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
+							  onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
+							  <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
+							  <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
+	  </div>`
+
+	});
+
+	container.innerHTML = '';
+	container.innerHTML = doc_html;
+
+	doc_index = 0;
+	documentList.forEach((doc) => {
+		doc_index += 1;
+		document.getElementById(`doc-${doc_index}-downloader`).addEventListener('click', (event) => {
+			event.stopPropagation();
+		});
+	});
+
+}
+
+function openDocModal(doc_path, doc_name) {
+	displayDocument(doc_path);
+	document.getElementById('viewDocumentModalLabel').innerText = doc_name;
+	const myModal = new bootstrap.Modal(document.getElementById('viewDocumentModal'));
+	myModal.show();
+}

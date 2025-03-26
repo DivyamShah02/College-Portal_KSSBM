@@ -16,6 +16,9 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
 
+    <!-- Import the official PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <!-- Import FontAwsome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -466,6 +469,88 @@
         </div>
     </div>
 
+    <!-- Assignments Students List Modal -->
+    <div class="modal fade" id="AssignmentStudentsListModal" tabindex="-1" aria-labelledby="AssignmentStudentsListModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AssignmentStudentsListModalLabel">Student's Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap p-3 text-center">Student Roll No</th>
+                                    <th class="text-nowrap p-3 text-center">Student Name</th>
+                                    <th class="text-nowrap p-3 text-center">Assignment Submitted</th>
+                                    <th class="text-nowrap p-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="AssignmentStudentsListTable">
+                                <!-- Dynamically populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Submitted Assignment Modal -->
+        <div class="modal fade" id="submittedAssignmentModal" tabindex="-1" aria-labelledby="submittedAssignmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="submittedAssignmentModalLabel">Your Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="document_list_div">
+                        <div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
+                            onclick="openDocModal('https://pdfobject.com/pdf/sample.pdf', 'sample.pdf')">
+                            <i class="fa fa-file-pdf fa-xl"></i>&nbsp;&nbsp;&nbsp; <u>sample.pdf</u>
+                            <div class="ms-auto"><i class="fa fa-download fa-xl mx-2"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
+                        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5 text-wrap text-break"
+                                        id="viewDocumentModalLabel">View Document</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="document-viewer" class="viewer"></div>
+                                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
+                                <canvas id="pdf-renderer"></canvas>
+                            </div> -->
+                                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
+                                style="border: none;"></iframe> -->
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Overlay for sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -486,7 +571,7 @@
 
     <script>
         window.onload = async function () {
-            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}");
+            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}", "{% url 'all-assignments-submitted-api-list' %}", "{% url 'submit-assignments-api-list' %}");
             toggle_loader();
         }
     </script>
