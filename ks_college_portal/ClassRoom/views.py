@@ -761,19 +761,11 @@ class AnnouncementViewSet(viewsets.ViewSet):
                     )
 
             user_role = user.role
-            if user_role != 'teacher':
-                return Response(
-                        {
-                            "success": False,
-                            "user_not_logged_in": False,
-                            "user_unauthorized": True,                            
-                            "data": None,
-                            "error": None
-                        },
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-    
-            all_announcements_obj = Announcement.objects.all()
+            if user_role == 'teacher':
+                all_announcements_obj = Announcement.objects.all()
+            elif user_role == 'student':
+                all_announcements_obj = Announcement.objects.filter(college_year=user.year, class_division=user.division)
+
             all_announcements_obj = all_announcements_obj[::-1]
 
             number_of_records = request.GET.get('number_of_records')           

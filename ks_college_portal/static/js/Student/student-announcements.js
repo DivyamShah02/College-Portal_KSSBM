@@ -1,215 +1,229 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Toggle sidebar on mobile
-  const sidebarToggle = document.getElementById("sidebarToggle")
-  const sidebar = document.getElementById("sidebar")
+let csrf_token = null;
+let student_subject_announcements_url = null;
+let student_subject_announcements_comments_url = null;
+let student_subject_url = null;
+let announcementSelectedFiles = [];
+let announcements = null;
 
-  if (sidebarToggle && sidebar) {
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("show")
-    })
-  }
+async function HandleAnnouncementsDetail(csrf_token_param,  student_subject_announcements_url_param, student_subject_announcements_comments_url_param, student_subject_url_param) {
+	csrf_token = csrf_token_param;	
+	student_subject_announcements_url = student_subject_announcements_url_param;
+	student_subject_announcements_comments_url = student_subject_announcements_comments_url_param;
+  student_subject_url = student_subject_url_param;
 
-  // Load announcements
-  loadAnnouncements()
+	await GetAnnoumcements();
 
   // Add event listeners for filters
   const subjectFilter = document.getElementById("subjectFilter")
-  const dateFilter = document.getElementById("dateFilter")
   const searchAnnouncement = document.getElementById("searchAnnouncement")
 
   if (subjectFilter) {
     subjectFilter.addEventListener("change", filterAnnouncements)
   }
 
-  if (dateFilter) {
-    dateFilter.addEventListener("change", filterAnnouncements)
-  }
 
   if (searchAnnouncement) {
     searchAnnouncement.addEventListener("input", filterAnnouncements)
   }
-})
 
-// Mock data for announcements
-const announcements = [
-  {
-    id: 1,
-    subjectId: 1,
-    subjectName: "Data Structures and Algorithms",
-    title: "Mid-term Exam Schedule",
-    content:
-      "The mid-term exam for Data Structures will be held on March 25th, 2023. The exam will cover all topics discussed up to Week 6. Please prepare accordingly and bring your ID cards.",
-    date: "2023-03-10",
-    attachment: null,
-  },
-  {
-    id: 2,
-    subjectId: 1,
-    subjectName: "Data Structures and Algorithms",
-    title: "Guest Lecture on Advanced Algorithms",
-    content:
-      'We will have a guest lecture by Dr. Robert Chen from Stanford University on "Advanced Algorithms in Industry" on March 18th, 2023. Attendance is mandatory for all students.',
-    date: "2023-03-12",
-    attachment: "guest_lecture_details.pdf",
-  },
-  {
-    id: 3,
-    subjectId: 2,
-    subjectName: "Web Development",
-    title: "Project Submission Deadline",
-    content:
-      "The deadline for the final project submission has been extended to April 5th, 2023. Please make sure to submit your projects on time.",
-    date: "2023-03-14",
-    attachment: null,
-  },
-  {
-    id: 4,
-    subjectId: 3,
-    subjectName: "Database Management Systems",
-    title: "Guest Lecture",
-    content:
-      "There will be a guest lecture on Advanced SQL by Dr. James Wilson on March 20th, 2023. All students are encouraged to attend.",
-    date: "2023-03-14",
-    attachment: "guest_lecture_sql.pdf",
-  },
-  {
-    id: 5,
-    subjectId: 4,
-    subjectName: "Artificial Intelligence",
-    title: "AI Workshop",
-    content:
-      'We are organizing a workshop on "Practical Applications of AI" on March 22nd, 2023. The workshop will be conducted by industry experts from Google and Microsoft.',
-    date: "2023-03-15",
-    attachment: "ai_workshop.pdf",
-  },
-  {
-    id: 6,
-    subjectId: 5,
-    subjectName: "Computer Networks",
-    title: "Network Lab Setup",
-    content:
-      "The network lab has been set up with new equipment. Students can now access the lab for practical sessions starting from March 20th, 2023.",
-    date: "2023-03-16",
-    attachment: null,
-  },
-  {
-    id: 7,
-    subjectId: 6,
-    subjectName: "Software Engineering",
-    title: "Industry Visit",
-    content:
-      "We have arranged an industry visit to Microsoft Development Center on March 28th, 2023. All students interested in participating should register by March 22nd.",
-    date: "2023-03-17",
-    attachment: "industry_visit_details.pdf",
-  },
-  {
-    id: 8,
-    subjectId: 0,
-    subjectName: "College Administration",
-    title: "Holiday Notice",
-    content:
-      "The college will remain closed on March 30th, 2023 on account of the annual function. Regular classes will resume from March 31st.",
-    date: "2023-03-18",
-    attachment: null,
-  },
-]
-
-// Function to load announcements
-function loadAnnouncements() {
-  const announcementsList = document.getElementById("announcementsList")
-  if (!announcementsList) return
-
-  renderAnnouncements(announcements)
 }
 
-// Function to render announcements
-function renderAnnouncements(announcementsToRender) {
-  const announcementsList = document.getElementById("announcementsList")
-  if (!announcementsList) return
+async function GetAnnoumcements() {
 
-  if (announcementsToRender.length === 0) {
-    announcementsList.innerHTML = '<div class="text-center py-5"><h5>No announcements found</h5></div>'
-    return
-  }
+	const url = `${student_subject_announcements_url}?`;
+	const [success, result] = await callApi("GET", url);
+	console.log(result);
+	if (success) {
+		if (result.success) {
+			announcements = result.data.all_announcements;
+      loadAnnouncements(announcements);
+		}
+		else {
+			window.location.href = "/dashboard/";
+			return;
+		}
+	} else {
+		window.location.href = "/dashboard/";
+		return;
+	}
 
-  let html = ""
-  announcementsToRender.forEach((announcement) => {
-    html += `
-            <div class="card announcement-card mb-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title mb-0">${announcement.title}</h5>
-                        <span class="badge bg-light text-dark">${new Date(announcement.date).toLocaleDateString()}</span>
-                    </div>
-                    <h6 class="card-subtitle mb-2 text-muted">${announcement.subjectName}</h6>
-                    <p class="card-text">${announcement.content}</p>
-                    ${
-                      announcement.attachment
-                        ? `
-                        <div class="mt-3">
-                            <a href="#" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-file-earmark me-2"></i>${announcement.attachment}
-                            </a>
+}
+
+
+function loadAnnouncements(subjectAnnouncements) {
+	const announcementsList = document.getElementById("announcementsList")
+		if (subjectAnnouncements.length === 0) {
+			announcementsList.innerHTML = '<div class="text-center py-4"><p>No announcements yet</p></div>'
+			return
+		}
+
+		let html = ""
+		let index = 0
+		subjectAnnouncements.forEach((announcement) => {
+			index += 1;
+			let doc_html = ""
+
+			if (announcement.document_paths.length === 0) {
+				doc_html = "";
+			}
+			else {
+				announcement.document_paths.forEach((doc) => {
+					doc_path = String(doc).replace('\\', '/');
+					doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
+            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+          </button>`
+				});
+			}
+			html += `
+                <div class="card announcement-card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">${announcement.subject_name}</h5>
+                            <span class="badge bg-primary text-white">${announcement.created_at}</span>
                         </div>
-                    `
-                        : ""
-                    }
-                </div>
-            </div>
-        `
-  })
+                        <p class="card-text">${announcement.text_content}</p>
+                        ${doc_html
+					? `
+                            <div class="mt-3 text-wrap text-break">
+                                ${doc_html}
+                            </div>
+                        `
+					: ""
+				}
+                        <!-- Comments Section -->
+                        <div class="mt-4">
+                            <h6 class="mb-3"><i class="bi bi-chat-left-text me-2"></i>Comments (${announcement.comment_data ? announcement.comment_data.length : 0})</h6>
+                            
+                            <!-- Add Comment Form -->
+                            <form class="add-comment-form mb-3">
+                                <div class="input-group">
+                                    <input 
+                                        type="text" 
+										id="announcement-${index}-comment-input"
+                                        class="form-control" 
+                                        placeholder="Write a comment..." 
+                                        aria-label="Add a comment" 
+                                        data-announcement-id="${announcement.announcement_id}"
+                                    >
+                                    <button class="btn btn-primary" type="button" onclick="addComment('${index}', '${announcement.announcement_id}')">
+                                        <i class="bi bi-send"></i>
+                                    </button>
+                                </div>
+                            </form>
 
-  announcementsList.innerHTML = html
+                            <!-- Comments List -->
+                            <div class="comments-list">
+                                ${announcement.comment_data && announcement.comment_data.length > 0
+					? announcement.comment_data.map(comment => `
+                                        <div class="comment mb-3">
+                                            <div class="comment-header">
+                                                <span class="comment-author">${comment.user_name}</span>
+                                                <span class="comment-time">${comment.created_at}</span>
+                                            </div>
+                                            <div class="text-muted">
+                                                ${comment.comment_content}
+                                            </div>
+                                        </div>
+                                    `).join('')
+					: '<p class="text-muted">No comments yet. Be the first to comment!</p>'
+				}
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+            `
+		})
+
+		announcementsList.innerHTML = html
+	 // Simulate loading delay
+}
+
+async function loadSubjects() {
+  const subjectsList = document.getElementById("subjectFilter")
+  subjectsList.innerHTML = '';
+
+  if (!subjectsList) return
+
+  const url = student_subject_url;
+  const [success, result] = await callApi("GET", url);
+
+  if (success) {
+    if (result.success) {
+      let options_html = '<option value="">All Subjects</option>';
+
+      result.data.all_subjects.forEach((subject) => {
+        options_html += `<option value="${subject.subject_id}">${subject.subject_name}</option>`
+      });
+
+      subjectsList.innerHTML = options_html;
+
+    }
+    else {
+    }
+  } else {
+  }
 }
 
 // Function to filter announcements
 function filterAnnouncements() {
+  toggle_loader();
   const subjectFilter = document.getElementById("subjectFilter").value
-  const dateFilter = document.getElementById("dateFilter").value
   const searchFilter = document.getElementById("searchAnnouncement").value.toLowerCase()
 
   const filteredAnnouncements = announcements.filter((announcement) => {
     // Filter by subject
-    if (subjectFilter && announcement.subjectId != subjectFilter) {
+    if (subjectFilter && announcement.subject_id != subjectFilter) {
       return false
-    }
-
-    // Filter by date
-    if (dateFilter) {
-      const announcementDate = new Date(announcement.date)
-      const today = new Date()
-
-      if (dateFilter === "today") {
-        if (announcementDate.toDateString() !== today.toDateString()) {
-          return false
-        }
-      } else if (dateFilter === "week") {
-        const weekAgo = new Date()
-        weekAgo.setDate(today.getDate() - 7)
-        if (announcementDate < weekAgo) {
-          return false
-        }
-      } else if (dateFilter === "month") {
-        const monthAgo = new Date()
-        monthAgo.setMonth(today.getMonth() - 1)
-        if (announcementDate < monthAgo) {
-          return false
-        }
-      }
     }
 
     // Filter by search term
     if (
       searchFilter &&
-      !announcement.title.toLowerCase().includes(searchFilter) &&
-      !announcement.content.toLowerCase().includes(searchFilter)
+      !announcement.subject_name.toLowerCase().includes(searchFilter) &&
+      !announcement.text_content.toLowerCase().includes(searchFilter)
     ) {
+      
       return false
     }
 
     return true
   })
-
-  renderAnnouncements(filteredAnnouncements)
+  loadAnnouncements(filteredAnnouncements)
+  toggle_loader();
 }
 
+async function addComment(index, announcement_id) {
+	console.log(document.getElementById(`announcement-${index}-comment-input`))
+	let comment_content = document.getElementById(`announcement-${index}-comment-input`).value;
+	console.log(index);
+	console.log(comment_content);
+	if (comment_content != '') {
+		let bodyData = {
+			announcement_id: announcement_id,
+			comment_content: comment_content
+		}
+
+		const url = student_subject_announcements_comments_url;
+		const [success, result] = await callApi("POST", url, bodyData, csrf_token);
+		if (success) {
+			console.log("Result:", result);
+
+			if (result.success) {
+				location.reload();
+			}
+
+			else {
+			}
+
+		} else {
+
+		}
+	}
+}
+
+function openDocModal(doc_path, doc_name) {
+	displayDocument(doc_path);
+	document.getElementById('viewDocumentModalLabel').innerText = doc_name;
+	const myModal = new bootstrap.Modal(document.getElementById('viewDocumentModal'));
+	myModal.show();
+}
