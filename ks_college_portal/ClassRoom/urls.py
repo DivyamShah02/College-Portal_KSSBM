@@ -6,6 +6,8 @@ from .views import *
 router = DefaultRouter()
 
 router.register(r'teacher-dashboard-api', TeacherDashboardViewSet, basename='teacher-dashboard-api')
+router.register(r'student-dashboard-api', StudentDashboardViewSet, basename='student-dashboard-api')
+router.register(r'student-dashboard-pending-assignment-count-api', StudentDashboardPendingAssignmentCountViewSet, basename='student-dashboard-pending-assignment-count-api')
 
 router.register(r'teacher-subjects-api', TeacherSubjectViewSet, basename='teacher-subjects-api')
 router.register(r'student-subjects-api', StudentSubjectViewSet, basename='student-subjects-api')

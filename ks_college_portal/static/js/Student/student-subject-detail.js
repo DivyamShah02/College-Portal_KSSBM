@@ -62,7 +62,7 @@ async function loadSubjectDetails(subjectId) {
   // document.getElementById("subjectDescriptionText").textContent = subject.subject_data.description
   document.getElementById("professorName").textContent = subject.subject_data.teacher_name
   document.getElementById("announcementsCount").textContent = subject.total_announcements
-  document.getElementById("assignmentsCount").textContent = subject.total_assignments
+  document.getElementById("assignmentsCount").textContent = `${subject.total_assignments_pending} Pending, ${subject.total_assignments_submitted} Completed`
   document.getElementById("attendanceSessions").textContent = subject.total_attendances
   // document.getElementById("subjectImage").src = subject.image
 
@@ -100,8 +100,8 @@ function loadAnnouncements(subjectAnnouncements) {
       }
       else {
         announcement.document_paths.forEach((doc) => {
-
-          doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
+          doc_path = String(doc).replace('\\', '/');
+          doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
           </button>`
         });
@@ -187,9 +187,8 @@ function loadAssignments(subjectAssignments) {
       }
       else {
         assignment.document_paths.forEach((doc) => {
-          // console.log(doc);
-          // console.log('srgtnrhug ontrhs gntbhrsb ghres')
-          doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc}', '${String(doc).replace('students_assignments\\', '')}')">
+          doc_path = String(doc).replace('\\', '/');
+          doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
           </button>`
         });
@@ -435,7 +434,7 @@ async function view_submitted_assignment(student_id, assignment_id) {
   submittedAssignmentModal.show();
   const container = document.getElementById('document_list_div');
   container.innerHTML = ''
-  container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';  
+  container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';
   await get_submitted_assignment(student_id, assignment_id);
 
 }
@@ -467,30 +466,31 @@ async function get_submitted_assignment(student_id, assignment_id) {
 
 function createDocumentList(documentList, created_at, text_content) {
   const container = document.getElementById('document_list_div');
-  
+
   let doc_index = 0;
   let doc_html = "";
   doc_html += `<p class="my-0"><b>Submitted on:</b> ${created_at}</p>`;
-	doc_html += `<p><b>Text Content:</b> ${text_content}</p>`;
+  doc_html += `<p><b>Text Content:</b> ${text_content}</p>`;
   documentList.forEach((doc) => {
     doc_index += 1;
+    doc_path = String(doc).replace('\\', '/');
     doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
-                            onclick="openDocModal('${doc}', '${String(doc).replace('students_assignments\\', '')}')">
+                            onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('students_assignments\\', '')}')">
                             <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
                             <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="/media/${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
     </div>`
 
   });
-  
+
   container.innerHTML = '';
   container.innerHTML = doc_html;
-  
+
   doc_index = 0;
   documentList.forEach((doc) => {
     doc_index += 1;
     document.getElementById(`doc-${doc_index}-downloader`).addEventListener('click', (event) => {
       event.stopPropagation();
-  });
+    });
   });
 
 }

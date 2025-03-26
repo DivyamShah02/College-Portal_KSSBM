@@ -30,12 +30,6 @@ class StudentSubjectSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        if 'college_year' in representation:
-            representation['college_year'] = representation['college_year'].replace('_', ' ').title()
-
-            student_counts = User.objects.filter(year=str(representation['college_year']).lower().replace(' ', '_'), division=representation['class_division']).count()
-            representation['student_counts'] = student_counts
-
         if 'teacher_id' in representation:
             teacher_data = User.objects.filter(user_id=representation['teacher_id']).first()
             representation['teacher_name'] = teacher_data.name
@@ -111,6 +105,9 @@ class StudentAssignmentSerializer(serializers.ModelSerializer):
             assignment_submitted = SubmittedAssignment.objects.filter(assignment_id=representation['assignment_id'], student_id=student_id).exists()
             representation['assignment_submitted'] = assignment_submitted
 
+        if 'subject_id' in representation:
+            subject_data = Subject.objects.filter(subject_id=representation['subject_id']).first()
+            representation['subject_name'] = subject_data.subject_name
         return representation
 
 class SubmittedAssignmentSerializer(serializers.ModelSerializer):

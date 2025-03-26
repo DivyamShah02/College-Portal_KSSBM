@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound, ParseError
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.utils.timezone import now
 
 from .serializers import *
 from .models import *
@@ -20,6 +21,7 @@ import boto3
 import base64
 from botocore.exceptions import NoCredentialsError
 from datetime import datetime, timedelta
+from dateutil.parser import isoparse
 
 
 logger = None
@@ -184,7 +186,7 @@ class TeacherDashboardViewSet(viewsets.ViewSet):
             all_attendance_obj = all_attendance_obj[::-1][0:5]
             all_attendance = FullDetailsAttendanceSerializer(all_attendance_obj, many=True).data
 
-            # Get Attendance details
+            # Get Announcement details
             all_announcement_obj = Announcement.objects.filter(teacher_id=user)
             total_announcement = len(all_announcement_obj)
             all_announcement_obj = all_announcement_obj[::-1][0:3]
@@ -212,6 +214,184 @@ class TeacherDashboardViewSet(viewsets.ViewSet):
 
                 "total_company": total_company,
                 "all_company": all_company,
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+class StudentDashboardViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'student':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            
+            # Get student details
+            student_data_obj = User.objects.filter(user_id=user).first()
+            student_data = UserSerializer(student_data_obj).data
+
+            # Get subject details
+            all_subjects_obj = Subject.objects.filter(college_year=user.year, class_division=user.division)
+            total_subjects = len(all_subjects_obj)
+            all_subjects_obj = all_subjects_obj[::-1][0:5]
+            all_subjects = StudentSubjectSerializer(all_subjects_obj, many=True).data
+
+            # Get Announcement details
+            all_announcement_obj = Announcement.objects.filter(college_year=user.year, class_division=user.division)
+            total_announcement = len(all_announcement_obj)
+            all_announcement_obj = all_announcement_obj[::-1][0:3]
+            all_announcement = AnnouncementSerializer(all_announcement_obj, many=True).data
+
+            # Get Assignment details
+            all_assignment_obj = Assignment.objects.filter(college_year=user.year, class_division=user.division, deadline_date__gte=now())
+            total_assignment = len(all_assignment_obj)
+            all_assignment_obj = all_assignment_obj[::-1]
+            all_assignment = []
+            for assignment in all_assignment_obj:
+                assignment_data = StudentAssignmentSerializer(assignment, context={'student_id': user}).data
+                if not assignment_data.get('assignment_submitted', False):
+                    all_assignment.append(assignment_data)
+                    if len(all_assignment) == 4:
+                        break
+
+
+            data = {
+                "student_data": student_data,
+
+                "total_subjects": total_subjects,
+                "all_subjects": all_subjects,
+
+                "total_announcement": total_announcement,
+                "all_announcement": all_announcement,
+
+                "total_assignment": total_assignment,
+                "all_assignment": all_assignment,
+
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+class StudentDashboardPendingAssignmentCountViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'student':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            
+            # Get Assignment details
+            all_assignment_obj = Assignment.objects.filter(college_year=user.year, class_division=user.division)
+            total_assignment = len(all_assignment_obj)
+            all_assignment_obj = all_assignment_obj[::-1]
+            pending_assignment = []
+            missed_assignment = []
+            for assignment in all_assignment_obj:
+                assignment_data = StudentAssignmentSerializer(assignment, context={'student_id': user}).data
+                if not assignment_data.get('assignment_submitted', False):
+                    deadline_datetime = isoparse(str(assignment_data.get('deadline_date')))
+                    current_time = datetime.now(deadline_datetime.tzinfo)
+                    if deadline_datetime > current_time:
+                        print("The given datetime is in the future.")
+                        pending_assignment.append(assignment_data)
+                    else:
+                        missed_assignment.append(assignment_data)
+                        print("The given datetime is in the past.")
+
+            data = {
+                "total_assignment": total_assignment,
+                
+                "pending_assignment": pending_assignment,
+                "total_pending_assignment": len(pending_assignment),
+
+                "missed_assignment": missed_assignment,
+                "total_missed_assignment": len(missed_assignment)
+
             }
             return Response(
                     {
@@ -271,9 +451,6 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
             college_year = request.data.get('college_year')
             class_division = request.data.get('class_division')
             YEAR_CHOICES = ['first_year', 'second_year', 'third_year', 'fourth_year', 'fifth_year']
-            print(subject_name)
-            print(college_year)
-            print(class_division)
             if (subject_name == None) or (college_year not in YEAR_CHOICES) or (class_division == None):
                 return Response(
                         {
@@ -477,6 +654,9 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+            total_assignments_submitted = 0
+            total_assignments_pending = 0
+
             user_role = user.role
             if user_role == 'student':
                 subject_is_valid = Subject.objects.filter(subject_id=subject_id, college_year=user.year).exists()
@@ -486,6 +666,12 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                     
                     all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
                     all_assignments = StudentAssignmentSerializer(all_assignments_obj, many=True, context={'student_id': user}).data
+
+                    for assignment_data in all_assignments:
+                        if assignment_data['assignment_submitted']:
+                            total_assignments_submitted+=1
+                        else:
+                            total_assignments_pending+=1
 
                     all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
                     all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
@@ -529,6 +715,9 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                 'total_attendances': len(all_attendance),
 
                 'subject_data': subject_data,
+
+                'total_assignments_submitted': total_assignments_submitted,
+                'total_assignments_pending': total_assignments_pending,
             }
             return Response(
                     {
@@ -677,6 +866,8 @@ class AnnouncementViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
             
+            subject_data = Subject.objects.filter(subject_id=subject_id).first()
+
             attached_docs = True
             if 'files[0]' not in request.FILES:
                 attached_docs = False
@@ -698,6 +889,8 @@ class AnnouncementViewSet(viewsets.ViewSet):
             new_announcements = Announcement(
                 announcement_id=announcement_id,
                 subject_id=subject_id,
+                college_year=subject_data.college_year,
+                class_division=subject_data.class_division,
                 teacher_id=user,
                 text_content=text_content,
                 attached_docs=attached_docs,
@@ -1014,6 +1207,8 @@ class AssignmentViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+            subject_data = Subject.objects.filter(subject_id=subject_id).first()
+            
             attached_docs = True
             if 'files[0]' not in request.FILES:
                 attached_docs = False
@@ -1035,6 +1230,8 @@ class AssignmentViewSet(viewsets.ViewSet):
             new_assignment = Assignment(
                 assignment_id=assignment_id,
                 subject_id=subject_id,
+                college_year=subject_data.college_year,
+                class_division=subject_data.class_division,
                 teacher_id=user,
                 text_content=text_content,
                 attached_docs=attached_docs,
@@ -1508,10 +1705,14 @@ class AttendanceViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+            subject_data = Subject.objects.filter(subject_id=subject_id).first()
+            
             attendance_id, unique_code = self.generate_attendance_details()
             new_attendance = Attendance(
                 attendance_id=attendance_id,
                 subject_id=subject_id,
+                college_year=subject_data.college_year,
+                class_division=subject_data.class_division,
                 code=unique_code,
                 teacher_id=user
             )
