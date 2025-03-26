@@ -4,109 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard | College Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Teacher Dashboard</title>
+
+    <!-- Import BootStrap CSS Library -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
+
+    <!-- Import the official PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <!-- Import FontAwsome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Import Wow Animation CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/loader_logo.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+
 </head>
 
 <body>
+    <div id="spinner" class="spinner-container p-2">
+        <div class="spinner"></div>
+        <!-- <div id="spinner-text" class="loading-text text-center">loading!</div> -->
+    </div>
+
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <div class="container-fluid position-relative">
-            <!-- Centered Title -->
-            <a class="navbar-brand mx-md-auto d-flex align-items-center" href="#">
-                <img src="https://www.reviewadda.com/assets/uploads/college/logo/LOGO_80105.png" alt="College Logo"
-                    class="me-2" style="height: 40px;">
-                <span><b>K.S.S.B.M</b></span>
-            </a>
+    {% include "Teacher/navbar.html" %}
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler position-absolute end-0" type="button" id="sidebarToggle"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>
-
-    <div class="d-flex">
+    <div class="d-flex blur" id="main-content">
         <!-- Sidebar -->
-        <div class="sidebar text-nowrap" id="sidebar">
-            <div class="p-3 mt-5 mt-md-4 pt-5 pt-md-0">
-                <div class="text-center mb-3">
-                    <!-- <img src="../images/teacher-avatar.jpg" alt="Teacher Avatar" class="avatar avatar-lg mb-2"> -->
-                    <h6 class="mb-0">Prof. Sarah Johnson</h6>
-                    <small class="text-light">Computer Science Department</small>
-                </div>
-
-                <hr>
-
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="dashboard.html" class="nav-link">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="subjects.html" class="nav-link">
-                            <i class="bi bi-book"></i> Subjects
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="announcements.html" class="nav-link active">
-                            <i class="bi bi-megaphone"></i> Announcements
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="assignments.html" class="nav-link">
-                            <i class="bi bi-file-earmark-text"></i> Assignments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="attendance.html" class="nav-link">
-                            <i class="bi bi-calendar-check"></i> Attendance
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="students.html" class="nav-link">
-                            <i class="bi bi-people"></i> Students
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="placements.html" class="nav-link">
-                            <i class="bi bi-briefcase"></i> Placements
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="" class="nav-link dark-mode-toggle-btn">
-                            <i class="bi bi-moon"></i> <span id="dark-mode-toggle-btn-text">Dark Mode</span>
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <a href="../index.html" class="nav-link text-danger">
-                            <i class="bi bi-box-arrow-left"></i> Logout
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        {% include "Teacher/sidebar.html" %}
 
         <!-- Main Content -->
         <div class="main-content flex-grow-1">
             <!-- Announcements Content -->
-            <div class="container-fluid fade-in">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0">Announcements</h2>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
-                        <i class="bi bi-plus-lg me-2"></i>Add New Announcement
+            <div class="fade-in">
+                <div class="row mb-4">
+                    <div class="col-md-6 text-start">
+                        <h2 class="mb-0">All Announcements</h2>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="text-muted me-2">Today:</span>
+                        <span id="currentDate"></span>
+                    </div>
+                    <!-- <div class="col-md-6 text-md-end">
+                        <span class="text-muted me-2">Today:</span>
+                        <span class="d-inline-flex align-items-center">
+                            <span id="currentDate" class="me-2"></span>
+                            <span class="dark-mode-toggle" title="Toggle Dark Mode">
+                                <i class="bi bi-moon"></i>
+                            </span>
+                        </span>
+                    </div> -->
+                </div>
+
+                <div class="mb-3 w-100">
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addAnnouncementModal">
+                        <i class="bi bi-plus-lg me-2"></i><b>Add New Announcement</b>
                     </button>
                 </div>
-                
+                                
                 <!-- Filters -->
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label for="subjectFilter" class="form-label">Subject</label>
                                 <select class="form-select" id="subjectFilter">
                                     <option value="">All Subjects</option>
@@ -115,17 +89,8 @@
                                     <option value="3">Database Management Systems</option>
                                     <option value="4">Artificial Intelligence</option>
                                 </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="dateFilter" class="form-label">Date Range</label>
-                                <select class="form-select" id="dateFilter">
-                                    <option value="">All Time</option>
-                                    <option value="today">Today</option>
-                                    <option value="week">This Week</option>
-                                    <option value="month">This Month</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
+                            </div>                            
+                            <div class="col-md-6">
                                 <label for="searchAnnouncement" class="form-label">Search</label>
                                 <input type="text" class="form-control" id="searchAnnouncement" placeholder="Search announcements...">
                             </div>
@@ -135,6 +100,7 @@
                 
                 <!-- Announcements List -->
                 <div id="announcementsList">
+                    <div class="text-center py-4"><h5>Loading...</h5></div>
                     <!-- Dynamically populated by JS -->
                 </div>
             </div>
@@ -142,34 +108,46 @@
     </div>
 
     <!-- Add Announcement Modal -->
-    <div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addAnnouncementModalLabel">Add New Announcement</h5>
+                    <h5 class="modal-title" id="addAnnouncementModalLabel">Add Announcement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addAnnouncementForm">
-                        <div class="mb-3">
-                            <label for="announcementSubject" class="form-label">Subject</label>
-                            <select class="form-select" id="announcementSubject" required>
-                                <option value="">Select Subject</option>
-                                <option value="1">Data Structures and Algorithms</option>
-                                <option value="2">Web Development</option>
-                                <option value="3">Database Management Systems</option>
-                                <option value="4">Artificial Intelligence</option>
-                            </select>
+                    <form id="add_announcement_form">
+                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                            Unexpected Error occured!
                         </div>
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="announcementTitle" class="form-label">Title</label>
                             <input type="text" class="form-control" id="announcementTitle" required>
-                        </div>
+                        </div> -->
                         <div class="mb-3">
-                            <label for="announcementContent" class="form-label">Content</label>
-                            <textarea class="form-control" id="announcementContent" rows="4" required></textarea>
+                            <label for="text_content_announcement" class="form-label">Content</label>
+                            <textarea class="form-control" id="text_content_announcement" rows="4" required></textarea>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-4">
+                            <label for="announcementFile" class="form-label">Attachment (Optional)</label>
+                            <!-- <label for="file_upload_id" class="form-label eh-label">File Upload</label> -->
+                            <div class="p-5 text-center border" id="upload_box"
+                                onclick="document.getElementById('announcementDoc_announcement').click()"
+                                style="border-radius: 10px; cursor: pointer; background-color: transparent;">
+
+                                <i class="bi bi-cloud-arrow-up fa-xl" id="announcementDocUploadIcon_announcement"></i>
+                                <p class="p-0 m-0" id="upload_input_text_announcement">Click to upload</p>
+                                <p class="p-0 m-0" id="upload_input_file_text_announcement" style="display: none;"></p>
+                                <input type="file" id="announcementDoc_announcement" hidden multiple>
+
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Post Announcement</button>
+
+                        <!-- <div class="mb-3">
                             <label for="announcementFile" class="form-label">Attachment (Optional)</label>
                             <div class="file-upload">
                                 <label for="announcementFile" class="file-upload-label">
@@ -182,17 +160,44 @@
                                 <div class="d-flex align-items-center p-2 border rounded">
                                     <i class="bi bi-file-earmark me-2"></i>
                                     <span id="announcementFileName">filename.pdf</span>
-                                    <button type="button" class="btn btn-sm btn-link text-danger ms-auto" id="removeAnnouncementFile">
+                                    <button type="button" class="btn btn-sm btn-link text-danger ms-auto"
+                                        id="removeAnnouncementFile">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveAnnouncementBtn">Post Announcement</button>
+                    <!-- <button type="button" class="btn btn-primary" id="saveAnnouncementBtn">Post Announcement</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document viewer modal -->
+    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
+        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-wrap text-break"
+                        id="viewDocumentModalLabel">View Document</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="document-viewer" class="viewer"></div>
+                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
+                <canvas id="pdf-renderer"></canvas>
+            </div> -->
+                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
+                style="border: none;"></iframe> -->
+                </div>
+                <div class="modal-footer">
+                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
                 </div>
             </div>
         </div>
@@ -201,9 +206,27 @@
     <!-- Overlay for sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/dark-mode.js"></script>
-    <script src="../js/teacher-announcements.js"></script>
+    <!-- Import BootStrap JavaScript Library -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Import Wow Animation JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+
+    <script src="/static/js/dark-mode.js"></script>
+    <script src="/static/js/Teacher/teacher-announcements.js"></script>
+    <script src="/static/js/api_caller.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/loader.js"></script>
+
+    <script>
+        window.onload = async function () {
+            await HandleAnnouncementsDetail("{{csrf_token}}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'teacher-subjects-api-list' %}");
+            await loadSubjects();
+            toggle_loader();
+        }
+    </script>
 </body>
 
 </html>

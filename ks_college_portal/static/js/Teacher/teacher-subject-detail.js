@@ -90,30 +90,30 @@ async function loadSubjectDetails(subjectId) {
 function loadAnnouncements(subjectAnnouncements) {
 	const announcementsList = document.getElementById("announcementsList")
 
-	setTimeout(() => {
-		if (subjectAnnouncements.length === 0) {
-			announcementsList.innerHTML = '<div class="text-center py-4"><p>No announcements yet</p></div>'
-			return
+
+	if (subjectAnnouncements.length === 0) {
+		announcementsList.innerHTML = '<div class="text-center py-4"><p>No announcements yet</p></div>'
+		return
+	}
+
+	let html = ""
+	let index = 0
+	subjectAnnouncements.forEach((announcement) => {
+		index += 1;
+		let doc_html = ""
+
+		if (announcement.document_paths.length === 0) {
+			doc_html = "";
 		}
-
-		let html = ""
-		let index = 0
-		subjectAnnouncements.forEach((announcement) => {
-			index += 1;
-			let doc_html = ""
-
-			if (announcement.document_paths.length === 0) {
-				doc_html = "";
-			}
-			else {
-				announcement.document_paths.forEach((doc) => {
-					doc_path = String(doc).replace('\\', '/');
-					doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
+		else {
+			announcement.document_paths.forEach((doc) => {
+				doc_path = String(doc).replace('\\', '/');
+				doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
           </button>`
-				});
-			}
-			html += `
+			});
+		}
+		html += `
                 <div class="card announcement-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -122,13 +122,13 @@ function loadAnnouncements(subjectAnnouncements) {
                         </div>
                         <p class="card-text">${announcement.text_content}</p>
                         ${doc_html
-					? `
+				? `
                             <div class="mt-3 text-wrap text-break">
                                 ${doc_html}
                             </div>
                         `
-					: ""
-				}
+				: ""
+			}
                         <!-- Comments Section -->
                         <div class="mt-4">
                             <h6 class="mb-3"><i class="bi bi-chat-left-text me-2"></i>Comments (${announcement.comment_data ? announcement.comment_data.length : 0})</h6>
@@ -153,7 +153,7 @@ function loadAnnouncements(subjectAnnouncements) {
                             <!-- Comments List -->
                             <div class="comments-list">
                                 ${announcement.comment_data && announcement.comment_data.length > 0
-					? announcement.comment_data.map(comment => `
+				? announcement.comment_data.map(comment => `
                                         <div class="comment mb-3">
                                             <div class="comment-header">
                                                 <span class="comment-author">${comment.user_name}</span>
@@ -164,49 +164,49 @@ function loadAnnouncements(subjectAnnouncements) {
                                             </div>
                                         </div>
                                     `).join('')
-					: '<p class="text-muted">No comments yet. Be the first to comment!</p>'
-				}
+				: '<p class="text-muted">No comments yet. Be the first to comment!</p>'
+			}
                             </div>                        
                         </div>
                     </div>
                 </div>
             `
-		})
+	})
 
-		announcementsList.innerHTML = html
-	}, 1000) // Simulate loading delay
+	announcementsList.innerHTML = html
+
 }
 
 // Function to load assignments
 function loadAssignments(subjectAssignments) {
-	setTimeout(() => {
-		if (subjectAssignments.length === 0) {
-			assignmentsList.innerHTML = '<div class="text-center py-4"><p>No assignments yet</p></div>'
-			return
+
+	if (subjectAssignments.length === 0) {
+		assignmentsList.innerHTML = '<div class="text-center py-4"><p>No assignments yet</p></div>'
+		return
+	}
+
+	let html = ""
+	subjectAssignments.forEach((assignment) => {
+		let doc_html = ""
+
+		if (assignment.document_paths.length === 0) {
+			doc_html = "";
 		}
-
-		let html = ""
-		subjectAssignments.forEach((assignment) => {
-			let doc_html = ""
-
-			if (assignment.document_paths.length === 0) {
-				doc_html = "";
-			}
-			else {
-				assignment.document_paths.forEach((doc) => {
-					doc_path = String(doc).replace('\\', '/');
-					doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
+		else {
+			assignment.document_paths.forEach((doc) => {
+				doc_path = String(doc).replace('\\', '/');
+				doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
             <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
           </button>`
-				});
-			}
+			});
+		}
 
-			const dueDateTime = new Date(`${assignment.deadline_date}`)
-			const isOverdue = dueDateTime < new Date()
+		const dueDateTime = new Date(`${assignment.deadline_date}`)
+		const isOverdue = dueDateTime < new Date()
 
-			// <h5 class="card-title mb-0">${assignment.title}</h5>
+		// <h5 class="card-title mb-0">${assignment.title}</h5>
 
-			html += `
+		html += `
                 <div class="card assignment-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -217,13 +217,13 @@ function loadAssignments(subjectAssignments) {
                         <p class="card-text">${assignment.text_content}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
 						${doc_html
-					? `
+				? `
 											<div class="mt-3 text-wrap text-break">
 												${doc_html}
 											</div>
 										`
-					: ""
-				}
+				: ""
+			}
                         </div>					
 						<div class="d-flex justify-content-between align-items-center mt-3">
 							<span class="text-muted">${assignment.total_assignment_submitted} / ${student_counts} submissions</span>
@@ -234,34 +234,34 @@ function loadAssignments(subjectAssignments) {
                     </div>
                 </div>
             `
-		})
+	})
 
-		assignmentsList.innerHTML = html
-	}, 1000) // Simulate loading delay
+	assignmentsList.innerHTML = html
+
 }
 
 // Function to load attendance
 function loadAttendance(subjectAttendance) {
-	setTimeout(() => {
-		if (subjectAttendance.length === 0) {
-			attendanceList.innerHTML = '<div class="text-center py-4"><p>No attendance sessions yet</p></div>'
-			return
+
+	if (subjectAttendance.length === 0) {
+		attendanceList.innerHTML = '<div class="text-center py-4"><p>No attendance sessions yet</p></div>'
+		return
+	}
+
+	let html = ""
+	subjectAttendance.forEach((session) => {
+		const attendanceDate = new Date(`${session.created_at}`)
+		const attendancePercentage = Math.round((session.attendance_data.length / student_counts) * 100)
+		const now = new Date()
+		let attendanceEndDate = attendanceDate
+		attendanceEndDate.setHours(attendanceDate.getHours() + 1);
+		let attendance_completed = "In Progress";
+
+		if (attendanceEndDate <= now) {
+			attendance_completed = "Completed";
 		}
 
-		let html = ""
-		subjectAttendance.forEach((session) => {
-			const attendanceDate = new Date(`${session.created_at}`)
-			const attendancePercentage = Math.round((session.attendance_data.length / student_counts) * 100)
-			const now = new Date()
-			let attendanceEndDate = attendanceDate
-			attendanceEndDate.setHours(attendanceDate.getHours() + 1);
-			let attendance_completed = "In Progress";
-
-			if (attendanceEndDate <= now) {
-				attendance_completed = "Completed";
-			}
-
-			html += `
+		html += `
                 <div class="card attendance-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -304,10 +304,10 @@ function loadAttendance(subjectAttendance) {
                     </div>
                 </div>
             `
-		})
+	})
 
-		attendanceList.innerHTML = html
-	}, 1000) // Simulate loading delay
+	attendanceList.innerHTML = html
+	// Simulate loading delay
 }
 
 

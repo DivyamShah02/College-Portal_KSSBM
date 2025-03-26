@@ -68,3 +68,12 @@ class PlacementDetailViewSet(viewsets.ViewSet):
                 elif request.user.role == 'student':
                     return render(request, "Student/placement-detail.html")
         return redirect('dashboard-list')
+
+class AnnouncementsViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/announcements.html")
+            elif request.user.role == 'student':
+                return render(request, "Student/announcements.html")
+        return redirect('dashboard-list')
