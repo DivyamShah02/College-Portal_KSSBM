@@ -125,12 +125,27 @@ class AttendanceSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         if 'attendance_id' in representation:
-            attendance_data_obj = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'])
-            attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
+            attendance_data = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id']).count()
+            # attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
 
             representation['attendance_data'] = attendance_data
 
         return representation
+
+class StudentAttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        student_id = self.context.get('student_id', None)
+        if 'attendance_id' in representation:
+            attendance_marked = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'], student_id=student_id).exists()
+            representation['attendance_marked'] = attendance_marked
+
+        return representation
+
 
 class FullDetailsAttendanceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -165,10 +180,10 @@ class MarkedAttendanceSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         
         if 'student_id' in representation:
-            user_data_obj = User.objects.filter(user_id=representation['student_id'])
-            user_data = UserSerializer(user_data_obj, many=True).data
+            user_data_obj = User.objects.filter(user_id=representation['student_id']).first()
+            user_data = UserSerializer(user_data_obj).data
 
-            representation['student_name'] = user_data.name
+            representation['student_name'] = user_data_obj.name
             representation['user_data'] = user_data
 
         return representation

@@ -22,6 +22,7 @@ router.register(r'submit-assignments-api', SubmittedAssignmentViewSet, basename=
 router.register(r'all-assignments-submitted-api', AllSubmittedAssignmentViewSet, basename='all-assignments-submitted-api')
 
 router.register(r'attendance-api', AttendanceViewSet, basename='attendance-api')
+router.register(r'mark-attendance-api', MarkedAttendanceViewSet, basename='mark-attendance-api')
 
 
 urlpatterns = [

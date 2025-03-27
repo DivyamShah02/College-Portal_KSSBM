@@ -6,13 +6,14 @@ let teacher_subject_assignments_url = null;
 let teacher_subject_attendance_url = null;
 let teacher_all_assignment_url = null;
 let teacher_subject_submit_assignments_url = null;
+let teacher_subject_marked_attendance_url = null;
 let subjectId = null;
 let student_counts = null;
 let announcementSelectedFiles = [];
 let assignmentSelectedFiles = [];
 let subject = null;
 
-async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param, teacher_subject_attendance_url_param, teacher_all_assignment_url_param, teacher_subject_submit_assignments_url_param) {
+async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url_param, teacher_subject_announcements_url_param, teacher_subject_announcements_comments_url_param, teacher_subject_assignments_url_param, teacher_subject_attendance_url_param, teacher_all_assignment_url_param, teacher_subject_submit_assignments_url_param, teacher_subject_marked_attendance_url_param) {
 	csrf_token = csrf_token_param;
 	teacher_subject_details_url = teacher_subject_details_url_param;
 	teacher_subject_announcements_url = teacher_subject_announcements_url_param;
@@ -21,17 +22,33 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 	teacher_subject_attendance_url = teacher_subject_attendance_url_param;
 	teacher_all_assignment_url = teacher_all_assignment_url_param;
 	teacher_subject_submit_assignments_url = teacher_subject_submit_assignments_url_param;
+	teacher_subject_marked_attendance_url = teacher_subject_marked_attendance_url_param;
 
 	const urlParams = new URLSearchParams(window.location.search);
 	subjectId = urlParams.get("subject_id");
+	const action = urlParams.get("action");
+
+	const createdAttendanceModal = document.getElementById("createdAttendanceModal");
+
+    createdAttendanceModal.addEventListener("hidden.bs.modal", function () {
+		let url = new URL(window.location.href);
+        url.searchParams.set("action", "attendance");
+        window.location.href = url.toString();
+    });
+	await loadSubjectDetails(subjectId);
+
+	if (action === "attendance") {
+		document.getElementById("attendance-tab").click();
+	}
+	else if (action === "assignments") {
+		document.getElementById("assignments-tab").click();
+	}
 
 	if (!subjectId) {
 		window.location.href = "/subjects/";
 		console.log('erabgyuobboawgreuy');
 		return;
 	}
-
-	await loadSubjectDetails(subjectId);
 
 }
 
@@ -251,7 +268,7 @@ function loadAttendance(subjectAttendance) {
 	let html = ""
 	subjectAttendance.forEach((session) => {
 		const attendanceDate = new Date(`${session.created_at}`)
-		const attendancePercentage = Math.round((session.attendance_data.length / student_counts) * 100)
+		const attendancePercentage = Math.round((session.attendance_data / student_counts) * 100)
 		const now = new Date()
 		let attendanceEndDate = attendanceDate
 		attendanceEndDate.setHours(attendanceDate.getHours() + 1);
@@ -273,9 +290,9 @@ function loadAttendance(subjectAttendance) {
                         <div class="row g-3">
 							<div class="col-6">
                                 <div class="d-flex align-items-center">
-                                    <i class="bi bi-calendar text-primary me-2"></i>
+                                    <i class="bi bi-calendar me-2"></i>
                                     <div>
-                                        <small class="text-muted d-block">Unique Code</small>
+                                        <small class="text-muted d-block">Attendance Code</small>
                                         <span>${session.code}</span>
                                     </div>
                                 </div>
@@ -286,7 +303,7 @@ function loadAttendance(subjectAttendance) {
                                     <i class="bi bi-people text-success me-2"></i>
                                     <div>
                                         <small class="text-muted d-block">Attendance</small>
-                                        <span>${session.attendance_data.length} / ${student_counts} (${attendancePercentage}%)</span>
+                                        <span>${session.attendance_data} / ${student_counts} (${attendancePercentage}%)</span>
                                     </div>
                                 </div>
                             </div>
@@ -297,7 +314,7 @@ function loadAttendance(subjectAttendance) {
                             </div>
                         </div>
                         <div class="mt-3">
-                            <button class="btn btn-sm btn-outline-primary">
+                            <button class="btn btn-sm btn-outline-primary" onclick="view_students_attendance(${session.attendance_id})">
                                 <i class="bi bi-eye me-2"></i>View Details
                             </button>
                         </div>
@@ -399,7 +416,9 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 	console.log(result);
 	if (success) {
 		if (result.success) {
-			location.reload();
+			let url = new URL(window.location.href);
+			url.searchParams.set("action", "assignments");
+			window.location.href = url.toString();
 		}
 	}
 
@@ -711,4 +730,59 @@ function openDocModal(doc_path, doc_name) {
 	document.getElementById('viewDocumentModalLabel').innerText = doc_name;
 	const myModal = new bootstrap.Modal(document.getElementById('viewDocumentModal'));
 	myModal.show();
+}
+
+
+async function view_students_attendance(attendance_id) {
+	const AttendanceStudentsListModal = new bootstrap.Modal(document.getElementById("AttendanceStudentsListModal"));
+	AttendanceStudentsListModal.show();
+	const container = document.getElementById('AttendanceStudentsListTable');
+	container.innerHTML = ''
+	container.innerHTML = '<div class="col-12 text-center py-5"><h5>Loading...</h5></div>';
+	await get_marked_attendance(attendance_id);
+
+}
+
+async function get_marked_attendance(attendance_id) {
+	const Params = {
+		attendance_id: attendance_id
+	};
+
+	const url = `${teacher_subject_marked_attendance_url}?` + toQueryString(Params);
+	const [success, result] = await callApi("GET", url);
+	console.log(result);
+	if (success) {
+		if (result.success) {
+			console.log(result.data);
+			loadAttendanceStudentsList(result.data.all_marked_attendances, attendance_id);
+
+		}
+		else {
+
+			return;
+		}
+	} else {
+
+		return;
+	}
+}
+
+// Function to load students list
+function loadAttendanceStudentsList(AttendanceStudent, attendance_id) {
+	const AttendanceStudentsListTable = document.getElementById("AttendanceStudentsListTable")
+
+	if (!AttendanceStudentsListTable) return
+
+	let html = ""
+	AttendanceStudent.forEach((student) => {
+		html += `
+            <tr>
+                <td class="text-nowrap text-center">${student.student_roll_no}</td>
+                <td class="text-nowrap text-center">${student.student_name}</td>
+                <td class="text-nowrap text-center">${student.attendance_marked ? '<i class="bi bi-check2"></i>' : '<i class="bi bi-x"></i>'}</td>                
+            </tr>
+        `
+	})
+
+	AttendanceStudentsListTable.innerHTML = html
 }

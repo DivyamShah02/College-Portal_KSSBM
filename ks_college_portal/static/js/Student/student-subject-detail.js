@@ -3,18 +3,20 @@ let student_subject_details_url = null;
 let student_subject_announcements_url = null;
 let student_subject_announcements_comments_url = null;
 let student_subject_submit_assignments_url = null;
+let student_subject_mark_attendance_url = null;
 let subjectId = null;
 let student_counts = null;
 let assignmentSelectedFiles = [];
 let subject = null;
 let student_id = null;
 
-async function HandleSubjectDetail(csrf_token_param, student_subject_details_url_param, student_subject_announcements_url_param, student_subject_announcements_comments_url_param, student_subject_submit_assignments_url_param, student_id_param) {
+async function HandleSubjectDetail(csrf_token_param, student_subject_details_url_param, student_subject_announcements_url_param, student_subject_announcements_comments_url_param, student_subject_submit_assignments_url_param, student_id_param, student_subject_mark_attendance_url_param) {
   csrf_token = csrf_token_param;
   student_subject_details_url = student_subject_details_url_param;
   student_subject_announcements_url = student_subject_announcements_url_param;
   student_subject_announcements_comments_url = student_subject_announcements_comments_url_param;
   student_subject_submit_assignments_url = student_subject_submit_assignments_url_param;
+  student_subject_mark_attendance_url = student_subject_mark_attendance_url_param;
   student_id = student_id_param;
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -27,6 +29,33 @@ async function HandleSubjectDetail(csrf_token_param, student_subject_details_url
   }
 
   await loadSubjectDetails(subjectId);
+
+  const submitAttendanceBtn = document.getElementById("submitAttendanceBtn")
+  if (submitAttendanceBtn) {
+    submitAttendanceBtn.addEventListener("click", submitAttendance)
+  }
+
+  const inputs = document.querySelectorAll(".attendance-code-input");
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", (event) => {
+      if (event.target.value.length === 1) {
+        const nextInput = inputs[index + 1];
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Backspace" && event.target.value === "") {
+        const prevInput = inputs[index - 1];
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
+    });
+  });
+
 
 }
 
@@ -252,55 +281,65 @@ function loadAttendance(subjectAttendance) {
   let html = ""
   subjectAttendance.forEach((session) => {
     const attendanceDate = new Date(`${session.created_at}`)
-    const attendancePercentage = Math.round((session.attendance_data.length / student_counts) * 100)
+    console.log(session.created_at)
+
     const now = new Date()
     let attendanceEndDate = attendanceDate
     attendanceEndDate.setHours(attendanceDate.getHours() + 1);
-    let attendance_completed = "In Progress";
+
+    let attendancePercentage = getAssignmentProgress(new Date(`${session.created_at}`), attendanceEndDate)
+    let attendanceProgressColor = getProgressColor(attendancePercentage);
+
+    let attendance_completed = "Live";
+    let attendance_badge_bg = "primary";
+    let attendance_still_live = true;
 
     if (attendanceEndDate <= now) {
-      attendance_completed = "Completed";
+      attendance_still_live = false;
+      if (!session.attendance_marked) {
+        attendance_completed = "Absent";
+        attendance_badge_bg = "danger";
+      }
+
+      else {
+        attendance_completed = "Present";
+        attendance_badge_bg = "success";
+        attendance_still_live = false;
+        attendancePercentage = 100
+        attendanceProgressColor = "success";
+      }
     }
+    else {
+      if (session.attendance_marked) {
+          attendance_completed = "Present";
+          attendance_badge_bg = "success";
+          attendance_still_live = false;
+          attendancePercentage = 100
+          attendanceProgressColor = "success";
+      }
+
+    }
+
+    console.log(attendanceProgressColor);
 
     html += `
                 <div class="card attendance-card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="card-title mb-0">${attendanceDate.toLocaleString()}</h6>
-                            <span class="badge bg-${attendance_completed === "Completed" ? "success" : "primary"} text-white">
+                            <h6 class="card-title mb-0">${attendanceEndDate.toLocaleString()}</h6>
+                            <span class="badge bg-${attendance_badge_bg} text-white">
                                 ${attendance_completed}
                             </span>
-                        </div>
-                        <div class="row g-3">
-							<div class="col-6">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-calendar text-primary me-2"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Unique Code</small>
-                                        <span>${session.code}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-people text-success me-2"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Attendance</small>
-                                        <span>${session.attendance_data.length} / ${student_counts} (${attendancePercentage}%)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </div>                        
                         <div class="mt-3">
                             <div class="progress" style="height: 10px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: ${attendancePercentage}%;" aria-valuenow="${attendancePercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-${attendanceProgressColor}" role="progressbar" style="width: ${attendancePercentage}%;" aria-valuenow="${attendancePercentage}" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
                         <div class="mt-3">
-                            <button class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye me-2"></i>View Details
-                            </button>
+                        ${attendance_still_live ? `<button class="btn btn-sm btn-primary" onclick="mark_attendance(${session.attendance_id})">
+                                <i class="bi bi-calendar-check me-2"></i>Mark Attendance
+                            </button>` : ''}                            
                         </div>
                     </div>
                 </div>
@@ -308,6 +347,25 @@ function loadAttendance(subjectAttendance) {
   })
 
   attendanceList.innerHTML = html
+}
+
+function getAssignmentProgress(createdAt, deadline) {
+
+  const currentTime = new Date();
+
+  if (currentTime < createdAt) return 0;
+  if (currentTime > deadline) return 100;
+
+  const totalDuration = deadline - createdAt;
+  const elapsedDuration = currentTime - createdAt;
+
+  return (elapsedDuration / totalDuration) * 100;
+}
+
+function getProgressColor(percentage) {
+  if (percentage < 25) return 'info';
+  if (percentage < 75) return 'warning';
+  return 'danger';
 }
 
 async function addComment(index, announcement_id) {
@@ -494,4 +552,57 @@ function openDocModal(doc_path, doc_name) {
   document.getElementById('viewDocumentModalLabel').innerText = doc_name;
   const myModal = new bootstrap.Modal(document.getElementById('viewDocumentModal'));
   myModal.show();
+}
+
+function mark_attendance(attendance_id) {
+  document.getElementById('attendance_id').value = attendance_id;
+  const markAttendanceModal = new bootstrap.Modal(document.getElementById('markAttendanceModal'));
+  markAttendanceModal.show();
+}
+
+async function submitAttendance() {
+  const inputs = document.querySelectorAll(".attendance-code-input");
+  document.getElementById('mark-attendance-error').style.display = 'none';
+  let code = ""
+
+  inputs.forEach((input) => {
+    code += input.value
+  })
+
+  if (code.length !== 6) {
+    alert("Please enter a valid 6-digit attendance code")
+    return
+  }
+
+  let bodyData = {
+    attendance_id: document.getElementById('attendance_id').value,
+    unique_code: code
+  }
+
+  const url = student_subject_mark_attendance_url;
+  const [success, result] = await callApi("POST", url, bodyData, csrf_token);
+  if (success) {
+    console.log("Result:", result);
+
+    if (result.success) {
+      location.reload();
+    }
+
+    else {
+      document.getElementById('mark-attendance-error').style.display = '';
+      document.getElementById('mark-attendance-error').innerText = result.error;
+      inputs[0].focus();
+    }
+
+  } else {
+    document.getElementById('mark-attendance-error').style.display = '';
+    document.getElementById('mark-attendance-error').innerText = 'Unexpected Error occured!';
+    inputs[0].focus();
+  }
+
+  // Reset inputs
+  inputs.forEach((input) => {
+    input.value = ""
+  })
+
 }

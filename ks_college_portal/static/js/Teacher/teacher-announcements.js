@@ -139,8 +139,10 @@ function loadAnnouncements(subjectAnnouncements) {
 }
 
 async function loadSubjects() {
-  const subjectsList = document.getElementById("subjectFilter")
+  const subjectsList = document.getElementById("subjectFilter");
+  const subject_id_select = document.getElementById("subject_id_select");
   subjectsList.innerHTML = '';
+  subject_id_select.innerHTML = '';
 
   if (!subjectsList) return
 
@@ -156,6 +158,7 @@ async function loadSubjects() {
       });
 
       subjectsList.innerHTML = options_html;
+      subject_id_select.innerHTML = options_html;
 
     }
     else {
@@ -268,7 +271,7 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 
 	// formData.append(`files`, selectedFiles);
 	formData.append(`text_content`, document.getElementById('text_content_announcement').value);
-	formData.append(`subject_id`, subjectId);
+	formData.append(`subject_id`, document.getElementById('subject_id_select').value);
 
 	const url = teacher_subject_announcements_url;
 	const [success, result] = await callApi("POST", url, formData, csrf_token, true);

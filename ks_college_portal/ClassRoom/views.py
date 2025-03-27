@@ -674,7 +674,7 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                             total_assignments_pending+=1
 
                     all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
-                    all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
+                    all_attendance = StudentAttendanceSerializer(all_attendance_obj, many=True, context={'student_id': user}).data
                     
                     subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
                     subject_data = StudentSubjectSerializer(subject_data_obj).data
@@ -1881,7 +1881,7 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            attendance_details = Attendance.objects.filter(attendance_id=attendance_id).first()
+            attendance_details = Attendance.objects.filter(attendance_id=attendance_id, code=unique_code).first()
             if not attendance_details:
                 return Response(
                         {
@@ -1889,7 +1889,7 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
                             "data": None,
-                            "error": 'Attendance id is not valid.'
+                            "error": 'Attendance code is not valid.'
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
@@ -1966,7 +1966,7 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            attendance_id = request.data.get('attendance_id')           
+            attendance_id = request.GET.get('attendance_id')           
             if attendance_id is None:
                 return Response(
                         {
@@ -1974,17 +1974,28 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                             "user_not_logged_in": False,
                             "user_unauthorized": False,                            
                             "data": None,
-                            "error": 'Subject id not provided.'
+                            "error": 'Attendance id not provided.'
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            all_attendance_obj = MarkedAttendance.objects.filter(attendance_id=attendance_id)
-            all_attendance = MarkedAttendanceSerializer(all_attendance_obj, many=True).data
+            attendance_data = Attendance.objects.filter(attendance_id=attendance_id).first()
+            
+            subject_data = Subject.objects.filter(subject_id=attendance_data.subject_id).first()
+            all_students = User.objects.filter(year=str(subject_data.college_year).lower().replace(' ', '_'), division=subject_data.class_division)
 
+            all_marked_attendances = []
+            for student in all_students:
+                attendance_marked = MarkedAttendance.objects.filter(attendance_id=attendance_id, student_id=student.user_id).exists()
+                all_marked_attendances.append({
+                    "attendance_marked": attendance_marked,
+                    "student_name": student.name,
+                    "student_id": student.user_id,
+                    "student_roll_no": student.roll_no
+                })
+            
             data = {
-                'all_attendance': all_attendance,
-                'total_subjects': len(all_attendance),
+                'all_marked_attendances': all_marked_attendances,                
             }
             return Response(
                     {

@@ -325,6 +325,40 @@
         </div>
     </div>
 
+    <!-- Mark Attendance Modal -->
+    <div class="modal fade" id="markAttendanceModal" tabindex="-1" aria-labelledby="markAttendanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="markAttendanceModalLabel">Mark Attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" id="mark-attendance-error" style="display: none;">
+                        Unexpected Error occured!
+                    </div>
+                    <p class="text-center mb-4">Enter the attendance code provided by your instructor:</p>
+                    <div class="code-input">
+                        <input type="text" maxlength="1" class="attendance-code-input" autofocus>
+                        <input type="text" maxlength="1" class="attendance-code-input">
+                        <input type="text" maxlength="1" class="attendance-code-input">
+                        <input type="text" maxlength="1" class="attendance-code-input">
+                        <input type="text" maxlength="1" class="attendance-code-input">
+                        <input type="text" maxlength="1" class="attendance-code-input">
+                    </div>
+                    <input type="hidden" name="attendance_id" id="attendance_id">
+                    <div class="text-center mt-3">
+                        <small class="text-muted">The attendance code is valid for a limited time only.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitAttendanceBtn">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Overlay for sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -344,7 +378,7 @@
 
     <script>
         window.onload = async function () {
-            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{{user.user_id}}");
+            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{{user.user_id}}", "{% url 'mark-attendance-api-list' %}");
             toggle_loader();
         }
     </script>

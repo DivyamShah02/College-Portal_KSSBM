@@ -120,10 +120,10 @@ function loadRecentAnnouncements(announcements) {
     }
     else {
       announcement.document_paths.forEach((doc) => {
-
-        doc_html += `<a href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2">
-          <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
-        </a>`
+        doc_path = String(doc).replace('\\', '/');
+        doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
+            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+          </button>`        
       });
     }
     html += `
@@ -177,5 +177,12 @@ function loadUpcomingPlacements(placements) {
   })
 
   upcomingPlacementsList.innerHTML = html
+}
+
+function openDocModal(doc_path, doc_name) {
+  displayDocument(doc_path);
+  document.getElementById('viewDocumentModalLabel').innerText = doc_name;
+  const myModal = new bootstrap.Modal(document.getElementById('viewDocumentModal'));
+  myModal.show();
 }
 

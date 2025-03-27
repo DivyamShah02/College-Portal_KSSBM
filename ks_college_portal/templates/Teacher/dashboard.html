@@ -129,7 +129,7 @@
                         <div class="card h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Recent Subjects</h5>
-                                <a href="subjects.html" class="btn btn-sm btn-outline-primary">View All</a>
+                                <a href="{% url 'subjects-list' %}" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
                             <div class="card-body" id="recentSubjects">
                                 <div class="table-responsive">
@@ -187,7 +187,7 @@
                         <div class="card h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Recent Announcements</h5>
-                                <a href="announcements.html" class="btn btn-sm btn-outline-primary">View All</a>
+                                <a href="{% url 'announcements-list' %}" class="btn btn-sm btn-outline-primary">View All</a>
                             </div>
                             <div class="card-body" id="recentAnnouncements">
                                 <div id="recentAnnouncementsList">
@@ -213,6 +213,32 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document viewer modal -->
+    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
+        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-wrap text-break"
+                        id="viewDocumentModalLabel">View Document</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="document-viewer" class="viewer"></div>
+                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
+                <canvas id="pdf-renderer"></canvas>
+            </div> -->
+                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
+                style="border: none;"></iframe> -->
+                </div>
+                <div class="modal-footer">
+                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
                 </div>
             </div>
         </div>

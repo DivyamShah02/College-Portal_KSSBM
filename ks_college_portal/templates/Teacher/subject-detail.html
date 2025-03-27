@@ -528,6 +528,38 @@
         </div>
     </div>
 
+    <!-- Attendance Students List Modal -->
+    <div class="modal fade" id="AttendanceStudentsListModal" tabindex="-1" aria-labelledby="AttendanceStudentsListModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AttendanceStudentsListModalLabel">Student's Assignment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap p-3 text-center">Student Roll No</th>
+                                    <th class="text-nowrap p-3 text-center">Student Name</th>
+                                    <th class="text-nowrap p-3 text-center">Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="AttendanceStudentsListTable">
+                                <!-- Dynamically populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Document viewer modal -->
     <div class="modal fade" id="viewDocumentModal" tabindex="-1"
         aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
@@ -573,7 +605,7 @@
 
     <script>
         window.onload = async function () {
-            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}", "{% url 'all-assignments-submitted-api-list' %}", "{% url 'submit-assignments-api-list' %}");
+            await HandleSubjectDetail("{{csrf_token}}", "{% url 'subject-detail-api-list' %}", "{% url 'announcements-api-list' %}", "{% url 'comment-api-list' %}", "{% url 'assignments-api-list' %}", "{% url 'attendance-api-list' %}", "{% url 'all-assignments-submitted-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{% url 'mark-attendance-api-list' %}");
             toggle_loader();
         }
     </script>
