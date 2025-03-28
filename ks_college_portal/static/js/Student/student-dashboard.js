@@ -2,14 +2,16 @@ let csrf_token = null;
 let student_dashboard_url = null;
 let student_dashboard_pending_assignment_count_url = null;
 let student_subject_submit_assignments_url = null;
+let student_dashboard_marked_attendance_url = null;
 let assignmentSelectedFiles = [];
 let dashboard_data = null;
 
-async function StudentDashboard(csrf_token_param, student_dashboard_url_param, student_dashboard_pending_assignment_count_url_param, student_subject_submit_assignments_url_param) {
+async function StudentDashboard(csrf_token_param, student_dashboard_url_param, student_dashboard_pending_assignment_count_url_param, student_subject_submit_assignments_url_param, student_dashboard_marked_attendance_url_param) {
   csrf_token = csrf_token_param;
   student_dashboard_url = student_dashboard_url_param;
   student_dashboard_pending_assignment_count_url = student_dashboard_pending_assignment_count_url_param;
   student_subject_submit_assignments_url = student_subject_submit_assignments_url_param;
+  student_dashboard_marked_attendance_url = student_dashboard_marked_attendance_url_param;
 
   const url = student_dashboard_url;
   const [success, result] = await callApi("GET", url);
@@ -375,3 +377,43 @@ document.getElementById("submit_assignment_form").addEventListener("submit", asy
 
 
 });
+
+async function GetMarkedAttendanceCount() {
+  const url = student_dashboard_marked_attendance_url;
+  const [success, result] = await callApi("GET", url);
+  console.log(result);
+  if (success) {
+    if (result.success) {
+      document.getElementById("attendance_percentage").innerText = `${result.data.total_attendance_percentage}%`;
+
+      let subject_details_container = document.getElementById('subject_wise_attendance')
+      subject_details_container.innerHTML = '';
+      let subject_html_content = '';
+
+      result.data.all_subject_attendance.forEach((subject_attendance) => {
+        subject_html_content += `
+          <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                  <span>${subject_attendance.subject_name} (${subject_attendance.marked_attendances}/${subject_attendance.all_attendance_subject})</span>
+                  <span>${subject_attendance.attendance_percentage}%</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: ${subject_attendance.attendance_percentage}%;" aria-valuenow="${subject_attendance.attendance_percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+          </div>
+        `
+      });
+
+      subject_details_container.innerHTML = subject_html_content;
+
+      let circle = document.querySelector('.circle');
+      circle.setAttribute('stroke-dasharray', `${result.data.total_attendance_percentage}, 100`);
+      document.getElementById('total_attendance_percentage').innerText = `${result.data.total_attendance_percentage}%`;
+      
+    }
+    else {
+    }
+  } else {
+  }
+
+}

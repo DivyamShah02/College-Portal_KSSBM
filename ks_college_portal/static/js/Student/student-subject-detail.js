@@ -92,7 +92,7 @@ async function loadSubjectDetails(subjectId) {
   document.getElementById("professorName").textContent = subject.subject_data.teacher_name
   document.getElementById("announcementsCount").textContent = subject.total_announcements
   document.getElementById("assignmentsCount").textContent = `${subject.total_assignments_pending} Pending, ${subject.total_assignments_submitted} Completed`
-  document.getElementById("attendanceSessions").textContent = subject.total_attendances
+  document.getElementById("attendanceSessions").textContent = `${subject.attendance_percentage}% (${subject.total_marked_attendance}/${subject.total_attendances} classes)`
   // document.getElementById("subjectImage").src = subject.image
 
   // Update subject badges

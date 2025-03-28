@@ -164,8 +164,8 @@ class FullDetailsAttendanceSerializer(serializers.ModelSerializer):
             representation['student_counts'] = student_counts
 
         if 'attendance_id' in representation:
-            attendance_data_obj = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id'])
-            attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
+            attendance_data = MarkedAttendance.objects.filter(attendance_id=representation['attendance_id']).count()
+            # attendance_data = MarkedAttendanceSerializer(attendance_data_obj, many=True).data
 
             representation['attendance_data'] = attendance_data
 

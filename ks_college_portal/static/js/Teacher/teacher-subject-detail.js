@@ -7,7 +7,7 @@ let teacher_subject_attendance_url = null;
 let teacher_all_assignment_url = null;
 let teacher_subject_submit_assignments_url = null;
 let teacher_subject_marked_attendance_url = null;
-let subjectId = null;
+let placementId = null;
 let student_counts = null;
 let announcementSelectedFiles = [];
 let assignmentSelectedFiles = [];
@@ -25,7 +25,7 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 	teacher_subject_marked_attendance_url = teacher_subject_marked_attendance_url_param;
 
 	const urlParams = new URLSearchParams(window.location.search);
-	subjectId = urlParams.get("subject_id");
+	placementId = urlParams.get("subject_id");
 	const action = urlParams.get("action");
 
 	const createdAttendanceModal = document.getElementById("createdAttendanceModal");
@@ -35,7 +35,7 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
         url.searchParams.set("action", "attendance");
         window.location.href = url.toString();
     });
-	await loadSubjectDetails(subjectId);
+	await loadPlacementDetails(placementId);
 
 	if (action === "attendance") {
 		document.getElementById("attendance-tab").click();
@@ -44,7 +44,7 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 		document.getElementById("assignments-tab").click();
 	}
 
-	if (!subjectId) {
+	if (!placementId) {
 		window.location.href = "/subjects/";
 		console.log('erabgyuobboawgreuy');
 		return;
@@ -53,7 +53,7 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 }
 
 // Function to load subject details
-async function loadSubjectDetails(subjectId) {
+async function loadPlacementDetails(subjectId) {
 	const Params = {
 		subject_id: subjectId
 	};
@@ -408,7 +408,7 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 
 	// formData.append(`files`, selectedFiles);
 	formData.append(`text_content`, document.getElementById('text_content_announcement').value);
-	formData.append(`subject_id`, subjectId);
+	formData.append(`subject_id`, placementId);
 
 	const url = teacher_subject_announcements_url;
 	const [success, result] = await callApi("POST", url, formData, csrf_token, true);
@@ -450,7 +450,7 @@ document.getElementById("add_assignment_form").addEventListener("submit", async 
 
 	// formData.append(`files`, selectedFiles);
 	formData.append(`text_content`, document.getElementById('text_content_assignment').value);
-	formData.append(`subject_id`, subjectId);
+	formData.append(`subject_id`, placementId);
 
 	const deadlineDate = dateInput.value
 	const deadlineTime = timeInput.value
@@ -552,7 +552,7 @@ if (dateInput && timeInput) {
 
 async function createAttendance() {
 	let bodyData = {
-		subject_id: subjectId
+		subject_id: placementId
 	}
 	const url = teacher_subject_attendance_url;
 	const [success, result] = await callApi("POST", url, bodyData, csrf_token);

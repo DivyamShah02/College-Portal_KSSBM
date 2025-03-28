@@ -92,7 +92,7 @@ function loadRecentAttendance(attendances) {
             <tr>
                 <td class="text-nowrap">${attendance.subject_name}</td>
                 <td>${new Date(attendance.created_at).toLocaleDateString()}</td>
-                <td>${attendance.attendance_data.length}/${attendance.student_counts}</td>
+                <td>${attendance.attendance_data}/${attendance.student_counts}</td>
                 <td><span class="badge bg-${attendance_completed === "Completed" ? "success" : "primary"}">${attendance_completed}</span></td>
             </tr>
         `

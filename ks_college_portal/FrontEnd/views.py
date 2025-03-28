@@ -52,20 +52,20 @@ class SubjectDetailViewSet(viewsets.ViewSet):
 class PlacementViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
-            if request.user.year == 'fifth_year':
-                if request.user.role == 'teacher':
-                    return render(request, "Teacher/placements.html")
-                elif request.user.role == 'student':
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/placements.html")
+            if request.user.role == 'student':
+                if request.user.year == 'fifth_year':
                     return render(request, "Student/placements.html")
         return redirect('dashboard-list')
 
 class PlacementDetailViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:
-            if request.user.year == 'fifth_year':
-                if request.user.role == 'teacher':
-                    return render(request, "Teacher/placement-detail.html")
-                elif request.user.role == 'student':
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/placement-detail.html")
+            if request.user.role == 'student':
+                if request.user.year == 'fifth_year':
                     return render(request, "Student/placement-detail.html")
         return redirect('dashboard-list')
 

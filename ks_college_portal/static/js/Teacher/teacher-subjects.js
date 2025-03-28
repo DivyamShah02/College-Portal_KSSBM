@@ -66,6 +66,7 @@ document.getElementById("add_subject_form").addEventListener("submit", async (ev
       console.log("Result:", result);
 
       if (result.success) {
+        document.getElementById("close_add_subject_modal").click();
         await loadSubjects();
       }
 

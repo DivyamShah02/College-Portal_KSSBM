@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Details | Teacher Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler border-0" type="button" id="sidebar-toggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand ms-lg-3" href="#">
+                <img src="../assets/logo.png" alt="Logo" height="30" class="d-inline-block align-text-top me-2">
+                Teacher Portal
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="dropdown me-3">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="min-width: 300px;">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">New assignment submission</a></li>
+                        <li><a class="dropdown-item" href="#">Attendance updated</a></li>
+                        <li><a class="dropdown-item" href="#">New announcement posted</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=Teacher&background=random" alt="Teacher" width="32" height="32" class="rounded-circle me-2">
+                        <span>Teacher</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="../index.html"><i class="bi bi-box-arrow-right me-2"></i>Sign out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="d-flex flex-column p-3">
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="dashboard.html" class="nav-link">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="subjects.html" class="nav-link">
+                                <i class="bi bi-book me-2"></i>Subjects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="assignments.html" class="nav-link">
+                                <i class="bi bi-file-earmark-text me-2"></i>Assignments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="attendance.html" class="nav-link">
+                                <i class="bi bi-calendar-check me-2"></i>Attendance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="announcements.html" class="nav-link">
+                                <i class="bi bi-megaphone me-2"></i>Announcements
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="students.html" class="nav-link">
+                                <i class="bi bi-people me-2"></i>Students
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="placements.html" class="nav-link active">
+                                <i class="bi bi-briefcase me-2"></i>Placements
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small">Dark Mode</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar Overlay -->
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+            <!-- Main Content -->
+            <main class="main-content col py-3">
+                <div class="container-fluid">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+                            <li class="breadcrumb-item"><a href="placements.html">Placements</a></li>
+                            <li class="breadcrumb-item active" aria-current="page" id="company-name-breadcrumb">Company Name</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Company Header -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    <img id="company-logo" src="/placeholder.svg?height=120&width=120" alt="Company Logo" class="img-fluid mb-3 mb-md-0" style="max-height: 120px;">
+                                </div>
+                                <div class="col-md-7">
+                                    <h2 id="company-name" class="mb-1">Company Name</h2>
+                                    <p id="company-description" class="text-muted mb-2">Company description and details will appear here.</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        <span id="company-location" class="badge bg-secondary"><i class="bi bi-geo-alt me-1"></i>Location</span>
+                                        <span id="company-role" class="badge bg-info"><i class="bi bi-briefcase me-1"></i>Role</span>
+                                        <span id="company-package" class="badge bg-success"><i class="bi bi-currency-dollar me-1"></i>Package</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-3"><i class="bi bi-calendar-event me-1"></i> <span id="drive-date">Drive Date: TBD</span></span>
+                                        <span><i class="bi bi-hourglass-split me-1"></i> <span id="application-deadline">Deadline: TBD</span></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                    <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
+                                        <i class="bi bi-megaphone me-1"></i> New Announcement
+                                    </button>
+                                    <div class="d-flex justify-content-md-end">
+                                        <span class="badge bg-primary p-2 me-2">
+                                            <i class="bi bi-people-fill me-1"></i> <span id="registered-count">0</span> Registered
+                                        </span>
+                                        <span class="badge bg-success p-2">
+                                            <i class="bi bi-check-circle-fill me-1"></i> <span id="selected-count">0</span> Selected
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Announcements Section -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Announcements</h5>
+                                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
+                                        <i class="bi bi-plus-lg"></i> Add
+                                    </button>
+                                </div>
+                                <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                                    <div id="announcements-container">
+                                        <!-- Announcements will be loaded here -->
+                                        <div class="text-center py-5 text-muted" id="no-announcements">
+                                            <i class="bi bi-megaphone display-4"></i>
+                                            <p class="mt-3">No announcements yet</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Registered Students Section -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Registered Students</h5>
+                                    <div class="input-group" style="max-width: 250px;">
+                                        <input type="text" class="form-control form-control-sm" id="student-search" placeholder="Search students...">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" id="export-csv">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                                    <div class="mb-3">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                                            <button type="button" class="btn btn-outline-primary" data-filter="pending">Pending</button>
+                                            <button type="button" class="btn btn-outline-primary" data-filter="selected">Selected</button>
+                                            <button type="button" class="btn btn-outline-primary" data-filter="rejected">Rejected</button>
+                                        </div>
+                                    </div>
+                                    <div id="students-container">
+                                        <!-- Students will be loaded here -->
+                                        <div class="text-center py-5 text-muted" id="no-students">
+                                            <i class="bi bi-people display-4"></i>
+                                            <p class="mt-3">No students registered yet</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- New Announcement Modal -->
+    <div class="modal fade" id="newAnnouncementModal" tabindex="-1" aria-labelledby="newAnnouncementModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newAnnouncementModalLabel">New Placement Announcement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="announcement-form">
+                        <div class="mb-3">
+                            <label for="announcement-title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="announcement-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcement-content" class="form-label">Content</label>
+                            <textarea class="form-control" id="announcement-content" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="announcement-file" class="form-label">Attachment (Optional)</label>
+                            <div class="file-upload">
+                                <label for="announcement-file" class="file-upload-label">
+                                    <i class="bi bi-cloud-upload"></i>
+                                    <span>Click to upload file</span>
+                                </label>
+                                <input type="file" class="file-upload-input" id="announcement-file">
+                            </div>
+                            <div id="selected-file" class="mt-2 d-none">
+                                <div class="d-flex align-items-center p-2 border rounded">
+                                    <i class="bi bi-file-earmark me-2"></i>
+                                    <span id="file-name">filename.pdf</span>
+                                    <button type="button" class="btn btn-sm btn-link text-danger ms-auto" id="remove-file">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submit-announcement">Post Announcement</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <img id="student-avatar" src="/placeholder.svg?height=150&width=150" alt="Student" class="img-fluid rounded-circle mb-2" style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 id="student-name">Student Name</h5>
+                            <p id="student-id" class="text-muted">Student ID</p>
+                            <div id="student-status-badge" class="badge bg-warning">Pending</div>
+                        </div>
+                        <div class="col-md-8">
+                            <h6>Personal Information</h6>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Email:</strong></p>
+                                    <p id="student-email">student@example.com</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Phone:</strong></p>
+                                    <p id="student-phone">+1234567890</p>
+                                </div>
+                            </div>
+                            
+                            <h6>Academic Information</h6>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Department:</strong></p>
+                                    <p id="student-department">Computer Science</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Year:</strong></p>
+                                    <p id="student-year">Third Year</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>CGPA:</strong></p>
+                                    <p id="student-cgpa">8.5</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Backlogs:</strong></p>
+                                    <p id="student-backlogs">None</p>
+                                </div>
+                            </div>
+                            
+                            <h6>Resume</h6>
+                            <div class="mb-3">
+                                <a href="#" id="student-resume" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> View Resume
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex w-100 justify-content-between">
+                        <div>
+                            <button type="button" class="btn btn-outline-danger" id="reject-student">
+                                <i class="bi bi-x-circle me-1"></i> Reject
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-success" id="select-student">
+                                <i class="bi bi-check-circle me-1"></i> Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/dark-mode.js"></script>
+    <script src="../js/teacher-placement-detail.js"></script>
+</body>
+</html>
