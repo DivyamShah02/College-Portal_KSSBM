@@ -102,14 +102,14 @@ async function loadSubjectDetails(subjectId) {
         <span class="badge bg-secondary">Division ${subject.subject_data.class_division}</span>
     `
 
-  loadAnnouncements(subject.all_announcements);
+  loadAssignments(subject.all_announcements);
   loadAssignments(subject.all_assignments);
   loadAttendance(subject.all_attendance);
 
 }
 
 // Function to load announcements
-function loadAnnouncements(subjectAnnouncements) {
+function loadAssignments(subjectAnnouncements) {
   const announcementsList = document.getElementById("announcementsList")
 
   if (subjectAnnouncements.length === 0) {
@@ -239,9 +239,16 @@ function loadAssignments(subjectAssignments) {
       badge = `<span class="badge ${isOverdue ? "bg-danger" : "bg-warning"} text-white">
                     Due: ${new Date(assignment.deadline_date).toLocaleDateString()} at ${new Date(assignment.deadline_date).toLocaleTimeString()}
                 </span>`
-      action_button = `<button class="btn btn-sm btn-primary" onclick="submitAssignment('${assignment.assignment_id}')">
-                          <i class="bi bi-upload me-2"></i>Submit Assignment
-                        </button>`
+      if (isOverdue) {
+        action_button = `<button class="btn btn-sm btn-outline-danger" disabled>
+                            <i class="bi bi-x me-2"></i><b>Assignment Not Submitted</b>
+                          </button>`
+      }
+      else {
+        action_button = `<button class="btn btn-sm btn-primary" onclick="submitAssignment('${assignment.assignment_id}')">
+                            <i class="bi bi-upload me-2"></i>Submit Assignment
+                          </button>`
+      }
     }
 
     // <h5 class="card-title mb-0">${assignment.title}</h5>

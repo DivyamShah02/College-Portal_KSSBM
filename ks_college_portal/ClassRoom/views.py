@@ -14,6 +14,7 @@ from Placement.models import *
 from Placement.serializers import *
 
 import os
+import pytz
 import time
 import random
 import string
@@ -1216,27 +1217,44 @@ class AssignmentViewSet(viewsets.ViewSet):
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
-            user_role = user.role
-            if user_role != 'teacher':
-                return Response(
-                        {
-                            "success": False,
-                            "user_not_logged_in": False,
-                            "user_unauthorized": True,                            
-                            "data": None,
-                            "error": None
-                        },
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-    
-            all_assignments_obj = Assignment.objects.all()
+            user_role = user.role           
+            if user_role == 'teacher':
+                all_assignments_obj = Assignment.objects.filter(teacher_id=user)
+            elif user_role == 'student':
+                all_assignments_obj = Assignment.objects.filter(college_year=user.year, class_division=user.division)
             all_assignments_obj = all_assignments_obj[::-1]
 
             number_of_records = request.GET.get('number_of_records')           
-            if number_of_records is None:
+            if number_of_records is not None:
+                all_assignments_obj = all_assignments_obj[0:int(number_of_records)]
+            
+            if user_role == 'teacher':
                 all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
-            else:
-                all_assignments = TeacherAssignmentSerializer(all_assignments_obj[0:int(number_of_records)], many=True).data
+            elif user_role == 'student':
+                all_assignments_data = StudentAssignmentSerializer(all_assignments_obj, many=True, context={'student_id': user}).data
+                pending_assignments = []
+                completed_assignments = []
+                missed_assignments = []
+
+                for assignment_data in all_assignments_data:
+                    if assignment_data['assignment_submitted']:
+                        completed_assignments.append(assignment_data)
+
+                    else:
+                        datetime_obj = datetime.fromisoformat(str(assignment_data['deadline_date']))
+                        current_time = datetime.now(pytz.timezone("Asia/Kolkata"))
+
+                        if datetime_obj < current_time:
+                            missed_assignments.append(assignment_data)
+
+                        else:
+                            pending_assignments.append(assignment_data)
+
+                all_assignments = {
+                    "pending_assignments": pending_assignments,
+                    "completed_assignments": completed_assignments,
+                    "missed_assignments": missed_assignments,
+                }
 
             data = {
                 'all_assignments': all_assignments,

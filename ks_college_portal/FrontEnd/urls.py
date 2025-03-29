@@ -20,6 +20,8 @@ router.register(r'placement-detail', PlacementDetailViewSet, basename='placement
 
 router.register(r'announcements', AnnouncementsViewSet, basename='announcements')
 
+router.register(r'assignments', AssignmentsViewSet, basename='assignments')
+
 urlpatterns = [
     path('', include(router.urls)),
 ]

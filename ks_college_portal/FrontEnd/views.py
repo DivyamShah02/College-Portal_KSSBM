@@ -77,3 +77,10 @@ class AnnouncementsViewSet(viewsets.ViewSet):
             elif request.user.role == 'student':
                 return render(request, "Student/announcements.html")
         return redirect('dashboard-list')
+
+class AssignmentsViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'student':
+                return render(request, "Student/assignments.html")
+        return redirect('dashboard-list')

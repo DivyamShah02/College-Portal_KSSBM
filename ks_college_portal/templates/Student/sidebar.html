@@ -19,11 +19,14 @@
                     <i class="bi bi-book"></i> Subjects
                 </a>
             </li>
+
+            {% if user.year == 'fifth_year' %}
             <li class="nav-item">
                 <a href="{% url 'placements-list' %}" class="nav-link" id="Placements-nav">
                     <i class="bi bi-briefcase"></i> Placements
                 </a>
             </li>
+            {% endif %}
             <label class="mt-1">Actions</label>
             <hr class="my-1">
             <li class="nav-item">
@@ -42,7 +45,7 @@
                 </a>
             </li> -->
             <li class="nav-item">
-                <a href="students.html" class="nav-link" id="Students-nav">
+                <a href="{% url 'assignments-list' %}" class="nav-link" id="Assignments-nav">
                     <i class="bi bi-people"></i> Assignments
                 </a>
             </li>
