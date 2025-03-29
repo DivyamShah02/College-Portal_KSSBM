@@ -141,6 +141,19 @@
                         </div>
                     </div>
 
+                    <!-- Recent Company Announcements -->
+                    <div class="col-md-6 mb-4" id="recentCompanyAnnouncementsCard">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Registered Company Announcements</h5>                                
+                            </div>
+                            <div class="card-body" id="recentCompanyAnnouncements">
+                                <div id="recentCompanyAnnouncementsList">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Pending Assignments -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
@@ -197,9 +210,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <!-- Recent Subjects -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
@@ -392,7 +403,7 @@
 
     <script>
         window.onload = async function () {
-            await StudentDashboard("{{csrf_token}}", "{% url 'student-dashboard-api-list' %}", "{% url 'student-dashboard-pending-assignment-count-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{% url 'student-dashboard-marked-attendance-api-list' %}");
+            await StudentDashboard("{{csrf_token}}", "{% url 'student-dashboard-api-list' %}", "{% url 'student-dashboard-pending-assignment-count-api-list' %}", "{% url 'submit-assignments-api-list' %}", "{% url 'student-dashboard-marked-attendance-api-list' %}", "{% url 'placement-detail-list' %}", "{% url 'subject-detail-list' %}");
             toggle_loader();
             GetPendingAssignmentCount();
             GetMarkedAttendanceCount();

@@ -297,6 +297,14 @@ class StudentDashboardViewSet(viewsets.ViewSet):
                     if len(all_assignment) == 4:
                         break
 
+            # Get placements detials
+            if user.year == 'fifth_year':
+                all_registered_company = PlacmentRegistration.objects.filter(student_id=user)
+                all_company_announcement_obj = CompanyAnnouncement.objects.filter(company_id__in=[registered_company.company_id for registered_company in all_registered_company]).order_by('-created_at')[:5]
+                all_company_announcement = StudentDashboardCompanyAnnouncementSerializer(all_company_announcement_obj, many=True).data
+            
+            else:
+                all_company_announcement = []
 
             data = {
                 "student_data": student_data,
@@ -309,6 +317,8 @@ class StudentDashboardViewSet(viewsets.ViewSet):
 
                 "total_assignment": total_assignment,
                 "all_assignment": all_assignment,
+
+                "all_company_announcement": all_company_announcement,
 
             }
             return Response(
@@ -780,7 +790,10 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                         if attendance['attendance_marked']:
                             total_marked_attendance+=1
                     total_attendance = len(all_attendance)
-                    attendance_percentage = int((total_marked_attendance * 100) / total_attendance)
+                    try:
+                        attendance_percentage = int((total_marked_attendance * 100) / total_attendance)
+                    except:
+                        attendance_percentage = 0
                     
                     subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
                     subject_data = StudentSubjectSerializer(subject_data_obj).data
@@ -798,17 +811,31 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                     )
 
             else:
-                all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
-                all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
+                subject_is_valid = Subject.objects.filter(subject_id=subject_id, teacher_id=user).exists()
+                if subject_is_valid:
+                    all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
+                    all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
 
-                all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
-                all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
+                    all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
+                    all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
 
-                all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
-                all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
+                    all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
+                    all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
 
-                subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
-                subject_data = TeacherSubjectSerializer(subject_data_obj).data
+                    subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
+                    subject_data = TeacherSubjectSerializer(subject_data_obj).data
+
+                else:
+                    return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
             data = {
                 'all_announcements': all_announcements[::-1],
@@ -871,7 +898,7 @@ class AnnouncementViewSet(viewsets.ViewSet):
 
             user_role = user.role
             if user_role == 'teacher':
-                all_announcements_obj = Announcement.objects.all()
+                all_announcements_obj = Announcement.objects.filter(teacher_id=user)
             elif user_role == 'student':
                 all_announcements_obj = Announcement.objects.filter(college_year=user.year, class_division=user.division)
 

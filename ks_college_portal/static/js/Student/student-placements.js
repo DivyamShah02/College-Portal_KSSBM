@@ -1,11 +1,13 @@
 let csrf_token = null;
-let teacher_placements_url = null;
-let teacher_placements_detail_url = null;
+let student_placements_url = null;
+let student_placements_detail_url = null;
+let student_placement_registrations_url = null;
 
-async function TeacherPlacements(csrf_token_param, teacher_placements_url_param, teacher_placements_detail_url_param) {
+async function StudentPlacements(csrf_token_param, student_placements_url_param, student_placements_detail_url_param, student_placement_registrations_url_param) {
   csrf_token = csrf_token_param;
-  teacher_placements_url = teacher_placements_url_param;
-  teacher_placements_detail_url = teacher_placements_detail_url_param;
+  student_placements_url = student_placements_url_param;
+  student_placements_detail_url = student_placements_detail_url_param;
+  student_placement_registrations_url = student_placement_registrations_url_param;
 
   const currentDateElement = document.getElementById("currentDate");
   if (currentDateElement) {
@@ -25,7 +27,7 @@ async function loadPlacements() {
   const placementsList = document.getElementById("placementsList")
   if (!placementsList) return
 
-  const url = teacher_placements_url;
+  const url = student_placements_url;
   const [success, result] = await callApi("GET", url);
   console.log(result);
   if (success) {
@@ -77,13 +79,15 @@ function renderPlacements(placementsToRender) {
                     <span class="badge bg-secondary">Internship stipend: <b>₹${company.internship_stipend}</b></span>                    
                   </div>
                   <p class="card-text text-muted"><u>${company.notes ? `${company.notes}` : ""}</u></p>
-                  <span class="badge bg-primary p-2 me-2">
-                      <i class="bi bi-people-fill me-1"></i> <span id="registered-count">${company.total_registrations}</span> Registered
-                  </span> 
                 </div>
                 <div class="card-footer bg-secondary border-top-0">
                   <div class="d-grid">
-                    <a class="btn btn-outline-light" href="${teacher_placements_detail_url}?company_id=${company.company_id}">Details</a>
+                    ${company.student_registered ?
+                      `<a class="btn btn-outline-light" href="${student_placements_detail_url}?company_id=${company.company_id}">Details</a>`
+                      :
+                      `<button class="btn btn-primary w-100" onclick="handleRegisterCompany('${company.company_id}', '${company.company_name}', '${company.job_role}')">
+                          <b class="me-2">Register for Placement</b><i class="bi bi-box-arrow-in-right"></i>
+                        </button>`}
                   </div>
                 </div>
               </div>
@@ -122,7 +126,7 @@ document.getElementById("add_company_form").addEventListener("submit", async (ev
     internship_stipend: document.getElementById('internship_stipend').value,
     estimated_package: document.getElementById('estimated_package').value,
   }
-  const url = teacher_placements_url;
+  const url = student_placements_url;
   const [success, result] = await callApi("POST", url, bodyData, csrf_token);
   if (success) {
     console.log("Result:", result);
@@ -159,4 +163,36 @@ function isValidURL(inputId) {
   const urlPattern = /^(https:\/\/)([\w\-]+\.)+[\w]{2,}(\/\S*)?$/;
 
   return urlPattern.test(url);
+}
+
+function handleRegisterCompany(company_id, company_name, job_role) {
+  document.getElementById('register-company-name').textContent = company_name;
+  document.getElementById('register-job-role').textContent = job_role;
+  document.getElementById('register-company-id').value = company_id;
+
+  const registerCompanyModal = new bootstrap.Modal(document.getElementById('registerCompanyModal'));
+  registerCompanyModal.show();
+  
+}
+
+async function placement_register() {
+  let company_id = document.getElementById('register-company-id').value
+  let bodyData = {
+    company_id: company_id
+  }
+  const url = student_placement_registrations_url;
+  const [success, result] = await callApi("POST", url, bodyData, csrf_token);
+  if (success) {
+      console.log("Result:", result);
+      if (result.success) {
+          window.location = `${student_placements_detail_url}?company_id=${company_id}`;
+          // location.reload();
+      }
+
+      else {
+      }
+
+  } else {
+  }
+
 }

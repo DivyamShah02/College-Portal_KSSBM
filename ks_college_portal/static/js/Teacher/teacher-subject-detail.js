@@ -30,11 +30,11 @@ async function HandleSubjectDetail(csrf_token_param, teacher_subject_details_url
 
 	const createdAttendanceModal = document.getElementById("createdAttendanceModal");
 
-    createdAttendanceModal.addEventListener("hidden.bs.modal", function () {
+	createdAttendanceModal.addEventListener("hidden.bs.modal", function () {
 		let url = new URL(window.location.href);
-        url.searchParams.set("action", "attendance");
-        window.location.href = url.toString();
-    });
+		url.searchParams.set("action", "attendance");
+		window.location.href = url.toString();
+	});
 	await loadPlacementDetails(placementId);
 
 	if (action === "attendance") {
@@ -347,12 +347,12 @@ async function addComment(index, announcement_id) {
 			if (result.success) {
 				location.reload();
 			}
-
 			else {
+				alert(`Error occured: ${result.error}`);
 			}
-
-		} else {
-
+		}
+		else {
+			alert(`Unexpected Error occured!`);
 		}
 	}
 }
@@ -416,10 +416,14 @@ document.getElementById("add_announcement_form").addEventListener("submit", asyn
 	console.log(result);
 	if (success) {
 		if (result.success) {
-			let url = new URL(window.location.href);
-			url.searchParams.set("action", "assignments");
-			window.location.href = url.toString();
+			location.reload();
 		}
+		else {
+			alert(`Error occured: ${result.error}`);
+		}
+	}
+	else {
+		alert(`Unexpected Error occured!`);
 	}
 
 	window.scrollTo({
@@ -464,8 +468,16 @@ document.getElementById("add_assignment_form").addEventListener("submit", async 
 	console.log(result);
 	if (success) {
 		if (result.success) {
-			location.reload();
+			let url = new URL(window.location.href);
+			url.searchParams.set("action", "assignments");
+			window.location.href = url.toString();
 		}
+		else {
+			alert(`Error occured: ${result.error}`);
+		}
+	}
+	else {
+		alert(`Unexpected Error occured!`);
 	}
 
 	window.scrollTo({
@@ -569,12 +581,12 @@ async function createAttendance() {
 			const attendanceCodeModal = new bootstrap.Modal(document.getElementById("createdAttendanceModal"))
 			attendanceCodeModal.show();
 		}
-
 		else {
+			alert(`Error occured: ${result.error}`);
 		}
-
-	} else {
-
+	}
+	else {
+		alert(`Unexpected Error occured!`);
 	}
 
 }

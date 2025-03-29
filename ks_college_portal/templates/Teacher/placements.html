@@ -56,42 +56,9 @@
                 </div>
 
                 <div class="mb-3 w-100">
-                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addPlacementModal">
                         <i class="bi bi-plus-lg me-2"></i><b>Add New Placement</b>
                     </button>
-                </div>
-
-                <!-- Filters -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label for="yearFilter" class="form-label">Year</label>
-                                <select class="form-select" id="yearFilter">
-                                    <option value="">All Years</option>
-                                    <option value="First Year">First Year</option>
-                                    <option value="Second Year">Second Year</option>
-                                    <option value="Third Year">Third Year</option>
-                                    <option value="Fourth Year">Fourth Year</option>
-                                    <option value="Fifth Year">Fifth Year</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="divisionFilter" class="form-label">Division</label>
-                                <select class="form-select" id="divisionFilter">
-                                    <option value="">All Divisions</option>
-                                    <option value="A">Division A</option>
-                                    <option value="B">Division B</option>
-                                    <option value="C">Division C</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="searchSubject" class="form-label">Search</label>
-                                <input type="text" class="form-control" id="searchSubject"
-                                    placeholder="Search subjects...">
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Placements List -->
@@ -103,62 +70,84 @@
         </div>
     </div>
 
-    <!-- Add Subject Modal -->
-    <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel"
+    <!-- Add placements Modal -->
+    <div class="modal fade" id="addPlacementModal" tabindex="-1" aria-labelledby="addPlacementModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSubjectModalLabel">Add New Subject</h5>
+                    <h5 class="modal-title" id="addPlacementModalLabel">Add New Subject</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="add_subject_form">
-                        <div class="mb-3">
-                            <label for="subject_name" class="form-label">Subject Name</label>
-                            <input type="text" class="form-control" id="subject_name" required placeholder="Enter Suject Name">
+                    <form id="add_company_form">
+                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                            Unexpected Error occured!
                         </div>
-                        <div class="mb-3">
-                            <label for="college_year" class="form-label">Year</label>
-                            <select class="form-select" id="college_year" required>
-                                <option value="">Select year</option>
-                                <option value="first_year">First Year</option>
-                                <option value="second_year">Second Year</option>
-                                <option value="third_year">Third Year</option>
-                                <option value="fourth_year">Fourth Year</option>
-                                <option value="fifth_year">Fifth Year</option>
-                            </select>
+                        <div class="row">
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="company_name" class="py-2 pb-1">Company Name</label>
+                                <input type="text" class="form-control" id="company_name" value="EximX"
+                                    placeholder="Enter Company Name" required autofocus>
+                            </div>
+    
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="description" class="py-2 pb-1">Description</label>
+                                <textarea id="description" class="form-control" rows="4" required>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda, debitis repellendus maiores ea enim aliquid placeat quod quisquam laudantium perf</textarea>
+                            </div>
+    
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="website" class="py-2 pb-1">Website</label>
+                                <input type="text" class="form-control" id="website" value="farefrae"
+                                    placeholder="Enter Website" required>
+                            </div>
+    
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="job_role" class="py-2 pb-1">Job Role</label>
+                                <input type="text" class="form-control" id="job_role" value="Django Developer"
+                                    placeholder="Enter Job Role" required>
+                            </div>
+    
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="notes" class="py-2 pb-1">Notes (Optional)</label>
+                                <textarea id="notes" class="form-control" rows="4"></textarea>
+                            </div>
+    
+                            <div class="mb-2 col-12 col-md-6 mb-2">
+                                <label for="internship_duration" class="py-2 pb-1">Internship Duration (Months)</label>
+                                <input type="number" class="form-control" id="internship_duration" value="6"
+                                    placeholder="Enter Internship Duration" required>
+                            </div>
+    
+                            <div class="mb-2 col-12 col-md-6 mb-2">
+                                <label for="internship_stipend" class="py-2 pb-1">Internship Stipend</label>
+                                <input type="number" class="form-control" id="internship_stipend" value="4500"
+                                    placeholder="Enter Internship Stipend" required>
+                            </div>
+    
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="estimated_package" class="py-2 pb-1">Estimated Package</label>
+                                <input type="text" class="form-control" id="estimated_package" value="4.5"
+                                    placeholder="Enter Estimated Package" required>
+                            </div>
+    
+                            <div class="mb-2 mt-4">
+                                <button type="submit"
+                                    class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
+                                    <b class="mx-auto">Add Company</b>
+                                    <i class="fa fa-plus fa-xl"></i>
+                                </button>
+                            </div>
+    
                         </div>
-                        <div class="mb-5">
-                            <label for="class_division" class="form-label">Division</label>
-                            <select class="form-select" id="class_division" required>
-                                <option value="">Select Division</option>
-                                <option value="A">Division A</option>
-                                <option value="B">Division B</option>
-                                <option value="C">Division C</option>
-                            </select>                            
-                        </div>
-                        <div class="mb-3">
-                            <button type="submit"
-                                class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
-                                <b class="mx-auto">Create Subject</b>
-                                <i class="fa fa-plus fa-xl"></i>
-                            </button>
-                        </div>
-                        <!-- <div class="mb-3">
-                            <label for="subjectDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="subjectDescription" rows="3"></textarea>
-                        </div> -->
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close_add_subject_modal">Cancel</button>
-                    <!-- <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Subject</button> -->
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Overlay for sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -179,7 +168,7 @@
 
     <script>
         window.onload = async function () {
-            await TeacherPlacements("{{csrf_token}}", "{% url 'teacher-placements-api-list' %}", "{% url 'subject-detail-list' %}");
+            await TeacherPlacements("{{csrf_token}}", "{% url 'teacher-placements-api-list' %}", "{% url 'placement-detail-list' %}");
             toggle_loader();
         }
     </script>

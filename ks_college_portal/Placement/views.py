@@ -149,7 +149,7 @@ class TeacherPlacementViewSet(viewsets.ViewSet):
             all_companies = CompanySerializer(all_companies_obj, many=True).data
 
             data = {
-                'all_companies': all_companies,
+                'all_companies': all_companies[::-1],
                 'total_companies': len(all_companies),
             }
             return Response(
@@ -194,7 +194,7 @@ class StudentPlacementViewSet(viewsets.ViewSet):
                     )
 
             user_role = user.role
-            if user_role != 'student':
+            if user_role != 'student' or request.user.year != 'fifth_year':
                 return Response(
                         {
                             "success": False,
@@ -207,10 +207,10 @@ class StudentPlacementViewSet(viewsets.ViewSet):
                     )
 
             all_companies_obj = Company.objects.all()
-            all_companies = CompanySerializer(all_companies_obj, many=True).data
+            all_companies = StudentCompanySerializer(all_companies_obj, many=True, context={'student_id': user}).data
 
             data = {
-                'all_companies': all_companies,
+                'all_companies': all_companies[::-1],
                 'total_companies': len(all_companies),
             }
             return Response(
@@ -267,20 +267,55 @@ class CompanyAnnouncementViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            all_company_announcements_obj = CompanyAnnouncement.objects.filter(company_id=company_id)
-            all_company_announcements = CompanyAnnouncementSerializer(all_company_announcements_obj, many=True).data
+            if user.role == 'teacher':
+                company_data_obj = Company.objects.filter(company_id=company_id, teacher_id=user).exists()
+                if not company_data_obj:
+                    return Response(
+                            {
+                                "success": False,
+                                "user_not_logged_in": False,
+                                "user_unauthorized": False,                            
+                                "data": None,
+                                "error": "Company Id is not valid or you are not authorized to get information."
+                            },
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+
+            elif user.role == 'student':
+                check_user_registered = PlacmentRegistration.objects.filter(company_id=company_id, student_id=user).exists()
+                if not check_user_registered:
+                    return Response(
+                            {
+                                "success": False,
+                                "user_not_logged_in": False,
+                                "user_unauthorized": False,                            
+                                "data": None,
+                                "error": "Company Id is not valid or you are not authorized to get information."
+                            },
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
 
             company_data_obj = Company.objects.filter(company_id=company_id).first()
             company_data = CompanySerializer(company_data_obj).data
 
+            all_company_announcements_obj = CompanyAnnouncement.objects.filter(company_id=company_id)
+            all_company_announcements = CompanyAnnouncementSerializer(all_company_announcements_obj, many=True).data
+
             user_registered = True
+            all_registered_students = []
+
             if user.role == 'student':
                 user_registered = PlacmentRegistration.objects.filter(company_id=company_id, student_id=user).exists()
+            
+            elif user.role == 'teacher':
+                all_registered_students_obj = PlacmentRegistration.objects.filter(company_id=company_id)
+                all_registered_students = PlacmentRegistrationSerializer(all_registered_students_obj, many=True).data
 
             data = {
                 'all_company_announcements': all_company_announcements[::-1],
                 'total_company_announcements': len(all_company_announcements),
                 'company_data': company_data,
+                'all_registered_students': all_registered_students,
                 'user_registered': user_registered,
             }
 

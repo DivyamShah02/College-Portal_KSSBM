@@ -3,15 +3,19 @@ let student_dashboard_url = null;
 let student_dashboard_pending_assignment_count_url = null;
 let student_subject_submit_assignments_url = null;
 let student_dashboard_marked_attendance_url = null;
+let student_placements_detail_url = null;
+let student_subjects_detail_url = null;
 let assignmentSelectedFiles = [];
 let dashboard_data = null;
 
-async function StudentDashboard(csrf_token_param, student_dashboard_url_param, student_dashboard_pending_assignment_count_url_param, student_subject_submit_assignments_url_param, student_dashboard_marked_attendance_url_param) {
+async function StudentDashboard(csrf_token_param, student_dashboard_url_param, student_dashboard_pending_assignment_count_url_param, student_subject_submit_assignments_url_param, student_dashboard_marked_attendance_url_param, student_placements_detail_url_param, student_subjects_detail_url_param) {
   csrf_token = csrf_token_param;
   student_dashboard_url = student_dashboard_url_param;
   student_dashboard_pending_assignment_count_url = student_dashboard_pending_assignment_count_url_param;
   student_subject_submit_assignments_url = student_subject_submit_assignments_url_param;
   student_dashboard_marked_attendance_url = student_dashboard_marked_attendance_url_param;
+  student_placements_detail_url = student_placements_detail_url_param;
+  student_subjects_detail_url = student_subjects_detail_url_param;
 
   const url = student_dashboard_url;
   const [success, result] = await callApi("GET", url);
@@ -31,6 +35,12 @@ async function StudentDashboard(csrf_token_param, student_dashboard_url_param, s
       loadPendingAssignment(dashboard_data.all_assignment);
       loadRecentAttendance(dashboard_data.all_attendance);
       loadRecentAnnouncements(dashboard_data.all_announcement);
+      if (dashboard_data.student_data.year === 'fifth_year') {
+        loadRecentCompanyAnnouncements(dashboard_data.all_company_announcement);
+      }
+      else {
+        document.getElementById('recentCompanyAnnouncementsCard').style.display = 'none';
+      }
       loadUpcomingPlacements(dashboard_data.all_company);
     }
     else {
@@ -131,7 +141,7 @@ function loadRecentAnnouncements(announcements) {
       });
     }
     html += `
-            <div class="announcement-card p-3 mb-3">
+            <div class="announcement-card p-3 mb-3" onclick="window.location = '${student_subjects_detail_url}?subject_id=${announcement.subject_id}'" style="cursor: pointer;">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h6 class="mb-0">${announcement.subject_name}</h6>
                     <span class="badge bg-primary text-white">${announcement.created_at}</span>
@@ -150,6 +160,34 @@ function loadRecentAnnouncements(announcements) {
   })
 
   recentAnnouncementsList.innerHTML = html
+}
+
+function loadRecentCompanyAnnouncements(company_announcements) {
+  console.log('gnresignrengrjiagengi');
+  const recentCompanyAnnouncementsList = document.getElementById("recentCompanyAnnouncementsList")
+  const recentCompanyAnnouncements = document.getElementById("recentCompanyAnnouncements");
+
+  if (!recentCompanyAnnouncementsList) return
+
+  if (company_announcements.length === 0) {
+    recentCompanyAnnouncements.innerHTML = '<div class="text-center py-5"><h5>No announcement found</h5></div>'
+    return
+  }
+
+  let html = ""
+  company_announcements.forEach((announcement) => {
+    html += `
+            <div class="announcement-card p-3 mb-3" onclick="window.location = '${student_placements_detail_url}?company_id=${announcement.company_id}'" style="cursor: pointer;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">${announcement.company_name}</h6>
+                    <span class="badge bg-primary text-white">${announcement.created_at}</span>
+                </div>
+                <p class="mb-1">${announcement.announcement_content}</p>
+            </div>
+        `
+  })
+
+  recentCompanyAnnouncementsList.innerHTML = html
 }
 
 function loadPendingAssignment(pending_assignments) {
