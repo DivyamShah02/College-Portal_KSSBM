@@ -1,0 +1,68 @@
+<div class="sidebar text-nowrap" id="sidebar">
+    <div class="p-3 mt-5 mt-md-4 pt-5 pt-md-0">
+        <div class="text-center mb-3">
+            <!-- <img src="/static/images/teacher-avatar.jpg" alt="Teacher Avatar" class="avatar avatar-lg mb-2"> -->
+            <h6 class="mb-0">Prof. {{user.name}}</h6>
+            <small class="text-light">{{user.email}}</small>
+        </div>
+        
+        <hr>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="{% url 'dashboard-list' %}" class="nav-link" id="Dashboard-nav">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'subjects-list' %}" class="nav-link" id="Subjects-nav">
+                    <i class="bi bi-book"></i> Subjects
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'placements-list' %}" class="nav-link" id="Placements-nav">
+                    <i class="bi bi-briefcase"></i> Placements
+                </a>
+            </li>
+            <label class="mt-1">Actions</label>
+            <hr class="my-1">
+            <li class="nav-item">
+                <a href="{% url 'announcements-list' %}" class="nav-link" id="Announcements-nav">
+                    <i class="bi bi-megaphone"></i> Announcements
+                </a>
+            </li>
+            <!-- <li class="nav-item">
+                <a href="assignments.html" class="nav-link" id="Assignments-nav">
+                    <i class="bi bi-file-earmark-text"></i> Assignments
+                </a>
+            </li> -->
+            <!-- <li class="nav-item">
+                <a href="attendance.html" class="nav-link" id="Attendance-nav">
+                    <i class="bi bi-calendar-check"></i> Attendance
+                </a>
+            </li> -->
+            <li class="nav-item">
+                <a href="{% url 'students-list' %}" class="nav-link" id="Students-nav">
+                    <i class="bi bi-people"></i> Students
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link dark-mode-toggle-btn">
+                    <i class="bi bi-moon"></i> <span id="dark-mode-toggle-btn-text">Dark Mode</span>
+                </a>
+            </li>
+            <label class="mt-1">Developed By</label>
+            <hr class="my-1">
+            <li class="nav-item">
+                <a href="https://www.dynamiclabz.net/" class="nav-link">
+                    <img src="/static/dynamiclabz_logo.png" alt="Logo" style="width: 1.75em; height: 1.75em; vertical-align: middle;"> <span id="dark-mode-toggle-btn-text">Dynamic Labz</span>
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a href="{% url 'logout-api-list' %}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-left"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

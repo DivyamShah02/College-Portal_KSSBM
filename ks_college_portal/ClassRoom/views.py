@@ -138,6 +138,112 @@ class StudentTemplateViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+class AdminDashboardViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            
+            # Get teacher details
+            admin_data_obj = User.objects.filter(user_id=user).first()
+            admin_data = UserSerializer(admin_data_obj).data
+
+            # Get total students details
+            total_students = User.objects.filter(role='student')
+
+            # Get total teachers details
+            total_teachers = User.objects.filter(role='teacher')
+
+            # Get subject details
+            all_subjects_obj = Subject.objects.all()
+            total_subjects = len(all_subjects_obj)
+            all_subjects_obj = all_subjects_obj[::-1][0:5]
+            all_subjects = TeacherSubjectSerializer(all_subjects_obj, many=True).data
+
+            # Get Attendance details
+            all_attendance_obj = Attendance.objects.all()
+            total_attendance = len(all_attendance_obj)
+            all_attendance_obj = all_attendance_obj[::-1][0:5]
+            all_attendance = FullDetailsAttendanceSerializer(all_attendance_obj, many=True).data
+
+            # Get Announcement details
+            all_announcement_obj = Announcement.objects.all()
+            total_announcement = len(all_announcement_obj)
+            all_announcement_obj = all_announcement_obj[::-1][0:3]
+            all_announcement = AnnouncementSerializer(all_announcement_obj, many=True).data
+
+            # Get Placement details
+            all_company_obj = Company.objects.all()
+            total_company = len(all_company_obj)
+            all_company_obj = all_company_obj[::-1][0:5]
+            all_company = CompanySerializer(all_company_obj, many=True).data
+
+            data = {
+                "admin_data": admin_data,
+
+                "total_students": len(total_students),
+                
+                "total_teachers": len(total_teachers),
+
+                "total_subjects": total_subjects,
+                "all_subjects": all_subjects,
+
+                "total_attendance": total_attendance,
+                "all_attendance": all_attendance,
+
+                "total_announcement": total_announcement,
+                "all_announcement": all_announcement,
+
+                "total_company": total_company,
+                "all_company": all_company,
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
 class TeacherDashboardViewSet(viewsets.ViewSet):
     def list(self, request):

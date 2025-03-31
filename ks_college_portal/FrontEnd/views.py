@@ -28,7 +28,8 @@ class DashboardViewSet(viewsets.ViewSet):
                 return render(request, "Teacher/dashboard.html")
             elif request.user.role == 'student':
                 return render(request, "Student/dashboard.html")
-            return render(request, "dashboard.html")
+            elif request.user.role == 'admin':
+                return render(request, "Admin/dashboard.html")
         return redirect('login-list')
 
 class SubjectsViewSet(viewsets.ViewSet):
