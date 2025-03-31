@@ -15,7 +15,7 @@ async function TeacherSubjects(csrf_token_param, teacher_subject_url_param, teac
   }
 
   // Load subjects
-  await loadSubjects();
+  await loadStudents();
 
   // Add event listeners for filters
   const yearFilter = document.getElementById("yearFilter")
@@ -67,7 +67,7 @@ document.getElementById("add_subject_form").addEventListener("submit", async (ev
 
       if (result.success) {
         document.getElementById("close_add_subject_modal").click();
-        await loadSubjects();
+        await loadStudents();
       }
 
       else {
@@ -90,7 +90,7 @@ document.getElementById("add_subject_form").addEventListener("submit", async (ev
 
 let subjects = []
 
-async function loadSubjects() {
+async function loadStudents() {
   const subjectsList = document.getElementById("subjectsList")
   if (!subjectsList) return
 

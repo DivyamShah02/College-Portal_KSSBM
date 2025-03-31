@@ -70,15 +70,17 @@ function loadAssignments(subjectAssignments, assignmentsList_id) {
 
     let badge = null;
     let action_button = null;
+    let card_border_color = 'warning';
 
     if (assignment.assignment_submitted) {
       badge = `<span class="badge bg-success text-white">
                     Submitted
                 </span>`
+      card_border_color = 'success';
       action_button = `
           <button class="btn btn-sm btn-outline-primary" onclick="view_submitted_assignment('${student_id}', '${assignment.assignment_id}')">
             <i class="bi bi-file-earmark-check me-2"></i>Your Submission
-          </button>`
+          </button>`;
     }
     else {
       badge = `<span class="badge ${isOverdue ? "bg-danger" : "bg-warning"} text-white">
@@ -87,18 +89,20 @@ function loadAssignments(subjectAssignments, assignmentsList_id) {
       if (isOverdue) {
         action_button = `<button class="btn btn-sm btn-outline-danger" disabled>
                             <i class="bi bi-x me-2"></i><b>Assignment Not Submitted</b>
-                          </button>`
+                          </button>`;
+        card_border_color = "danger";
       }
       else {
         action_button = `<button class="btn btn-sm btn-primary" onclick="submitAssignment('${assignment.assignment_id}', '${assignment.subject_id}')">
                             <i class="bi bi-upload me-2"></i>Submit Assignment
                           </button>`
+        card_border_color = "warning";
       }
     }
 
     // <h5 class="card-title mb-0">${assignment.title}</h5>
     html += `
-                <div class="card assignment-card mb-3">
+                <div class="card assignment-card mb-3 border-${card_border_color}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             ${badge}

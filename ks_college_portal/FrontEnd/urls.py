@@ -22,6 +22,8 @@ router.register(r'announcements', AnnouncementsViewSet, basename='announcements'
 
 router.register(r'assignments', AssignmentsViewSet, basename='assignments')
 
+router.register(r'students', StudentsDataViewSet, basename='students')
+
 urlpatterns = [
     path('', include(router.urls)),
 ]

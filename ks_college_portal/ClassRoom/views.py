@@ -2312,7 +2312,7 @@ class TeacherStudentDataViewSet(viewsets.ViewSet):
                     "student_roll_no": student.roll_no,
                     "student_name": student.name,
                     "student_id": student.user_id,
-
+                    "student_mail": student.email
                 })
                 
 

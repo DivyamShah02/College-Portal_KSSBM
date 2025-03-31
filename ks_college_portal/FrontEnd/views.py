@@ -84,3 +84,10 @@ class AssignmentsViewSet(viewsets.ViewSet):
             if request.user.role == 'student':
                 return render(request, "Student/assignments.html")
         return redirect('dashboard-list')
+
+class StudentsDataViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/students.html")
+        return redirect('dashboard-list')
