@@ -88,7 +88,7 @@ function HandleUniqueClasses(uniqueClass) {
 
   // Automatically select the first year
   if (years.length > 0) {
-    yearFilter.value = years[3]; //TODO
+    yearFilter.value = years[0]; //TODO
   }
 
   // Function to populate Division Select based on selected year
@@ -137,7 +137,7 @@ function HandleUniqueClasses(uniqueClass) {
   updateDivisions(yearFilter.value);
   
   divisionFilter.selectedIndex = 1;
-  loadStudents(years[3], divisionFilter.options[1].textContent);
+  loadStudents(years[0], divisionFilter.options[1].textContent);
 }
 
 async function loadStudents(college_year, division) {
