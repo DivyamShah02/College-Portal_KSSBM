@@ -13,6 +13,7 @@ router.register(r'student-dashboard-marked-attendance-api', StudentDashboardMark
 
 router.register(r'teacher-subjects-api', TeacherSubjectViewSet, basename='teacher-subjects-api')
 router.register(r'student-subjects-api', StudentSubjectViewSet, basename='student-subjects-api')
+router.register(r'admin-subjects-api', AdminSubjectViewSet, basename='admin-subjects-api')
 
 router.register(r'subject-detail-api', SubjectDetailViewSet, basename='subject-detail-api')
 
@@ -30,6 +31,9 @@ router.register(r'teacher-subject-unique-class-data-api', TeacherSubjectUniqueCl
 router.register(r'teacher-student-data-api', TeacherStudentDataViewSet, basename='teacher-student-data-api')
 router.register(r'teacher-per-student-data-api', TeacherPerStudentDataViewSet, basename='teacher-per-student-data-api')
 
+router.register(r'admin-subject-unique-class-data-api', AdminSubjectUniqueClassViewSet, basename='admin-subject-unique-class-data-api')
+router.register(r'admin-student-data-api', AdminStudentDataViewSet, basename='admin-student-data-api')
+router.register(r'admin-per-student-data-api', AdminPerStudentDataViewSet, basename='admin-per-student-data-api')
 
 urlpatterns = [
     path('', include(router.urls)),

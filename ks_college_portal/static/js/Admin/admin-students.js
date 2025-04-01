@@ -1,15 +1,15 @@
 let csrf_token = null;
-let teacher_students_unique_classes_url = null;
-let teacher_students_url = null;
-let teacher_students_detail_url = null;
+let admin_students_unique_classes_url = null;
+let admin_students_url = null;
+let admin_students_detail_url = null;
 let student_subject_submit_assignments_url = null;
 let students = null;
 
-async function TeacherStudents(csrf_token_param, teacher_students_unique_classes_url_param, teacher_students_url_param, teacher_students_detail_url_param, student_subject_submit_assignments_url_param) {
+async function AdminStudents(csrf_token_param, admin_students_unique_classes_url_param, admin_students_url_param, admin_students_detail_url_param, student_subject_submit_assignments_url_param) {
   csrf_token = csrf_token_param;
-  teacher_students_unique_classes_url = teacher_students_unique_classes_url_param;
-  teacher_students_url = teacher_students_url_param;
-  teacher_students_detail_url = teacher_students_detail_url_param;
+  admin_students_unique_classes_url = admin_students_unique_classes_url_param;
+  admin_students_url = admin_students_url_param;
+  admin_students_detail_url = admin_students_detail_url_param;
   student_subject_submit_assignments_url = student_subject_submit_assignments_url_param;
 
 
@@ -46,7 +46,7 @@ async function TeacherStudents(csrf_token_param, teacher_students_unique_classes
 let subjects = []
 
 async function getClassInfo() {
-  const url = teacher_students_unique_classes_url;
+  const url = admin_students_unique_classes_url;
   const [success, result] = await callApi("GET", url);
   if (success) {
     if (result.success) {
@@ -146,7 +146,7 @@ async function loadStudents(college_year, division) {
     class_division: division,
   };
 
-  const url = `${teacher_students_url}?` + toQueryString(Params);
+  const url = `${admin_students_url}?` + toQueryString(Params);
   const [success, result] = await callApi("GET", url);
   if (success) {
     if (result.success) {
@@ -241,7 +241,7 @@ async function loadStudentDetails(student_id) {
     student_id: student_id
   };
 
-  const url = `${teacher_students_detail_url}?` + toQueryString(Params);
+  const url = `${admin_students_detail_url}?` + toQueryString(Params);
   const [success, result] = await callApi("GET", url);
   if (success) {
     if (result.success) {

@@ -39,6 +39,8 @@ class SubjectsViewSet(viewsets.ViewSet):
                 return render(request, "Teacher/subjects.html")
             elif request.user.role == 'student':
                 return render(request, "Student/subjects.html")
+            elif request.user.role == 'admin':
+                return render(request, "Admin/subjects.html")
         return redirect('dashboard-list')
 
 class SubjectDetailViewSet(viewsets.ViewSet):
@@ -48,6 +50,8 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                 return render(request, "Teacher/subject-detail.html")
             elif request.user.role == 'student':
                 return render(request, "Student/subject-detail.html")
+            elif request.user.role == 'admin':
+                return render(request, "Admin/subject-detail.html")
         return redirect('dashboard-list')
 
 class PlacementViewSet(viewsets.ViewSet):
@@ -91,4 +95,6 @@ class StudentsDataViewSet(viewsets.ViewSet):
         if request.user.is_authenticated:
             if request.user.role == 'teacher':
                 return render(request, "Teacher/students.html")
+            elif request.user.role == 'admin':
+                return render(request, "Admin/students.html")
         return redirect('dashboard-list')

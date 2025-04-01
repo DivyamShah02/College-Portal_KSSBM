@@ -839,6 +839,67 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+class AdminSubjectViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_subjects_obj = Subject.objects.all()
+            all_subjects = StudentSubjectSerializer(all_subjects_obj, many=True).data
+
+            data = {
+                'all_subjects': all_subjects[::-1],
+                'total_subjects': len(all_subjects),
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
 class SubjectDetailViewSet(viewsets.ViewSet):
     def list(self, request):
         try:
@@ -917,7 +978,7 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            else:
+            elif user_role == 'teacher':
                 subject_is_valid = Subject.objects.filter(subject_id=subject_id, teacher_id=user).exists()
                 if subject_is_valid:
                     all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
@@ -943,6 +1004,22 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
+
+            elif user_role == 'admin':
+                
+                all_announcements_obj = Announcement.objects.filter(subject_id=subject_id)
+                all_announcements = AnnouncementSerializer(all_announcements_obj, many=True).data
+
+                all_assignments_obj = Assignment.objects.filter(subject_id=subject_id)
+                all_assignments = TeacherAssignmentSerializer(all_assignments_obj, many=True).data
+
+                all_attendance_obj = Attendance.objects.filter(subject_id=subject_id)
+                all_attendance = AttendanceSerializer(all_attendance_obj, many=True).data
+
+                subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
+                subject_data = TeacherSubjectSerializer(subject_data_obj).data
+
+
 
             data = {
                 'all_announcements': all_announcements[::-1],
@@ -1836,7 +1913,7 @@ class AllSubmittedAssignmentViewSet(viewsets.ViewSet):
                     )
 
             user_role = user.role
-            if user_role != 'teacher':
+            if user_role == 'student':
                 return Response(
                         {
                             "success": False,
@@ -2214,7 +2291,7 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                     )
 
             user_role = user.role
-            if user_role != 'teacher':
+            if user_role == 'student':
                 return Response(
                         {
                             "success": False,
@@ -2470,6 +2547,341 @@ class TeacherPerStudentDataViewSet(viewsets.ViewSet):
 
             user_role = user.role
             if user_role != 'teacher':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            
+            student_id = request.GET.get('student_id')
+            if not student_id:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "student_id required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            student_data_obj = User.objects.filter(user_id=student_id).first()
+            if not student_data_obj:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "student_id invalid."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            student_data = UserSerializer(student_data_obj).data
+
+            # Get Assignment details
+            all_assignment_obj = Assignment.objects.filter(college_year=student_data_obj.year, class_division=student_data_obj.division)
+            total_assignment = len(all_assignment_obj)
+            all_assignment_obj = all_assignment_obj[::-1]
+
+            pending_assignment = []
+            missed_assignment = []
+            submitted_assignment = []
+
+            for assignment in all_assignment_obj:
+                assignment_data = StudentAssignmentSerializer(assignment, context={'student_id': student_data_obj.user_id}).data
+                if not assignment_data.get('assignment_submitted', False):
+                    deadline_datetime = isoparse(str(assignment_data.get('deadline_date')))
+                    current_time = datetime.now(deadline_datetime.tzinfo)
+                    if deadline_datetime > current_time:
+                        print("The given datetime is in the future.")
+                        pending_assignment.append(assignment_data)
+                    else:
+                        missed_assignment.append(assignment_data)
+                        print("The given datetime is in the past.")
+
+                else:
+                    submitted_assignment.append(assignment_data)
+
+
+            # Get Attendance details
+            student_subjects = Subject.objects.filter(college_year=student_data_obj.year, class_division=student_data_obj.division)
+
+            all_subject_attendances = []
+            total_attendances = 0
+            total_marked_attendances = 0
+
+            for student_subject in student_subjects:
+                all_attendance_subject = Attendance.objects.filter(subject_id=student_subject.subject_id)
+                marked_attendances = 0
+                for attendance_subject in all_attendance_subject:
+                    attendance_marked = MarkedAttendance.objects.filter(attendance_id=attendance_subject.attendance_id, student_id=student_data_obj.user_id).exists()
+                    if attendance_marked:
+                        marked_attendances += 1
+                
+                total_attendances += len(all_attendance_subject)
+                total_marked_attendances += marked_attendances
+
+                try:
+                    attendance_percentage = int((marked_attendances * 100) / len(all_attendance_subject))
+                except:
+                    print(f'in this for {student_subject.subject_name}')
+                    attendance_percentage = 0
+                
+                all_subject_attendances.append({
+                    "subject_id": student_subject.subject_id,
+                    "subject_name": student_subject.subject_name,
+                    "all_attendance_subject": len(all_attendance_subject),
+                    "marked_attendances": marked_attendances,
+                    "attendance_percentage": attendance_percentage
+                })
+
+            try:
+                total_attendance_percentage = int((total_marked_attendances * 100) / total_attendances)
+            except:
+                total_attendance_percentage = 0
+
+            data = {
+                "student_data": student_data,
+
+                "total_assignment": total_assignment,
+                
+                "pending_assignment": pending_assignment,
+                "total_pending_assignment": len(pending_assignment),
+
+                "missed_assignment": missed_assignment,
+                "total_missed_assignment": len(missed_assignment),
+
+                "submitted_assignment": submitted_assignment,
+                "total_submitted_assignment": len(submitted_assignment),
+
+
+                "all_subject_attendance": all_subject_attendances,
+                "total_attendances": total_attendances,
+                "total_marked_attendances": total_marked_attendances,
+                "total_attendance_percentage": total_attendance_percentage
+
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+class AdminSubjectUniqueClassViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_students = User.objects.filter(role='student')
+            unique_class = self.get_unique_classes(all_students)
+
+            data = {
+                "unique_class": unique_class
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+    def get_unique_classes(self, data):
+        unique_classes = set()
+        
+        for entry in data:
+            college_year = entry.year
+            class_division = entry.division
+            unique_classes.add((college_year, class_division))
+        
+        return list(unique_classes)
+
+class AdminStudentDataViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            college_year = request.GET.get('college_year')
+            if not college_year:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "college_year required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            class_division = request.GET.get('class_division')
+            if not class_division:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": "class_division required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_subjects = Subject.objects.filter(teacher_id=user, class_division=class_division, college_year=college_year)
+            all_subjects_text = ", ".join([subject_data.subject_name for subject_data in all_subjects[::-1]])
+
+            all_students_obj = User.objects.filter(year=college_year, division=class_division)
+            all_students = []
+            
+            for student in all_students_obj:
+                all_students.append({
+                    "student_roll_no": student.roll_no,
+                    "student_name": student.name,
+                    "student_id": student.user_id,
+                    "student_mail": student.email
+                })
+                
+
+            data = {
+                "all_subjects_text": all_subjects_text,
+                "all_students": all_students
+
+            }
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data":data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+class AdminPerStudentDataViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
                 return Response(
                         {
                             "success": False,

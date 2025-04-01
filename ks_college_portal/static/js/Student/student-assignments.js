@@ -107,6 +107,7 @@ function loadAssignments(subjectAssignments, assignmentsList_id) {
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             ${badge}
                         </div>
+                        <h5>${assignment.subject_name}</h5>
                         <p class="card-text">${assignment.text_content}</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
 						${doc_html
@@ -119,6 +120,9 @@ function loadAssignments(subjectAssignments, assignmentsList_id) {
       }
                         </div>
                         ${action_button}
+                    </div>
+                    <div class="card-footer">
+                      <p class="text-muted"><u>${assignment.created_at}</u></p>
                     </div>
                 </div>
             `
