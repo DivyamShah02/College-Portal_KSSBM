@@ -5,6 +5,7 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'user', UserCreationViewSet, basename='user')
+router.register(r'multiple-student-api', MultipleStudentCreationViewSet, basename='multiple-student-api')
 router.register(r'login-api', LoginApiViewSet, basename='login-api')
 router.register(r'logout-api', LogoutApiViewSet, basename='logout-api')
 
