@@ -91,6 +91,9 @@ function logPageLoadUrl() {
     else if (currentUrl.includes('placements')) {
         document.getElementById('Placements-nav').className = 'nav-link active';
     }
+    else if (currentUrl.includes('events')) {
+        document.getElementById('Events-nav').className = 'nav-link active';
+    }
     else if (currentUrl.includes('announcements')) {
         document.getElementById('Announcements-nav').className = 'nav-link active';
     }

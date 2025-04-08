@@ -98,3 +98,23 @@ class StudentsDataViewSet(viewsets.ViewSet):
             elif request.user.role == 'admin':
                 return render(request, "Admin/students.html")
         return redirect('dashboard-list')
+
+class EventViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/events.html")
+            if request.user.role == 'student':
+                if request.user.year == 'fifth_year':
+                    return render(request, "Student/events.html")
+        return redirect('dashboard-list')
+
+class EventDetailViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/event-detail.html")
+            if request.user.role == 'student':
+                if request.user.year == 'fifth_year':
+                    return render(request, "Student/event-detail.html")
+        return redirect('dashboard-list')

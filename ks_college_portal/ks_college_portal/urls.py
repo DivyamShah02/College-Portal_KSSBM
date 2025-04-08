@@ -12,6 +12,7 @@ urlpatterns = [
     path('user/', include('UserDetail.urls')),
     path('classroom/', include('ClassRoom.urls')),
     path('placement/', include('Placement.urls')),
+    path('event/', include('Fest_Workshop.urls')),
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

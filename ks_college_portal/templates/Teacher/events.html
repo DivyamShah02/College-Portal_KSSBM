@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events | K.S.S.B.M Portal</title>
+
+    <!-- Import BootStrap CSS Library -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Import Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
+
+    <!-- Import FontAwsome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Import Wow Animation CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/loader_logo.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+</head>
+
+<body>
+    <div id="spinner" class="spinner-container p-2">
+        <div class="spinner"></div>
+        <!-- <div id="spinner-text" class="loading-text text-center">loading!</div> -->
+    </div>
+
+    <!-- Navbar -->
+    {% include "Teacher/navbar.html" %}
+
+    <div class="d-flex blur" id="main-content">
+        <!-- Sidebar -->
+        {% include "Teacher/sidebar.html" %}
+
+        <!-- Main Content -->
+        <div class="main-content flex-grow-1">
+            <!-- Dashboard Content -->
+            <div class="fade-in">
+                <div class="row mb-4">
+                    <div class="col-md-6 text-start">
+                        <h2 class="mb-0">All Events</h2>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="text-muted me-2">Today:</span>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 w-100">
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addEventModal">
+                        <i class="bi bi-plus-lg me-2"></i><b>Add New Event</b>
+                    </button>
+                </div>
+
+                <!-- Events List -->
+                <div class="row" id="eventsList">
+                    <!-- Dynamically populated by JS -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add events Modal -->
+    <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEventModalLabel">Add New Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add_event_form">
+                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                            Unexpected Error occured!
+                        </div>
+                        <div class="row">
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="event_type" class="form-label">Type of event</label>
+                                <select class="form-select" id="event_type" required>
+                                    <option value="">Select Type of event</option>
+                                    <option value="Fest">Fest</option>
+                                    <option value="Workshop">Workshop</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="event_name" class="py-2 pb-1">Event Name</label>
+                                <input type="text" class="form-control" id="event_name" value="EximX"
+                                    placeholder="Enter Event Name" required autofocus>
+                            </div>
+
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="description" class="py-2 pb-1">Description</label>
+                                <textarea id="description" class="form-control" rows="4"
+                                    required>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Assumenda, debitis repellendus maiores ea enim aliquid placeat quod quisquam laudantium perf</textarea>
+                            </div>
+
+                            <div class="mb-2 col-12 mb-2">
+                                <label for="notes" class="py-2 pb-1">Notes (Optional)</label>
+                                <textarea id="notes" class="form-control" rows="4"></textarea>
+                            </div>
+
+                            <div class="mb-2 col-12 col-md-6 mb-2">
+                                <label for="event_duration" class="py-2 pb-1 text-nowrap">Event Duration (10-04-2025 | 12-04-2025)</label>
+                                <input type="text" class="form-control" id="event_duration"
+                                    value="10-04-2025 | 12-04-2025" placeholder="Enter Event Duration" required>
+                            </div>
+
+                            <div class="mb-2 mt-4">
+                                <button type="submit"
+                                    class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
+                                    <b class="mx-auto">Add Event</b>
+                                    <i class="fa fa-plus fa-xl"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="close_add_subject_modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registered Students List Modal -->
+    <div class="modal fade" id="EventRegisteredStudentsListModal" tabindex="-1"
+        aria-labelledby="EventRegisteredStudentsListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="EventRegisteredStudentsListModalLabel">Registered Students</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap p-3 text-center">Sr No</th>
+                                    <th class="text-nowrap p-3 text-center">Student Roll No</th>
+                                    <th class="text-nowrap p-3 text-center">Student Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="EventRegisteredStudentsListTable">
+                                <!-- Dynamically populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay for sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Import BootStrap JavaScript Library -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Import Wow Animation JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+
+    <script src="/static/js/dark-mode.js"></script>
+    <script src="/static/js/Teacher/teacher-events.js"></script>
+    <script src="/static/js/api_caller.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/loader.js"></script>
+
+    <script>
+        window.onload = async function () {
+            await TeacherEvents("{{csrf_token}}", "{% url 'teacher-events-api-list' %}", "{% url 'event-detail-list' %}");
+            toggle_loader();
+        }
+    </script>
+</body>
+
+</html>

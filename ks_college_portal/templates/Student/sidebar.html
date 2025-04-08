@@ -27,6 +27,11 @@
                 </a>
             </li>
             {% endif %}
+            <li class="nav-item">
+                <a href="{% url 'events-list' %}" class="nav-link" id="Events-nav">
+                    <i class="bi bi-calendar2-event"></i> Events
+                </a>
+            </li>
             <label class="mt-1">Actions</label>
             <hr class="my-1">
             <li class="nav-item">
@@ -61,7 +66,7 @@
                     <img src="/static/dynamiclabz_logo.png" alt="Logo" style="width: 1.75em; height: 1.75em; vertical-align: middle;"> <span id="dark-mode-toggle-btn-text">Dynamic Labz</span>
                 </a>
             </li>
-            <li class="nav-item mt-4">
+            <li class="nav-item mt-2">
                 <a href="{% url 'logout-api-list' %}" class="nav-link text-danger">
                     <i class="bi bi-box-arrow-left"></i> Logout
                 </a>

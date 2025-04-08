@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'FrontEnd',
     'UserDetail',
     'ClassRoom',
+    'Fest_Workshop',
     'Placement',
     'rest_framework',
 ]
