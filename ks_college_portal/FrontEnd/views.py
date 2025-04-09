@@ -105,8 +105,7 @@ class EventViewSet(viewsets.ViewSet):
             if request.user.role == 'teacher':
                 return render(request, "Teacher/events.html")
             if request.user.role == 'student':
-                if request.user.year == 'fifth_year':
-                    return render(request, "Student/events.html")
+                return render(request, "Student/events.html")
         return redirect('dashboard-list')
 
 class EventDetailViewSet(viewsets.ViewSet):
