@@ -7,8 +7,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 
 from .serializers import UserSerializer
-from .models import User
+from .models import *
 
+from ClassRoom.models import *
 
 import random
 import string
@@ -21,6 +22,32 @@ logger = None
 class UserCreationViewSet(viewsets.ViewSet):
     def create(self, request):
         try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
             # Extract data from the request
             name = request.data.get('name')
             password = request.data.get('password')
@@ -232,6 +259,32 @@ class LogoutApiViewSet(viewsets.ViewSet):
 class MultipleStudentCreationViewSet(viewsets.ViewSet):
     def create(self, request):
         try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
             all_students_data = request.data.get('students_data')
             if not all_students_data:
                 return Response(
@@ -332,6 +385,99 @@ class MultipleStudentCreationViewSet(viewsets.ViewSet):
             if not User.objects.filter(user_id=user_id).exists():
                 return user_id
 
+
+class PromoteStudentsViewSet(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            # user = request.user
+            # if not user.is_authenticated:
+            #     return Response(
+            #             {
+            #                 "success": False,
+            #                 "user_not_logged_in": True,
+            #                 "user_unauthorized": False,
+            #                 "data": None,
+            #                 "error": None
+            #             },
+            #             status=status.HTTP_400_BAD_REQUEST
+            #         )
+
+            # user_role = user.role
+            # if user_role != 'admin':
+            #     return Response(
+            #             {
+            #                 "success": False,
+            #                 "user_not_logged_in": False,
+            #                 "user_unauthorized": True,
+            #                 "data": None,
+            #                 "error": None
+            #             },
+            #             status=status.HTTP_400_BAD_REQUEST
+            #         )
+
+            YEAR_FLOW = {
+                'first_year': 'second_year',
+                'second_year': 'third_year',
+                'third_year': 'fourth_year',
+                'fourth_year': 'fifth_year',
+                'fifth_year': None,  # No promotion beyond this
+            }
+
+            failed_student_ids = request.data.get('failed', [])
+
+            current_academic_year = get_current_academic_year() # "2024-25"
+            new_academic_year = str(int(current_academic_year.split('-')[0]) + 1) + '-' + str(int(current_academic_year.split('-')[1]) + 1)
+            AcademicYear.objects.create(year=new_academic_year, is_current=True)        
+
+            students = User.objects.filter(role='student')
+
+            for student in students:
+                student_failed = False
+                if student.user_id in failed_student_ids:
+                    student_failed = True
+
+                StudentHistory.objects.create(
+                    user_id=student.user_id,
+                    name=student.name,
+                    roll_no=student.roll_no,
+                    year=student.year,
+                    division=student.division,
+                    city=student.city,
+                    state=student.state,
+                    academic_year=new_academic_year,
+                    was_promoted=not student_failed,
+                )
+
+                if not student_failed:
+                    if YEAR_FLOW[student.year] is not None:
+                        if student.year in YEAR_FLOW and YEAR_FLOW[student.year]:
+                            student.year = YEAR_FLOW[student.year]
+                            student.save()
+                    else:
+                        student.delete()            
+
+            return Response(
+                            {
+                                "success": True,
+                                "user_not_logged_in": False,
+                                "user_unauthorized": False,
+                                "data": 'Promotion completed successfully',
+                                "error": None
+                            },
+                            status=status.HTTP_200_OK
+                        )
+
+        except Exception as ex:
+             return Response(
+                            {
+                                "success": False,
+                                "user_not_logged_in": False,
+                                "user_unauthorized": False,
+                                "data": None,
+                                "error": str(ex)
+                            },
+                            status=status.HTTP_200_OK
+                        )
 
 def login_to_account(request):
     try:

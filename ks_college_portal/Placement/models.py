@@ -1,4 +1,5 @@
 from django.db import models
+from ClassRoom.models import get_current_academic_year, CurrentAcedemicManager
 
 # Create your models here.
 class Company(models.Model):
@@ -12,7 +13,17 @@ class Company(models.Model):
     internship_duration = models.CharField(max_length=255)
     internship_stipend = models.CharField(max_length=255)
     estimated_package = models.CharField(max_length=255)
+    academic_year = models.CharField(max_length=9)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CurrentAcedemicManager()
+    all_objects = models.Manager()
+    
+    def save(self, *args, **kwargs):
+        if not self.academic_year:
+            self.academic_year = get_current_academic_year()
+        super().save(*args, **kwargs)
+
 
 class CompanyAnnouncement(models.Model):
     company_announcement_id = models.CharField(max_length=12, unique=True)

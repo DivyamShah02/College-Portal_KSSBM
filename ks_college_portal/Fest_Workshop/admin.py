@@ -7,6 +7,9 @@ class Fest_WorkshopAdmin(admin.ModelAdmin):
     list_display = ('id', 'event_name', 'description')
     search_fields = ('event_name',)
 
+    def get_queryset(self, request):
+        return Fest_Workshop.all_objects.all()
+
 @admin.register(EventAnnouncement)
 class EventAnnouncementAdmin(admin.ModelAdmin):
     list_display = ('id', 'company_announcement_id', 'event_id')

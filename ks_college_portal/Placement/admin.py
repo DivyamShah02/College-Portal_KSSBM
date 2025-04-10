@@ -8,6 +8,9 @@ class CompanyAdmin(admin.ModelAdmin):
     search_fields = ('company_name', 'job_role')
     list_filter = ('job_role',)
 
+    def get_queryset(self, request):
+        return Company.all_objects.all()
+
 @admin.register(CompanyAnnouncement)
 class CompanyAnnouncementAdmin(admin.ModelAdmin):
     list_display = ('id', 'company_announcement_id', 'company_id')

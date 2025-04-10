@@ -20,9 +20,20 @@ def create_user():
 
     return response
 
+def promote_student():
+    url = base_url + 'user/promote-student-api/'
+
+
+    response = requests.post(url)
+
+    return response
+
 
 if __name__ == '__main__':
     print('Hello')
 
-    create_user_respone = create_user()
-    print(create_user_respone.text)
+    # create_user_respone = create_user()
+    # print(create_user_respone.text)
+
+    promote_student_respone = promote_student()
+    print(promote_student_respone.text)

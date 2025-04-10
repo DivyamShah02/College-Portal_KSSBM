@@ -17,3 +17,15 @@ class User(AbstractUser):
     city = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255, null=True, blank=True)
 
+
+class StudentHistory(models.Model):
+    user_id = models.CharField(max_length=12)
+    name = models.CharField(max_length=255)
+    roll_no = models.CharField(max_length=10)
+    year = models.CharField(max_length=20)
+    division = models.CharField(max_length=5)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255, null=True, blank=True)
+    academic_year = models.CharField(max_length=9)
+    was_promoted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

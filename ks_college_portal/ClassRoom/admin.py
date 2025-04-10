@@ -6,12 +6,18 @@ class SubjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'teacher_id', 'subject_id', 'subject_name', 'college_year')
     search_fields = ('subject_name', 'college_year', 'teacher_id')
     list_filter = ('college_year',)
-
+    
+    def get_queryset(self, request):        
+        return Subject.all_objects.all()
+    
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('id', 'announcement_id', 'subject_id', 'text_content', 'attached_docs', 'document_paths')
     search_fields = ('text_content', 'subject_id')
     list_filter = ('subject_id',)
+
+    def get_queryset(self, request):        
+        return Announcement.all_objects.all()
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -24,6 +30,9 @@ class AssignmentAdmin(admin.ModelAdmin):
     search_fields = ('text_content',)
     list_filter = ('subject_id',)
 
+    def get_queryset(self, request):        
+        return Assignment.all_objects.all()
+
 @admin.register(SubmittedAssignment)
 class SubmittedAssignmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'assignment_id', 'student_id', 'text_content', 'document_paths', 'created_at')
@@ -35,7 +44,15 @@ class AttendanceAdmin(admin.ModelAdmin):
     search_fields = ('code',)
     list_filter = ('subject_id',)
 
+    def get_queryset(self, request):        
+        return Attendance.all_objects.all()
+
 @admin.register(MarkedAttendance)
 class MarkedAttendanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'attendance_id', 'student_id')
     search_fields = ('attendance_id',)
+
+@admin.register(AcademicYear)
+class AcademicYearAdmin(admin.ModelAdmin):
+    list_display = ('id', 'year', 'is_current')
+    search_fields = ('year',)
