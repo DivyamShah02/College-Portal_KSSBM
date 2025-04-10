@@ -423,6 +423,14 @@ class PromoteStudentsViewSet(viewsets.ViewSet):
                 'fifth_year': None,  # No promotion beyond this
             }
 
+            # YEAR_FLOW = {
+            #     'first_year': 'second_year',
+            #     'second_year': 'first_year',
+            #     'third_year': 'second_year',
+            #     'fourth_year': 'third_year',
+            #     'fifth_year': 'fourth_year',  # No promotion beyond this
+            # }
+
             failed_student_ids = request.data.get('failed', [])
 
             current_academic_year = get_current_academic_year() # "2024-25"
