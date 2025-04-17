@@ -34,6 +34,8 @@ router.register(r'teacher-per-student-data-api', TeacherPerStudentDataViewSet, b
 router.register(r'admin-subject-unique-class-data-api', AdminSubjectUniqueClassViewSet, basename='admin-subject-unique-class-data-api')
 router.register(r'admin-student-data-api', AdminStudentDataViewSet, basename='admin-student-data-api')
 router.register(r'admin-per-student-data-api', AdminPerStudentDataViewSet, basename='admin-per-student-data-api')
+router.register(r'admin-teacher-data-api', AdminTeacherDataViewSet, basename='admin-teacher-data-api')
+
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -64,7 +64,7 @@ class TeacherTemplateViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -119,7 +119,7 @@ class StudentTemplateViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -228,7 +228,7 @@ class AdminDashboardViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -330,7 +330,7 @@ class TeacherDashboardViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -436,7 +436,7 @@ class StudentDashboardViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -518,7 +518,7 @@ class StudentDashboardPendingAssignmentCountViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -615,7 +615,7 @@ class StudentDashboardMarkedAttendanceViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -761,7 +761,7 @@ class TeacherSubjectViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -822,7 +822,7 @@ class StudentSubjectViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -883,7 +883,7 @@ class AdminSubjectViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -1047,7 +1047,7 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -1106,7 +1106,7 @@ class AnnouncementViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -1451,7 +1451,7 @@ class AssignmentViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -1717,7 +1717,7 @@ class SubmittedAssignmentViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -1975,7 +1975,7 @@ class AllSubmittedAssignmentViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2124,7 +2124,7 @@ class AttendanceViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2368,7 +2368,7 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2428,7 +2428,7 @@ class TeacherSubjectUniqueClassViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2516,7 +2516,7 @@ class TeacherStudentDataViewSet(viewsets.ViewSet):
             all_subjects = Subject.objects.filter(teacher_id=user, class_division=class_division, college_year=college_year)
             all_subjects_text = ", ".join([subject_data.subject_name for subject_data in all_subjects[::-1]])
 
-            all_students_obj = User.objects.filter(year=college_year, division=class_division)
+            all_students_obj = User.objects.filter(role='student', year=college_year, division=class_division)
             all_students = []
             
             for student in all_students_obj:
@@ -2538,7 +2538,7 @@ class TeacherStudentDataViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2703,7 +2703,7 @@ class TeacherPerStudentDataViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2763,7 +2763,7 @@ class AdminSubjectUniqueClassViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -2851,7 +2851,7 @@ class AdminStudentDataViewSet(viewsets.ViewSet):
             all_subjects = Subject.objects.filter(teacher_id=user, class_division=class_division, college_year=college_year)
             all_subjects_text = ", ".join([subject_data.subject_name for subject_data in all_subjects[::-1]])
 
-            all_students_obj = User.objects.filter(year=college_year, division=class_division)
+            all_students_obj = User.objects.filter(role='student', year=college_year, division=class_division)
             all_students = []
             
             for student in all_students_obj:
@@ -2873,7 +2873,7 @@ class AdminStudentDataViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK
@@ -3038,7 +3038,80 @@ class AdminPerStudentDataViewSet(viewsets.ViewSet):
                         "success": True,
                         "user_not_logged_in": False,
                         "user_unauthorized": False,                        
-                        "data":data,
+                        "data": data,
+                        "error": None
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+class AdminTeacherDataViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,                            
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            all_teachers_obj = User.objects.filter(role='teacher')
+            all_teachers = []
+
+            for teacher in all_teachers_obj:
+                all_teachers.append({
+                    "teacher_name": teacher.name,
+                    "teacher_id": teacher.user_id,
+                    "teacher_mail": teacher.email,
+                    "total_subjects": Subject.objects.filter(teacher_id=teacher.user_id).count(),
+                    "total_announcements": Announcement.objects.filter(teacher_id=teacher.user_id).count(),
+                    "total_assignments": Assignment.objects.filter(teacher_id=teacher.user_id).count(),
+                    "total_attendance": Attendance.objects.filter(teacher_id=teacher.user_id).count(),
+                })
+
+            data = {
+                "total_teachers": len(all_teachers_obj),
+                "all_teachers": all_teachers
+            }
+
+            return Response(
+                    {
+                        "success": True,
+                        "user_not_logged_in": False,
+                        "user_unauthorized": False,                        
+                        "data": data,
                         "error": None
                     },
                     status=status.HTTP_200_OK

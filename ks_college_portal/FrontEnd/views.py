@@ -99,6 +99,13 @@ class StudentsDataViewSet(viewsets.ViewSet):
                 return render(request, "Admin/students.html")
         return redirect('dashboard-list')
 
+class TeachersDataViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:            
+            if request.user.role == 'admin':
+                return render(request, "Admin/teachers.html")
+        return redirect('dashboard-list')
+
 class EventViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:

@@ -110,6 +110,9 @@ function logPageLoadUrl() {
         document.getElementById('Students-nav').className = 'nav-link active';
     }
 
+    else if (currentUrl.includes('teachers')) {
+        document.getElementById('Teachers-nav').className = 'nav-link active';
+    }
 }
 
 logPageLoadUrl();

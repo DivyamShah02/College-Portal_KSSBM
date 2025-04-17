@@ -15,31 +15,11 @@ async function AdminStudents(csrf_token_param, admin_students_unique_classes_url
 
   await getClassInfo();
 
-  // Load subjects
-  // await loadStudents();
-
-  // Add event listeners for filters
-  // const yearFilter = document.getElementById("yearFilter")
-  // const divisionFilter = document.getElementById("divisionFilter")
   const searchStudent = document.getElementById("searchStudent")
-
-  // if (yearFilter) {
-  //   yearFilter.addEventListener("change", filterStudents)
-  // }
-
-  // if (divisionFilter) {
-  //   divisionFilter.addEventListener("change", filterStudents)
-  // }
-
   if (searchStudent) {
     searchStudent.addEventListener("input", filterStudents)
   }
 
-  // // Add event listener for save subject button
-  // const saveSubjectBtn = document.getElementById("saveSubjectBtn")
-  // if (saveSubjectBtn) {
-  //   saveSubjectBtn.addEventListener("click", saveSubject);
-  // }
 }
 
 
@@ -204,20 +184,9 @@ function renderStudentsList(students, college_year, division) {
 }
 
 function filterStudents() {
-  // const yearFilter = document.getElementById("yearFilter").value
-  // const divisionFilter = document.getElementById("divisionFilter").value
   const searchFilter = document.getElementById("searchStudent").value.toLowerCase()
 
   const filteredStudents = students.filter((student) => {
-    // Filter by year
-    // if (yearFilter && subject.college_year != yearFilter) {
-    //   return false
-    // }
-
-    // // Filter by division
-    // if (divisionFilter && subject.class_division !== divisionFilter) {
-    //   return false
-    // }
 
     // Filter by search term
     if (searchFilter && !student.student_name.toLowerCase().includes(searchFilter)) {
