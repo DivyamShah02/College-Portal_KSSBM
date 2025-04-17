@@ -1,5 +1,6 @@
 import requests
 import random
+import pandas as pd
 
 API_URL = "http://127.0.0.1:8000/"
 
@@ -55,20 +56,24 @@ def create_users():
                 all_students.append(data)
                 roll_counter += 1
 
-    try:
-        data = {
-            "students_data": all_students,
-        }
-        # import pdb; pdb.set_trace()
-        # print(data)
-        url = API_URL + 'user/multiple-student-api/'
-        response = requests.post(url, json=data)
-        print(response.json())
-        if response.status_code == 201:
-            print(f"\n✅ Total users created: {len(all_students)}")
+    df = pd.DataFrame(all_students)
+    df.to_excel("students_data.xlsx", index=False)
+    
+
+    # try:
+    #     data = {
+    #         "students_data": all_students,
+    #     }
+    #     # import pdb; pdb.set_trace()
+    #     # print(data)
+    #     url = API_URL + 'user/multiple-student-api/'
+    #     response = requests.post(url, json=data)
+    #     print(response.json())
+    #     if response.status_code == 201:
+    #         print(f"\n✅ Total users created: {len(all_students)}")
             
-    except Exception as e:
-        print(f"[!] Exception for {data['roll_no']}: {e}")
+    # except Exception as e:
+    #     print(f"[!] Exception for {data['roll_no']}: {e}")
 
     
 

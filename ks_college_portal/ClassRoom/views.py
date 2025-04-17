@@ -141,7 +141,7 @@ class StudentTemplateViewSet(viewsets.ViewSet):
 
 class AdminDashboardViewSet(viewsets.ViewSet):
     def list(self, request):
-        # try:
+        try:
             user = request.user
             if not user.is_authenticated:
                 return Response(
@@ -234,19 +234,19 @@ class AdminDashboardViewSet(viewsets.ViewSet):
                     status=status.HTTP_200_OK
                 )
 
-        # except Exception as ex:
-        #     # logger.error(ex, exc_info=True)
-        #     print(ex)
-        #     return Response(
-        #                 {
-        #                     "success": False,
-        #                     "user_not_logged_in": False,
-        #                     "user_unauthorized": False,                            
-        #                     "data": None,
-        #                     "error": str(ex)
-        #                 },
-        #                 status=status.HTTP_400_BAD_REQUEST
-        #             )
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
 class TeacherDashboardViewSet(viewsets.ViewSet):
     def list(self, request):

@@ -6,6 +6,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r'user', UserCreationViewSet, basename='user')
 router.register(r'multiple-student-api', MultipleStudentCreationViewSet, basename='multiple-student-api')
+router.register(r'excel-upload-multiple-student-api', MultipleStudentCreationExcelUploadViewSet, basename='excel-upload-multiple-student-api')
 
 router.register(r'promote-student-api', PromoteStudentsViewSet, basename='promote-student-api')
 

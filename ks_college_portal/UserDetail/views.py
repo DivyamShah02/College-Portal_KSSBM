@@ -14,6 +14,7 @@ from ClassRoom.models import *
 
 import random
 import string
+import pandas as pd
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -368,16 +369,142 @@ class MultipleStudentCreationViewSet(viewsets.ViewSet):
             if field not in student_data:
                 return False, f"Missing field: {field}"
             
-            student_already_user = User.objects.filter(email=student_data['email']).first()
-            if student_already_user:
-                return False, "User already registered."
+        student_already_user = User.objects.filter(email=student_data['email']).first()
+        if student_already_user:
+            return False, "User already registered."
         return True, "All fields are present."
 
     def checl_all_students_data_dict(self, all_students_data):
         for ind,student_data in enumerate(all_students_data):
             data_perfect, reason = self.check_students_data_dict(student_data)
             if not data_perfect:
-                return False, f"Data error at index {ind}: {reason}"
+                return False, f"Data error at index {ind+1}: {reason}"
+        return True, "All data is perfect."
+
+    def generate_user_id(self, role_code):
+        while True:
+            user_id = ''.join(random.choices(string.digits, k=10))
+            user_id = role_code + user_id
+            if not User.objects.filter(user_id=user_id).exists():
+                return user_id
+
+
+class MultipleStudentCreationExcelUploadViewSet(viewsets.ViewSet):
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            excel_file = request.FILES.get('file')
+            if not excel_file:
+                return Response({"error": "No file uploaded."}, status=400)
+
+            df = pd.read_excel(excel_file)
+            all_students_data = df.to_dict(orient='records')
+            
+            all_student_data_perfect, reason = self.checl_all_students_data_dict(all_students_data)
+            if not all_student_data_perfect:
+                return Response(
+                    {
+                        "success": False,
+                        "data": None,
+                        "error": reason
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            for index,student_data in enumerate(all_students_data):
+                name = student_data.get('name')
+                password = student_data.get('password')
+                contact_number = student_data.get('contact_number')
+                email = student_data.get('email')
+                city = student_data.get('city')
+                state = student_data.get('state')
+                role = student_data.get('role')
+                roll_no = student_data.get('roll_no')
+                year = student_data.get('year')
+                division = student_data.get('division')
+
+                user_id = self.generate_user_id(role_code='S')
+
+                user = User.objects.create_user(
+                    user_id=user_id,
+                    username = user_id,
+                    password = password,
+                    name=name,
+                    contact_number=contact_number,
+                    email=email,
+                    city=city,
+                    state=state,
+                    role=role,
+                    roll_no=roll_no,
+                    year=year,
+                    division=division,
+                )
+
+                print(f"{index}) [✓] Created {name} - {roll_no}")
+
+            return Response(
+                        {
+                            "success": True,                         
+                            "data":"Users created successfully.",
+                            "error": None
+                        },
+                        status=status.HTTP_201_CREATED
+                    )
+
+
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "data":None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+
+    def check_students_data_dict(self, student_data):
+        required_fields = ['name', 'password', 'contact_number', 'email', 'city', 'state', 'role', 'roll_no', 'year', 'division']
+        for field in required_fields:
+            if field not in student_data:
+                return False, f"Missing field: {field}"
+        print(student_data['email'])
+        student_already_user = User.objects.filter(email=student_data['email']).first()
+        if student_already_user:
+            return False, "User already registered."
+        return True, "All fields are present."
+
+    def checl_all_students_data_dict(self, all_students_data):
+        for ind,student_data in enumerate(all_students_data):
+            data_perfect, reason = self.check_students_data_dict(student_data)
+            if not data_perfect:
+                return False, f"Data error at row number {ind+2}: {reason}"
         return True, "All data is perfect."
 
     def generate_user_id(self, role_code):
@@ -506,6 +633,7 @@ class PromoteStudentsViewSet(viewsets.ViewSet):
                             },
                             status=status.HTTP_200_OK
                         )
+
 
 class StudentNameAutocompleteViewSet(viewsets.ViewSet):
     def list(self, request):

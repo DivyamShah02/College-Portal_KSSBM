@@ -3,16 +3,19 @@ let admin_dashboard_url = null;
 let admin_user_creation_url = null;
 let promote_student_url = null;
 let admin_student_autocomplete_url = null;
+let upload_student_excel_url = null;
 let dashboard_data = null;
 let failed_students = []
 let failed_students_names = []
+let SelectedFiles = []
 
-async function AdminDashboard(csrf_token_param, admin_dashboard_url_param, admin_user_creation_url_param, admin_student_autocomplete_url_param, promote_student_url_param) {
+async function AdminDashboard(csrf_token_param, admin_dashboard_url_param, admin_user_creation_url_param, admin_student_autocomplete_url_param, promote_student_url_param, upload_student_excel_url_param) {
   csrf_token = csrf_token_param;
   admin_dashboard_url = admin_dashboard_url_param;
   admin_user_creation_url = admin_user_creation_url_param;
   admin_student_autocomplete_url = admin_student_autocomplete_url_param;
   promote_student_url = promote_student_url_param;
+  upload_student_excel_url = upload_student_excel_url_param;
 
   const url = admin_dashboard_url;
   const [success, result] = await callApi("GET", url);
@@ -42,9 +45,6 @@ async function AdminDashboard(csrf_token_param, admin_dashboard_url_param, admin
 
       // Load data
       loadRecentSubjects(dashboard_data.all_subjects);
-      loadRecentAttendance(dashboard_data.all_attendance);
-      loadRecentAnnouncements(dashboard_data.all_announcement);
-      loadUpcomingPlacements(dashboard_data.all_company);
 
       const failed_student_roll_no_input = document.getElementById('failed_student_roll_no');
       const autocompleteStudentList = document.getElementById('autocomplete-student-list');
@@ -149,120 +149,6 @@ function loadRecentSubjects(subjects) {
   recentSubjectsTable.innerHTML = html
 }
 
-function loadRecentAttendance(attendances) {
-  const recentAttendanceTable = document.getElementById("recentAttendanceTable");
-  const recentAttendance = document.getElementById("recentAttendance");
-
-  if (!recentAttendanceTable) return
-
-  if (attendances.length === 0) {
-    recentAttendance.innerHTML = '<div class="text-center py-5"><h5>No attendance found</h5></div>'
-    return
-  }
-
-  let html = ""
-  attendances.forEach((attendance) => {
-    const now = new Date()
-    const attendanceDate = new Date(`${attendance.created_at}`)
-    let attendanceEndDate = attendanceDate
-    attendanceEndDate.setHours(attendanceDate.getHours() + 1);
-    let attendance_completed = "In Progress";
-
-    if (attendanceEndDate <= now) {
-      attendance_completed = "Completed";
-    }
-
-    html += `
-            <tr>
-                <td class="text-nowrap">${attendance.subject_name}</td>
-                <td>${new Date(attendance.created_at).toLocaleDateString()}</td>
-                <td>${attendance.attendance_data}/${attendance.student_counts}</td>
-                <td><span class="badge bg-${attendance_completed === "Completed" ? "success" : "primary"}">${attendance_completed}</span></td>
-            </tr>
-        `
-  })
-
-  recentAttendanceTable.innerHTML = html
-}
-
-function loadRecentAnnouncements(announcements) {
-  const recentAnnouncementsList = document.getElementById("recentAnnouncementsList")
-  const recentAnnouncements = document.getElementById("recentAnnouncements");
-
-  if (!recentAnnouncementsList) return
-
-  if (announcements.length === 0) {
-    recentAnnouncements.innerHTML = '<div class="text-center py-5"><h5>No announcement found</h5></div>'
-    return
-  }
-
-  let html = ""
-  announcements.forEach((announcement) => {
-    let doc_html = ""
-    if (announcement.document_paths.length === 0) {
-      doc_html = "";
-    }
-    else {
-      announcement.document_paths.forEach((doc) => {
-        doc_path = String(doc).replace('\\', '/');
-        doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
-            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
-          </button>`
-      });
-    }
-    html += `
-            <div class="announcement-card p-3 mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0">${announcement.subject_name}</h6>
-                    <span class="badge bg-primary text-white">${announcement.created_at}</span>
-                </div>
-                <p class="mb-1">${announcement.text_content}</p>  
-                ${doc_html
-        ? `
-                                    <div class="mt-3 text-wrap text-break">
-                                        ${doc_html}
-                                    </div>
-                                `
-        : ""
-      }              
-            </div>
-        `
-  })
-
-  recentAnnouncementsList.innerHTML = html
-}
-
-function loadUpcomingPlacements(placements) {
-  const upcomingPlacementsList = document.getElementById("upcomingPlacementsList")
-  const upcomingPlacements = document.getElementById("upcomingPlacements");
-
-  if (!upcomingPlacementsList) return
-
-  if (placements.length === 0) {
-    upcomingPlacements.innerHTML = '<div class="text-center py-5"><h5>No company found</h5></div>'
-    return
-  }
-
-  let html = ""
-  placements.forEach((placement) => {
-    html += `
-            <div class="placement-card p-3 mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="mb-0">${placement.company_name}</h6>
-                    <span class="badge bg-success">${placement.estimated_package} LPA</span>
-                </div>
-                <p class="mb-1">${placement.job_role}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">${placement.created_at}</small>
-                    <span class="badge bg-primary text-light">5 registrations</span>
-                </div>
-            </div>
-        `
-  })
-
-  upcomingPlacementsList.innerHTML = html
-}
-
 function openDocModal(doc_path, doc_name) {
   displayDocument(doc_path);
   document.getElementById('viewDocumentModalLabel').innerText = doc_name;
@@ -349,4 +235,72 @@ async function transitToNewAcademicYear() {
       toggle_loader()
     }
   );
+}
+
+document.getElementById('students_excel_file').addEventListener('change', function (event) {
+  handleFiles(event.target.files);
+});
+
+function handleFiles(files) {
+  const allowedExtensions = ['xlsx', 'xls', 'csv'];
+
+  for (let file of files) {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      alert(`Unsupported file type: ${file.name}`);
+      continue;
+    }
+    document.getElementById(`upload_input_text_students_excel_file`).style.display = 'none';
+    document.getElementById(`upload_input_file_text_students_excel_file`).style.display = '';
+    document.getElementById(`upload_input_file_text_students_excel_file`).innerText = file.name;
+    document.getElementById(`students_excel_file_DocUploadIcon`).className = 'bi bi-cloud-check fa-xl';
+    SelectedFiles = [];
+    SelectedFiles.push(file);
+
+  }
+}
+
+async function uploadStudentExcel() {
+  if (SelectedFiles.length === 0) {
+    alert("Please select a file!");
+    return;
+  }
+  if (SelectedFiles.length > 1) {
+    alert("Please select only one file!");
+    return;
+  }
+  const file = SelectedFiles[0];
+  if (!file) {
+    alert("Please select a file!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  toggle_loader();
+  try {
+    const url = upload_student_excel_url;
+    const [success, result] = await callApi("POST", url, formData, csrf_token, true);
+    console.log("Result:", result);
+    if (success) {
+      if (result.success) {
+        alert("File uploaded successfully!");
+        location.reload();
+      }
+
+      else {
+        alert(result.error);
+      }
+
+    } else {
+      alert("Upload failed!");
+
+    }
+    toggle_loader();
+
+  } catch (err) {
+    console.error("Error uploading file", err);
+    alert("Upload failed!");
+  }
 }
