@@ -12,6 +12,8 @@ router.register(r'promote-student-api', PromoteStudentsViewSet, basename='promot
 router.register(r'login-api', LoginApiViewSet, basename='login-api')
 router.register(r'logout-api', LogoutApiViewSet, basename='logout-api')
 
+router.register(r'student-name-autocomplete-api', StudentNameAutocompleteViewSet, basename='student-name-autocomplete-api')
+
 urlpatterns = [
     path('', include(router.urls)),
     

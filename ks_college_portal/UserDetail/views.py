@@ -5,14 +5,16 @@ from rest_framework.exceptions import NotFound, ParseError
 
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 
-from .serializers import UserSerializer
+from .serializers import *
 from .models import *
 
 from ClassRoom.models import *
 
 import random
 import string
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 
@@ -389,31 +391,31 @@ class MultipleStudentCreationViewSet(viewsets.ViewSet):
 class PromoteStudentsViewSet(viewsets.ViewSet):
     def create(self, request):
         try:
-            # user = request.user
-            # if not user.is_authenticated:
-            #     return Response(
-            #             {
-            #                 "success": False,
-            #                 "user_not_logged_in": True,
-            #                 "user_unauthorized": False,
-            #                 "data": None,
-            #                 "error": None
-            #             },
-            #             status=status.HTTP_400_BAD_REQUEST
-            #         )
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
-            # user_role = user.role
-            # if user_role != 'admin':
-            #     return Response(
-            #             {
-            #                 "success": False,
-            #                 "user_not_logged_in": False,
-            #                 "user_unauthorized": True,
-            #                 "data": None,
-            #                 "error": None
-            #             },
-            #             status=status.HTTP_400_BAD_REQUEST
-            #         )
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
             YEAR_FLOW = {
                 'first_year': 'second_year',
@@ -423,16 +425,21 @@ class PromoteStudentsViewSet(viewsets.ViewSet):
                 'fifth_year': None,  # No promotion beyond this
             }
 
-            # YEAR_FLOW = {
-            #     'first_year': 'second_year',
-            #     'second_year': 'first_year',
-            #     'third_year': 'second_year',
-            #     'fourth_year': 'third_year',
-            #     'fifth_year': 'fourth_year',  # No promotion beyond this
-            # }
-
             failed_student_ids = request.data.get('failed', [])
 
+            roll_no_counters = defaultdict(int)
+
+            # Find current max roll numbers in each year
+            existing_roll_nos = User.objects.filter(role='student').values('year', 'roll_no')
+            for entry in existing_roll_nos:
+                try:
+                    year = entry['year']
+                    roll_no = int(str(entry['roll_no']))
+                    if roll_no > roll_no_counters[year]:
+                        roll_no_counters[year] = roll_no
+                except:
+                    continue
+                
             current_academic_year = get_current_academic_year() # "2024-25"
             new_academic_year = str(int(current_academic_year.split('-')[0]) + 1) + '-' + str(int(current_academic_year.split('-')[1]) + 1)
             AcademicYear.objects.create(year=new_academic_year, is_current=True)        
@@ -452,17 +459,30 @@ class PromoteStudentsViewSet(viewsets.ViewSet):
                     division=student.division,
                     city=student.city,
                     state=student.state,
-                    academic_year=new_academic_year,
+                    academic_year=current_academic_year,
                     was_promoted=not student_failed,
                 )
 
-                if not student_failed:
+                if student_failed:
+                    # Stay in same year, but get new roll number
+                    roll_no_counters[student.year] += 1
+                    new_roll_no = str(roll_no_counters[student.year])
+
+                    student.roll_no = new_roll_no
+                    student.email = str(student.email).replace(str(student.roll_no), new_roll_no)
+                    student.save()
+
+                else:
                     if YEAR_FLOW[student.year] is not None:
                         if student.year in YEAR_FLOW and YEAR_FLOW[student.year]:
                             student.year = YEAR_FLOW[student.year]
+                            student_roll_no = str(student.roll_no)
+                            new_student_roll_no = str(int(student_roll_no[0])+1) + str(student_roll_no[1:])
+                            student.email = str(student.email).replace(str(student_roll_no), str(new_student_roll_no))
+                            student.roll_no = new_student_roll_no
                             student.save()
                     else:
-                        student.delete()            
+                        student.delete()
 
             return Response(
                             {
@@ -486,6 +506,81 @@ class PromoteStudentsViewSet(viewsets.ViewSet):
                             },
                             status=status.HTTP_200_OK
                         )
+
+class StudentNameAutocompleteViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": True,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            user_role = user.role
+            if user_role != 'admin':
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": True,
+                            "data": None,
+                            "error": None
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            query = request.GET.get('q', '')
+            if not query:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": "Query parameter is required."
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            student_data_name_obj = User.objects.filter(Q(name__icontains=query, role='student'))  # Add fields as needed
+            student_data_roll_no_obj = User.objects.filter(Q(roll_no__icontains=query, role='student'))  # Add fields as needed
+            student_data_name = AutocompleteUserSerializer(student_data_name_obj, many=True).data
+            student_data_roll_no = AutocompleteUserSerializer(student_data_roll_no_obj, many=True).data
+
+            data = student_data_roll_no + student_data_name
+
+            return Response(
+                        {
+                            "success": True,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,
+                            "data": data,
+                            "error": None
+                        },
+                        status=status.HTTP_200_OK
+                    )
+        
+        except Exception as ex:
+            # logger.error(ex, exc_info=True)
+            print(ex)
+            return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,
+                            "data": None,
+                            "error": str(ex)
+                        },
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+
 
 def login_to_account(request):
     try:

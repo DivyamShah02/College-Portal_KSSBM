@@ -9,6 +9,8 @@ let student_counts = null;
 let assignmentSelectedFiles = [];
 let subject = null;
 let student_id = null;
+let user_latitude = null;
+let user_longitude = null;
 
 async function HandleSubjectDetail(csrf_token_param, student_subject_details_url_param, student_subject_announcements_url_param, student_subject_announcements_comments_url_param, student_subject_submit_assignments_url_param, student_id_param, student_subject_mark_attendance_url_param) {
   csrf_token = csrf_token_param;
@@ -24,7 +26,7 @@ async function HandleSubjectDetail(csrf_token_param, student_subject_details_url
 
   if (!subjectId) {
     window.location.href = "/subjects/";
-    console.log('erabgyuobboawgreuy');
+    // console.log('erabgyuobboawgreuy');
     return;
   }
 
@@ -67,7 +69,7 @@ async function loadSubjectDetails(subjectId) {
 
   const url = `${student_subject_details_url}?` + toQueryString(Params);
   const [success, result] = await callApi("GET", url);
-  console.log(result);
+  // console.log(result);
   if (success) {
     if (result.success) {
       subject = result.data;
@@ -293,7 +295,6 @@ function loadAttendance(subjectAttendance) {
   let html = ""
   subjectAttendance.forEach((session) => {
     const attendanceDate = new Date(`${session.created_at}`)
-    console.log(session.created_at)
 
     const now = new Date()
     let attendanceEndDate = attendanceDate
@@ -332,7 +333,7 @@ function loadAttendance(subjectAttendance) {
 
     }
 
-    console.log(attendanceProgressColor);
+    // console.log(attendanceProgressColor);
 
     html += `
                 <div class="card attendance-card mb-3">
@@ -381,10 +382,10 @@ function getProgressColor(percentage) {
 }
 
 async function addComment(index, announcement_id) {
-  console.log(document.getElementById(`announcement-${index}-comment-input`))
+  // console.log(document.getElementById(`announcement-${index}-comment-input`))
   let comment_content = document.getElementById(`announcement-${index}-comment-input`).value;
-  console.log(index);
-  console.log(comment_content);
+  // console.log(index);
+  // console.log(comment_content);
   if (comment_content != '') {
     let bodyData = {
       announcement_id: announcement_id,
@@ -394,7 +395,7 @@ async function addComment(index, announcement_id) {
     const url = student_subject_announcements_comments_url;
     const [success, result] = await callApi("POST", url, bodyData, csrf_token);
     if (success) {
-      console.log("Result:", result);
+      // console.log("Result:", result);
 
       if (result.success) {
         location.reload();
@@ -470,7 +471,7 @@ document.getElementById("submit_assignment_form").addEventListener("submit", asy
   const url = student_subject_submit_assignments_url;
   const [success, result] = await callApi("POST", url, formData, csrf_token, true);
 
-  console.log(result);
+  // console.log(result);
   if (success) {
     if (result.success) {
       location.reload();
@@ -511,10 +512,10 @@ async function get_submitted_assignment(student_id, assignment_id) {
 
   const url = `${student_subject_submit_assignments_url}?` + toQueryString(Params);
   const [success, result] = await callApi("GET", url);
-  console.log(result);
+  // console.log(result);
   if (success) {
     if (result.success) {
-      console.log(result.data);
+      // console.log(result.data);
       createDocumentList(result.data.submitted_assignment.document_paths, result.data.submitted_assignment.created_at, result.data.submitted_assignment.text_content);
 
     }
@@ -586,16 +587,34 @@ async function submitAttendance() {
     return
   }
 
+  let user_latitude, user_longitude;
+
+  if (navigator.geolocation) {
+    try {
+      const coords = await getCoordinates();  // ⬅️ Await coordinates
+      user_latitude = coords.latitude;
+      user_longitude = coords.longitude;
+    } catch (err) {
+      document.getElementById('mark-attendance-error').innerText = 'Location access denied or failed.';
+      return;
+    }
+  } else {
+    document.getElementById('mark-attendance-error').innerText = 'Geolocation is not supported by this browser.';
+    return;
+  }
+
   let bodyData = {
     attendance_id: document.getElementById('attendance_id').value,
-    unique_code: code
+    unique_code: code,
+    latitude: user_latitude,
+    longitude: user_longitude
   }
+
+  console.log(bodyData);
 
   const url = student_subject_mark_attendance_url;
   const [success, result] = await callApi("POST", url, bodyData, csrf_token);
   if (success) {
-    console.log("Result:", result);
-
     if (result.success) {
       location.reload();
     }
@@ -617,4 +636,20 @@ async function submitAttendance() {
     input.value = ""
   })
 
+}
+
+function getCoordinates() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
 }

@@ -137,7 +137,12 @@ function HandleUniqueClasses(uniqueClass) {
   updateDivisions(yearFilter.value);
   
   divisionFilter.selectedIndex = 1;
-  loadStudents(years[0], divisionFilter.options[1].textContent);
+  try {
+    loadStudents(years[0], divisionFilter.options[1].textContent);
+  }
+  catch (error) {
+    console.error("Error loading students:", error);
+  }
 }
 
 async function loadStudents(college_year, division) {

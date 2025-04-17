@@ -18,11 +18,12 @@ import pytz
 import time
 import random
 import string
-# import boto3
-# from botocore.exceptions import NoCredentialsError
+import boto3
 import base64
-from datetime import datetime, timedelta
+from geopy.distance import geodesic
 from dateutil.parser import isoparse
+from datetime import datetime, timedelta
+from botocore.exceptions import NoCredentialsError
 
 
 logger = None
@@ -203,6 +204,8 @@ class AdminDashboardViewSet(viewsets.ViewSet):
 
             data = {
                 "admin_data": admin_data,
+
+                "current_acedemic_year": get_current_academic_year(),
 
                 "total_students": len(total_students),
                 
@@ -1263,40 +1266,40 @@ class AnnouncementViewSet(viewsets.ViewSet):
         # Return the relative file path
         return os.path.relpath(file_path, settings.MEDIA_ROOT)
 
-    # def upload_file_to_s3(self, uploaded_file):
-    #     """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
-    #     region_name = "eu-north-1"
-    #     s3_client = boto3.client(
-    #         "s3",
-    #         aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-    #         aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
-    #         region_name = region_name
-    #     )
+    def upload_file_to_s3(self, uploaded_file):
+        """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
+        region_name = "eu-north-1"
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
+            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            region_name = region_name
+        )
         
-    #     bucket_name = "ehunt"
-    #     base_name, extension = os.path.splitext(uploaded_file.name)
-    #     file_name = uploaded_file.name
-    #     s3_key = f"uploads/{file_name}"
-    #     counter = 1
+        bucket_name = "ehunt"
+        base_name, extension = os.path.splitext(uploaded_file.name)
+        file_name = uploaded_file.name
+        s3_key = f"uploads/{file_name}"
+        counter = 1
 
-    #     # Check if file exists and rename if necessary
-    #     while True:
-    #         try:
-    #             s3_client.head_object(Bucket=bucket_name, Key=s3_key)
-    #             # If file exists, update the filename
-    #             file_name = f"{base_name}({counter}){extension}"
-    #             s3_key = f"uploads/{file_name}"
-    #             counter += 1
-    #         except s3_client.exceptions.ClientError:
-    #             break  # File does not exist, proceed with upload
+        # Check if file exists and rename if necessary
+        while True:
+            try:
+                s3_client.head_object(Bucket=bucket_name, Key=s3_key)
+                # If file exists, update the filename
+                file_name = f"{base_name}({counter}){extension}"
+                s3_key = f"uploads/{file_name}"
+                counter += 1
+            except s3_client.exceptions.ClientError:
+                break  # File does not exist, proceed with upload
 
-    #     # Upload file
-    #     s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
+        # Upload file
+        s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
 
-    #     # Generate file URL
-    #     file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
+        # Generate file URL
+        file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
 
-    #     return file_url
+        return file_url
 
     def decrypt(self, b64_text):
         # Decode the Base64 string back to bytes, then to text
@@ -1623,40 +1626,40 @@ class AssignmentViewSet(viewsets.ViewSet):
         # Return the relative file path
         return os.path.relpath(file_path, settings.MEDIA_ROOT)
 
-    # def upload_file_to_s3(self, uploaded_file):
-    #     """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
-    #     region_name = "eu-north-1"
-    #     s3_client = boto3.client(
-    #         "s3",
-    #         aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-    #         aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
-    #         region_name = region_name
-    #     )
+    def upload_file_to_s3(self, uploaded_file):
+        """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
+        region_name = "eu-north-1"
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
+            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            region_name = region_name
+        )
         
-    #     bucket_name = "ehunt"
-    #     base_name, extension = os.path.splitext(uploaded_file.name)
-    #     file_name = uploaded_file.name
-    #     s3_key = f"uploads/{file_name}"
-    #     counter = 1
+        bucket_name = "ehunt"
+        base_name, extension = os.path.splitext(uploaded_file.name)
+        file_name = uploaded_file.name
+        s3_key = f"uploads/{file_name}"
+        counter = 1
 
-    #     # Check if file exists and rename if necessary
-    #     while True:
-    #         try:
-    #             s3_client.head_object(Bucket=bucket_name, Key=s3_key)
-    #             # If file exists, update the filename
-    #             file_name = f"{base_name}({counter}){extension}"
-    #             s3_key = f"uploads/{file_name}"
-    #             counter += 1
-    #         except s3_client.exceptions.ClientError:
-    #             break  # File does not exist, proceed with upload
+        # Check if file exists and rename if necessary
+        while True:
+            try:
+                s3_client.head_object(Bucket=bucket_name, Key=s3_key)
+                # If file exists, update the filename
+                file_name = f"{base_name}({counter}){extension}"
+                s3_key = f"uploads/{file_name}"
+                counter += 1
+            except s3_client.exceptions.ClientError:
+                break  # File does not exist, proceed with upload
 
-    #     # Upload file
-    #     s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
+        # Upload file
+        s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
 
-    #     # Generate file URL
-    #     file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
+        # Generate file URL
+        file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
 
-    #     return file_url
+        return file_url
 
     def decrypt(self, b64_text):
         # Decode the Base64 string back to bytes, then to text
@@ -1857,40 +1860,40 @@ class SubmittedAssignmentViewSet(viewsets.ViewSet):
         # Return the relative file path
         return os.path.relpath(file_path, settings.MEDIA_ROOT)
 
-    # def upload_file_to_s3(self, uploaded_file):
-    #     """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
-    #     region_name = "eu-north-1"
-    #     s3_client = boto3.client(
-    #         "s3",
-    #         aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-    #         aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
-    #         region_name = region_name
-    #     )
+    def upload_file_to_s3(self, uploaded_file):
+        """Uploads a file to AWS S3, renaming it if a file with the same name exists."""
+        region_name = "eu-north-1"
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
+            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            region_name = region_name
+        )
         
-    #     bucket_name = "ehunt"
-    #     base_name, extension = os.path.splitext(uploaded_file.name)
-    #     file_name = uploaded_file.name
-    #     s3_key = f"uploads/{file_name}"
-    #     counter = 1
+        bucket_name = "ehunt"
+        base_name, extension = os.path.splitext(uploaded_file.name)
+        file_name = uploaded_file.name
+        s3_key = f"uploads/{file_name}"
+        counter = 1
 
-    #     # Check if file exists and rename if necessary
-    #     while True:
-    #         try:
-    #             s3_client.head_object(Bucket=bucket_name, Key=s3_key)
-    #             # If file exists, update the filename
-    #             file_name = f"{base_name}({counter}){extension}"
-    #             s3_key = f"uploads/{file_name}"
-    #             counter += 1
-    #         except s3_client.exceptions.ClientError:
-    #             break  # File does not exist, proceed with upload
+        # Check if file exists and rename if necessary
+        while True:
+            try:
+                s3_client.head_object(Bucket=bucket_name, Key=s3_key)
+                # If file exists, update the filename
+                file_name = f"{base_name}({counter}){extension}"
+                s3_key = f"uploads/{file_name}"
+                counter += 1
+            except s3_client.exceptions.ClientError:
+                break  # File does not exist, proceed with upload
 
-    #     # Upload file
-    #     s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
+        # Upload file
+        s3_client.upload_fileobj(uploaded_file, bucket_name, s3_key)
 
-    #     # Generate file URL
-    #     file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
+        # Generate file URL
+        file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
 
-    #     return file_url
+        return file_url
 
     def decrypt(self, b64_text):
         # Decode the Base64 string back to bytes, then to text
@@ -2214,6 +2217,32 @@ class MarkedAttendanceViewSet(viewsets.ViewSet):
                             "user_unauthorized": False,                            
                             "data": None,
                             "error": 'Attendance id not provided.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            COLLEGE_LOCATION = (23.036464, 72.548065)
+            MAX_ALLOWED_DISTANCE_METERS = 35
+
+            user_lat = float(request.data.get('latitude'))
+            user_lon = float(request.data.get('longitude'))
+
+            # ff = '23.036454,72.547759'
+            # user_lat = ff.split(',')[0]
+            # user_lon = ff.split(',')[-1]
+
+            user_location = (user_lat, user_lon)
+            distance = geodesic(COLLEGE_LOCATION, user_location).meters
+            # print(distance)
+            
+            if distance >= MAX_ALLOWED_DISTANCE_METERS:
+                return Response(
+                        {
+                            "success": False,
+                            "user_not_logged_in": False,
+                            "user_unauthorized": False,                            
+                            "data": None,
+                            "error": 'You are not within the college premises.'
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )

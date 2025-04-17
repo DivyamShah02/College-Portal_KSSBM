@@ -218,3 +218,49 @@ function displayDocument(url) {
         viewer.innerHTML = `<p>Unsupported document type: ${extension}</p>`;
     }
 }
+
+function showModal(title, content, callback, submit_not_needed=false) {
+    // Create modal HTML structure
+    const modalHtml = `
+      <div class="modal fade" id="dynamicConfirmationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">${title}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ${content}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary eh-btn-blue-primary-no-hover" id="dynamicConfirmModalButton">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    // Append the modal to the body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Show the modal
+    const modalElement = document.getElementById('dynamicConfirmationModal');
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+    bootstrapModal.show();
+
+    // Attach event listener to the submit button
+    document.getElementById('dynamicConfirmModalButton').addEventListener('click', () => {
+        callback(); // Call the provided callback function
+        bootstrapModal.hide(); // Hide the modal
+        modalElement.remove(); // Remove the modal from the DOM
+    });
+
+    if (submit_not_needed) {
+        document.getElementById('dynamicConfirmModalButton').style.display = 'none';
+    }
+
+    // Clean up modal after hiding
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        modalElement.remove();
+    });
+}

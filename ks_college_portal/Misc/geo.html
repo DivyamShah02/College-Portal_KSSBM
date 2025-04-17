@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS Attendance</title>
+</head>
+<body>
+  <h2>Mark Attendance</h2>
+  <button onclick="getLocation()">Mark Attendance</button>
+
+  <p id="status"></p>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById("status");
+
+      if (navigator.geolocation) {
+        status.innerHTML = "Getting your location...";
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        status.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+
+    function success(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      document.getElementById("status").innerHTML =
+        `Location: ${latitude}, ${longitude}`;
+    }
+
+    function error(err) {
+      if (err.code === 1) {
+        alert("You must allow location access to mark attendance.");
+      } else {
+        alert("Error getting location.");
+      }
+    }
+
+    // For Django CSRF token handling (if needed)
+    function getCSRFToken() {
+      return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+    }
+  </script>
+</body>
+</html>

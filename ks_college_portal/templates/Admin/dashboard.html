@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,8 @@
     <!-- Import Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lexend:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap">
 
     <!-- Import FontAwsome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,7 +29,27 @@
     <link rel="stylesheet" href="/static/css/loader_logo.css">
     <link rel="stylesheet" href="/static/css/styles.css">
 
+    <style>
+        #autocomplete-student-list {
+            border: 1px solid #ddd;
+            max-height: 350px;
+            overflow-y: auto;
+            position: absolute;
+            background: white;
+            z-index: 1000;
+        }
+
+        .autocomplete-student-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .autocomplete-student-item:hover {
+            text-emphasis: bold;
+        }
+    </style>
 </head>
+
 <body>
     <div id="spinner" class="spinner-container p-2">
         <div class="spinner"></div>
@@ -47,11 +69,11 @@
             <div class="fade-in">
                 <div class="row mb-4">
                     <div class="col-md-6 text-start">
-                        <h2 class="mb-0">Admin Dashboard</h2>                        
+                        <h2 class="mb-0">Admin Dashboard</h2>
                     </div>
                     <div class="col-md-6 text-md-end">
                         <span class="text-muted me-2">Today:</span>
-                        <span id="currentDate"></span>                        
+                        <span id="currentDate"></span>
                     </div>
                     <!-- <div class="col-md-6 text-md-end">
                         <span class="text-muted me-2">Today:</span>
@@ -79,7 +101,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card stats-card blue">
                             <div class="card-body">
@@ -93,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card stats-card orange">
                             <div class="card-body">
@@ -107,7 +129,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card stats-card blue">
                             <div class="card-body">
@@ -120,8 +142,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
-                                        
+                    </div>
+
                     <div class="col-md-4">
                         <div class="card stats-card orange">
                             <div class="card-body">
@@ -135,7 +157,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card stats-card red">
                             <div class="card-body">
@@ -156,8 +178,14 @@
                             <i class="fa fa-plus"></i>
                         </button>
                     </div>
+                    <div class="col-12 mt-2">
+                        <button class="btn btn-primary w-100" data-bs-toggle="modal"
+                            data-bs-target="#transition_to_new_academic_yearModal">
+                            <b class="mx-auto">Transition to new academic year</b>
+                        </button>
+                    </div>
                 </div>
-                
+
                 <div class="row">
                     <!-- Recent Subjects -->
                     <div class="col-md-6 mb-4">
@@ -186,12 +214,12 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Recent Attendance -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">Recent Attendance</h5>                                
+                                <h5 class="mb-0">Recent Attendance</h5>
                             </div>
                             <div class="card-body" id="recentAttendance">
                                 <div class="table-responsive">
@@ -214,34 +242,40 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <!-- Recent Announcements -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Recent Announcements</h5>
-                                <a href="{% url 'announcements-list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                                <a href="{% url 'announcements-list' %}" class="btn btn-sm btn-outline-primary">View
+                                    All</a>
                             </div>
                             <div class="card-body" id="recentAnnouncements">
                                 <div id="recentAnnouncementsList">
-                                    <div class="text-center py-5"><h5>Loading...</h5></div>
+                                    <div class="text-center py-5">
+                                        <h5>Loading...</h5>
+                                    </div>
                                     <!-- Dynamically populated by JS -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Upcoming Placements -->
                     <div class="col-md-6 mb-4">
                         <div class="card h-100">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Recent Placements</h5>
-                                <a href="{% url 'placements-list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                                <a href="{% url 'placements-list' %}" class="btn btn-sm btn-outline-primary">View
+                                    All</a>
                             </div>
                             <div class="card-body" id="upcomingPlacements">
                                 <div id="upcomingPlacementsList">
-                                    <div class="text-center py-5"><h5>Loading...</h5></div>
+                                    <div class="text-center py-5">
+                                        <h5>Loading...</h5>
+                                    </div>
                                     <!-- Dynamically populated by JS -->
                                 </div>
                             </div>
@@ -250,145 +284,234 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add User Modal -->
-    <div class="modal modal-xl fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addUserModalLabel">Create New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="register_form">
-                        <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
-                            Unexpected Error occured!
-                        </div>
-                        <div class="alert alert-success" role="alert" id="user-created-success" style="display: none;">
-                            User Created Successfully!
-                        </div>
-                        <div class="row">
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="username" class="py-2 pb-1">Email address</label>
-                                <input type="email" class="form-control dark-input" id="email"
-                                    placeholder="name@mail.com" required autofocus>
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="firstname" class="py-2 pb-1">First Name</label>
-                                <input type="text" class="form-control dark-input" id="firstname"
-                                    placeholder="John" required>                    
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="lastname" class="py-2 pb-1">Last Name</label>
-                                <input type="text" class="form-control dark-input" id="lastname"
-                                    placeholder="Doe" required>                    
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="contact_number" class="py-2 pb-1">Mobile Number</label>
-                                <input type="number" class="form-control dark-input" id="contact_number"
-                                    placeholder="1234567890" required>                    
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="city" class="py-2 pb-1">City</label>
-                                <input type="text" class="form-control dark-input" id="city"
-                                    placeholder="Ahmedabad" required>                    
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="state" class="py-2 pb-1">State</label>
-                                <input type="text" class="form-control dark-input" id="state"
-                                    placeholder="Gujarat" required>                    
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="role" class="py-2 pb-1">UserRole</label>
-                                <select class="form-select dark-input" aria-label="select" id="role" name="role">
-                                    <option value="">Select type of User</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="teacher">Teacher</option>
-                                    <option value="student">Student</option>
-                                </select>
-                            </div>
-    
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="roll_no" class="py-2 pb-1">Roll Number</label>
-                                <input type="text" class="form-control dark-input" id="roll_no"
-                                    placeholder="1065">                    
-                            </div>
 
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="role" class="py-2 pb-1">Year</label>
-                                <select class="form-select dark-input" aria-label="select" id="year" name="year">
-                                    <option value="">Select year</option>
-                                    <option value="first_year">First Year</option>
-                                    <option value="second_year">Second Year</option>
-                                    <option value="third_year">Third Year</option>
-                                    <option value="fourth_year">Fourth Year</option>
-                                    <option value="fifth_year">Fifth Year</option>
-                                </select>
+        <!-- Add User Modal -->
+        <div class="modal modal-xl fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addUserModalLabel">Create New User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="register_form">
+                            <div class="alert alert-danger" role="alert" id="error-unexpected" style="display: none;">
+                                Unexpected Error occured!
                             </div>
-
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="division" class="py-2 pb-1">Class Division</label>
-                                <input type="text" class="form-control dark-input" id="division"
-                                    placeholder="A">                    
+                            <div class="alert alert-success" role="alert" id="user-created-success"
+                                style="display: none;">
+                                User Created Successfully!
                             </div>
+                            <div class="row">
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="username" class="py-2 pb-1">Email address</label>
+                                    <input type="email" class="form-control dark-input" id="email"
+                                        placeholder="name@mail.com" required autofocus>
+                                </div>
 
-                            <div class=" mb-2 col-12 col-md-6 mb-2">
-                                <label for="password" class="py-2 pb-1">Password</label>
-                                <input type="password" class="form-control dark-input" id="password" placeholder="Enter Password"
-                                    required>                    
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="firstname" class="py-2 pb-1">First Name</label>
+                                    <input type="text" class="form-control dark-input" id="firstname" placeholder="John"
+                                        required>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="lastname" class="py-2 pb-1">Last Name</label>
+                                    <input type="text" class="form-control dark-input" id="lastname" placeholder="Doe"
+                                        required>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="contact_number" class="py-2 pb-1">Mobile Number</label>
+                                    <input type="number" class="form-control dark-input" id="contact_number"
+                                        placeholder="1234567890" required>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="city" class="py-2 pb-1">City</label>
+                                    <input type="text" class="form-control dark-input" id="city" placeholder="Ahmedabad"
+                                        required>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="state" class="py-2 pb-1">State</label>
+                                    <input type="text" class="form-control dark-input" id="state" placeholder="Gujarat"
+                                        required>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="role" class="py-2 pb-1">UserRole</label>
+                                    <select class="form-select dark-input" aria-label="select" id="role" name="role">
+                                        <option value="">Select type of User</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="teacher">Teacher</option>
+                                        <option value="student">Student</option>
+                                    </select>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="roll_no" class="py-2 pb-1">Roll Number</label>
+                                    <input type="text" class="form-control dark-input" id="roll_no" placeholder="1065">
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="role" class="py-2 pb-1">Year</label>
+                                    <select class="form-select dark-input" aria-label="select" id="year" name="year">
+                                        <option value="">Select year</option>
+                                        <option value="first_year">First Year</option>
+                                        <option value="second_year">Second Year</option>
+                                        <option value="third_year">Third Year</option>
+                                        <option value="fourth_year">Fourth Year</option>
+                                        <option value="fifth_year">Fifth Year</option>
+                                    </select>
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="division" class="py-2 pb-1">Class Division</label>
+                                    <input type="text" class="form-control dark-input" id="division" placeholder="A">
+                                </div>
+
+                                <div class=" mb-2 col-12 col-md-6 mb-2">
+                                    <label for="password" class="py-2 pb-1">Password</label>
+                                    <input type="password" class="form-control dark-input" id="password"
+                                        placeholder="Enter Password" required>
+                                </div>
+
+                                <div class="mb-2 mt-4">
+                                    <button type="submit"
+                                        class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
+                                        <b class="mx-auto">Create User</b>
+                                        <i class="fa fa-plus fa-xl"></i>
+                                    </button>
+                                </div>
+
                             </div>
-    
-                            <div class="mb-2 mt-4">
-                                <button type="submit"
-                                    class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
-                                    <b class="mx-auto">Create User</b>
-                                    <i class="fa fa-plus fa-xl"></i>
-                                </button>
-                            </div>
-
-                        </div>                        
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close_add_subject_modal">Cancel</button>
-                    <!-- <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Subject</button> -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Document viewer modal -->
-    <div class="modal fade" id="viewDocumentModal" tabindex="-1"
-        aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-wrap text-break"
-                        id="viewDocumentModalLabel">View Document</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="document-viewer" class="viewer"></div>
-                    <!-- <div id="pdf-viewer-container" class="pdf-viewer-container">
-                <canvas id="pdf-renderer"></canvas>
-            </div> -->
-                    <!-- <iframe src="/media/uploads/suit_divyam(1).jpeg" width="100%" height="500px" id="viewDocumentModalIframe"
-                style="border: none;"></iframe> -->
-                </div>
-                <div class="modal-footer">
-                    <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="close_add_subject_modal">Cancel</button>
+                        <!-- <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Subject</button> -->
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Add transition_to_new_academic_year Modal -->
+        <div class="modal fade" id="transition_to_new_academic_yearModal" tabindex="-1"
+            aria-labelledby="transition_to_new_academic_yearModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="transition_to_new_academic_yearModalLabel">Transition to new
+                            academic year</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <h6 class="text-muted">Current Academic year: <b class="text-dark"><u
+                                        id="current_academic_year">2024-25</u></b></h6>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-muted">Transitioned Academic year: <b class="text-dark"><u
+                                        id="transitioned_academic_year">2025-26</u></b></h6>
+                        </div>
+                        <hr>
+                        <div class="mb-2 col-12 mt-3">
+                            <h5>Please select the students that are failed</h5>
+                            <label for="failed_student_roll_no" class="py-2 pb-1">Failed Student Roll Number</label>
+                            <input type="text" class="form-control dark-input" id="failed_student_roll_no"
+                                placeholder="Enter the failed student roll number" required>
+                            <div id="autocomplete-student-list" class="text-white bg-dark w-75"></div>
+                        </div>
+                        <div class="mb-2 col-12 mt-3">
+                            <h5>Selected students that are failed (<span id="total_failed_students">0</span>):</h5>
+                            <p class="text-muted text-center" id="no-students-failed">No students selected</p>
+                            <ul id="failed-students-list"></ul>
+                        </div>
+
+                        <div class="mb-2 mt-4">
+                            <button type="submit" data-bs-toggle="modal"
+                                data-bs-target="#final_transition_to_new_academic_yearModal"
+                                class="btn btn-primary w-100 d-flex justify-content-between align-items-center">
+                                <b class="mx-auto">Transit to new academic year</b>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="close_add_subject_modal">Cancel</button>
+                        <!-- <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Subject</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add final_transition_to_new_academic_year Modal -->
+        <div class="modal fade" id="final_transition_to_new_academic_yearModal" tabindex="-1"
+            aria-labelledby="final_transition_to_new_academic_yearModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="final_transition_to_new_academic_yearModalLabel">Confirm Transition
+                            to new academic year</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12">
+                            <h6 class="text-muted">Current Academic year: <b class="text-dark"><u
+                                        id="final_current_academic_year">2024-25</u></b></h6>
+                        </div>
+                        <div class="col-12">
+                            <h6 class="text-muted">Transitioned Academic year: <b class="text-dark"><u
+                                        id="final_transitioned_academic_year">2025-26</u></b></h6>
+                        </div>
+                        <hr>
+                        <div class="mb-2 col-12 mt-3">
+                            <h5>Total Selected students that are failed (<span
+                                    id="final_total_failed_students">0</span>):</h5>
+                            <p class="text-muted text-center" id="final-no-students-failed">No students selected</p>
+                            <ul id="final-failed-students-list"></ul>
+                        </div>
+
+                        <div class="mb-2 mt-4">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" onclick="transitToNewAcademicYear()"
+                            class="btn btn-danger d-flex justify-content-between align-items-center">
+                            <b class="mx-auto">Confirm Transit to new academic year</b>
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            id="close_add_subject_modal">Cancel</button>
+                        <!-- <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Subject</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document viewer modal -->
+        <div class="modal fade" id="viewDocumentModal" tabindex="-1" aria-labelledby="viewDocumentModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 text-wrap text-break" id="viewDocumentModalLabel">View Document</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="document-viewer" class="viewer"></div>                        
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Overlay for sidebar -->
@@ -396,8 +519,8 @@
 
     <!-- Import BootStrap JavaScript Library -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
     <!-- Import Wow Animation JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
@@ -410,9 +533,10 @@
 
     <script>
         window.onload = async function () {
-            await AdminDashboard("{{csrf_token}}", "{% url 'admin-dashboard-api-list' %}", "{% url 'user-list' %}");
+            await AdminDashboard("{{csrf_token}}", "{% url 'admin-dashboard-api-list' %}", "{% url 'user-list' %}", "{% url 'student-name-autocomplete-api-list' %}", "{% url 'promote-student-api-list' %}");
             toggle_loader();
         }
     </script>
 </body>
+
 </html>

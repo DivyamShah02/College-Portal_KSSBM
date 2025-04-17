@@ -7,3 +7,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         # fields = ["id", "is_superuser", "username", "first_name", "last_name", "email", "is_staff", "is_active", "date_joined", "role", "user_id", "name", "contact_number", "city", "state"]
         fields = '__all__'
+
+class AutocompleteUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "user_id", "name", "roll_no", "division"]
