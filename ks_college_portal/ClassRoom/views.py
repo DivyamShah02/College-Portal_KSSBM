@@ -1192,7 +1192,8 @@ class AnnouncementViewSet(viewsets.ViewSet):
             ind = 0
             while True:
                 if f'files[{ind}]' in request.FILES:
-                    file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    # file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    file_path = self.upload_file_to_s3(request.FILES[f'files[{ind}]'])
                     document_paths.append(file_path)
                     ind+=1
 
@@ -1271,12 +1272,12 @@ class AnnouncementViewSet(viewsets.ViewSet):
         region_name = "eu-north-1"
         s3_client = boto3.client(
             "s3",
-            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            aws_access_key_id = self.decrypt("QUtJQTVJSk9YQlFVVEVFNU9NSkI="),
+            aws_secret_access_key = self.decrypt("TlIwblU5T0oyQ0lkQm1nRkFXMEk4RTRiT01na3NEVXVPQnJJTU5iNQ=="),
             region_name = region_name
         )
         
-        bucket_name = "ehunt"
+        bucket_name = "sankievents"
         base_name, extension = os.path.splitext(uploaded_file.name)
         file_name = uploaded_file.name
         s3_key = f"uploads/{file_name}"
@@ -1550,7 +1551,8 @@ class AssignmentViewSet(viewsets.ViewSet):
             ind = 0
             while True:
                 if f'files[{ind}]' in request.FILES:
-                    file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    # file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    file_path = self.upload_file_to_s3(request.FILES[f'files[{ind}]'])
                     document_paths.append(file_path)
                     ind+=1
 
@@ -1631,12 +1633,12 @@ class AssignmentViewSet(viewsets.ViewSet):
         region_name = "eu-north-1"
         s3_client = boto3.client(
             "s3",
-            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            aws_access_key_id = self.decrypt("QUtJQTVJSk9YQlFVVEVFNU9NSkI="),
+            aws_secret_access_key = self.decrypt("TlIwblU5T0oyQ0lkQm1nRkFXMEk4RTRiT01na3NEVXVPQnJJTU5iNQ=="),
             region_name = region_name
         )
         
-        bucket_name = "ehunt"
+        bucket_name = "sankievents"
         base_name, extension = os.path.splitext(uploaded_file.name)
         file_name = uploaded_file.name
         s3_key = f"uploads/{file_name}"
@@ -1798,7 +1800,8 @@ class SubmittedAssignmentViewSet(viewsets.ViewSet):
 
             while True:
                 if f'files[{ind}]' in request.FILES:
-                    file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    # file_path = self.save_file(request.FILES[f'files[{ind}]'])
+                    file_path = self.upload_file_to_s3(request.FILES[f'files[{ind}]'])
                     document_paths.append(file_path)
                     ind+=1
 
@@ -1865,12 +1868,12 @@ class SubmittedAssignmentViewSet(viewsets.ViewSet):
         region_name = "eu-north-1"
         s3_client = boto3.client(
             "s3",
-            aws_access_key_id = self.decrypt("QUtJQTRUNE9DTTU2TENMUUdTNlA="),
-            aws_secret_access_key = self.decrypt("TzRzQmlWK0NvcWdBM2Q1aGhPMXJkeGV0c1YyaWdibjR6YXhrbTRqMA=="),
+            aws_access_key_id = self.decrypt("QUtJQTVJSk9YQlFVVEVFNU9NSkI="),
+            aws_secret_access_key = self.decrypt("TlIwblU5T0oyQ0lkQm1nRkFXMEk4RTRiT01na3NEVXVPQnJJTU5iNQ=="),
             region_name = region_name
         )
         
-        bucket_name = "ehunt"
+        bucket_name = "sankievents"
         base_name, extension = os.path.splitext(uploaded_file.name)
         file_name = uploaded_file.name
         s3_key = f"uploads/{file_name}"

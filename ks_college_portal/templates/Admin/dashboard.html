@@ -179,7 +179,8 @@
                         </button>
                     </div>
                     <div class="col-12 mt-2">
-                        <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addUserExcelModal">
+                        <button class="btn btn-primary w-100" data-bs-toggle="modal"
+                            data-bs-target="#addUserExcelModal">
                             <b class="mx-auto">Upload Student Excel</b>
                             <i class="fa fa-plus"></i>
                         </button>
@@ -445,25 +446,29 @@
                     </div>
                     <div class="modal-body">
                         <div class="p-5 text-center border" id="upload_box"
-                                onclick="document.getElementById('students_excel_file').click()"
-                                style="border-radius: 10px; cursor: pointer; background-color: transparent;">
+                            onclick="document.getElementById('students_excel_file').click()"
+                            style="border-radius: 10px; cursor: pointer; background-color: transparent;">
 
-                                <i class="bi bi-cloud-arrow-up fa-xl" id="students_excel_file_DocUploadIcon"></i>
-                                <p class="p-0 m-0" id="upload_input_text_students_excel_file">Click to upload</p>
-                                <p class="p-0 m-0" id="upload_input_file_text_students_excel_file" style="display: none;"></p>
-                                <input type="file" id="students_excel_file" hidden accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+                            <i class="bi bi-cloud-arrow-up fa-xl" id="students_excel_file_DocUploadIcon"></i>
+                            <p class="p-0 m-0" id="upload_input_text_students_excel_file">Click to upload</p>
+                            <p class="p-0 m-0" id="upload_input_file_text_students_excel_file" style="display: none;">
+                            </p>
+                            <input type="file" id="students_excel_file" hidden
+                                accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
 
-                            </div>
+                        </div>
+                        <a href="/static/Example_Student_data.xlsx" download="Example_Student_data.xlsx" class="btn btn-primary my-2 w-100 mt-4">Download Example Excel</a>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             id="close_add_subject_modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="saveSubjectBtn" onclick="uploadStudentExcel();">Upload</button>
+                        <button type="button" class="btn btn-primary" id="saveSubjectBtn"
+                            onclick="uploadStudentExcel();">Upload</button>
                     </div>
                 </div>
             </div>
         </div>
-    
+
         <!-- Document viewer modal -->
         <div class="modal fade" id="viewDocumentModal" tabindex="-1" aria-labelledby="viewDocumentModalLabel"
             aria-hidden="true">
@@ -474,7 +479,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div id="document-viewer" class="viewer"></div>                        
+                        <div id="document-viewer" class="viewer"></div>
                     </div>
                     <div class="modal-footer">
                         <!-- <button class="btn btn-danger" id="viewDocumentModalDeleteBtn"><b>Delete Doc</b></button> -->
