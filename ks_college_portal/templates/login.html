@@ -26,13 +26,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../static/css/loader.css">
+    <link rel="stylesheet" href="/static/css/loader_logo.css">
     <link rel="stylesheet" href="../static/css/styles.css">
 
 </head>
 
 <body class="login-page">
-    <div id="main-content">
+    <div id="spinner" class="spinner-container p-2">
+        <div class="spinner"></div>
+        <!-- <div id="spinner-text" class="loading-text text-center">loading!</div> -->
+    </div>
+    <div id="main-content" class="blur">
         <div class="container">
             <div class="row justify-content-center align-items-center min-vh-100">
                 <div class="col-md-8 col-lg-6">
@@ -111,6 +115,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 
     <script src="/static/js/api_caller.js"></script>
+    <script src="/static/js/loader.js"></script>
+
+    <script>
+        window.onload = async function () {            
+            toggle_loader();
+        }
+    </script>
 
     <script>
         async function LoginUser(username, password) {
@@ -131,24 +142,33 @@
                 }
 
                 else if (result.user_does_not_exist) {
+                    toggle_loader();
                     document.getElementById('error-user-not-found').style.display = '';
+                    return;
                 }
 
                 else if (result.wrong_password) {
+                    toggle_loader();
                     document.getElementById('error-wrong-password').style.display = '';
+                    return;
                 }
 
                 else {
+                    toggle_loader();
                     document.getElementById('error-unexpected').style.display = '';
+                    return;
                 }
 
             } else {
+                toggle_loader();
                 console.error("Login User Failed:", result);
                 document.getElementById('error-unexpected').style.display = '';
+                return;
             }
         }
 
         document.getElementById("login_form").addEventListener("submit", async (event) => {
+            toggle_loader();
             document.getElementById('error-wrong-password').style.display = 'none';
             document.getElementById('error-user-not-found').style.display = 'none';
             document.getElementById('error-unexpected').style.display = 'none';
@@ -170,7 +190,7 @@
             const password = document.getElementById("password").value.trim();
 
             // Call the login API
-            await LoginUser(username, password);
+            await LoginUser(username, password);            
 
         });
 
