@@ -120,9 +120,10 @@ function loadRecentAnnouncements(announcements) {
     }
     else {
       announcement.document_paths.forEach((doc) => {
-        doc_path = String(doc).replace('\\', '/');
-        doc_html += `<button href="/media/${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
-            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+        // doc_path = String(doc).replace('\\', '/');
+        doc_path = String(doc);
+        doc_html += `<button href="${doc}" class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('${doc_path}', '${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}')">
+            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}
           </button>`        
       });
     }

@@ -58,9 +58,10 @@ function loadAssignments(subjectAssignments, assignmentsList_id) {
     }
     else {
       assignment.document_paths.forEach((doc) => {
-        doc_path = String(doc).replace('\\', '/');
-        doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('uploads\\', '')}')">
-            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('uploads\\', '')}
+        // doc_path = String(doc).replace('\\', '/');
+        doc_path = String(doc);
+        doc_html += `<button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="openDocModal('${doc_path}', '${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}')">
+            <i class="bi bi-file-earmark me-2"></i>${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}
           </button>`
       });
     }
@@ -163,6 +164,7 @@ function handleFiles(files) {
 }
 
 document.getElementById("submit_assignment_form").addEventListener("submit", async (event) => {
+  toggle_loader();
   event.preventDefault();
   if (assignmentSelectedFiles.length === 0) {
     document.getElementById('upload_box').classList.add('border-danger');
@@ -212,7 +214,7 @@ document.getElementById("submit_assignment_form").addEventListener("submit", asy
     top: 0, // Set the scroll position to the top
     behavior: 'smooth' // Optional: Adds smooth scrolling
   });
-
+  toggle_loader();
 
 });
 
@@ -260,11 +262,12 @@ function createDocumentList(documentList, created_at, text_content) {
   doc_html += `<p><b>Text Content:</b> ${text_content}</p>`;
   documentList.forEach((doc) => {
     doc_index += 1;
-    doc_path = String(doc).replace('\\', '/');
+    // doc_path = String(doc).replace('\\', '/');
+        doc_path = String(doc);
     doc_html += `<div class="d-flex align-items-center py-3 px-2 mb-2 document-card"
-                            onclick="openDocModal('/media/${doc_path}', '${String(doc).replace('students_assignments\\', '')}')">
-                            <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('students_assignments\\', '')}</u>
-                            <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="/media/${doc}" download="${String(doc).replace('students_assignments\\', '')}" id="doc-${doc_index}-downloader"></a></div>
+                            onclick="openDocModal('${doc_path}', '${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}')">
+                            <i class="fa fa-file-pdf fa-xl text-danger"></i>&nbsp;&nbsp;&nbsp; <u>${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}</u>
+                            <div class="ms-auto"><a class="fa fa-download fa-xl mx-2 text-white" href="${doc}" download="${String(doc).replace('https://sankievents.s3.eu-north-1.amazonaws.com/uploads/', '')}" id="doc-${doc_index}-downloader"></a></div>
     </div>`
 
   });

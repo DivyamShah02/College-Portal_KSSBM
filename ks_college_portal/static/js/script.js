@@ -218,7 +218,7 @@ function displayDocument(url) {
     }
     else {
         // Unsupported file type
-        viewer.innerHTML = `<p>Unsupported document type: ${extension}</p>`;
+        viewer.innerHTML = `<p>Unsupported document type: ${extension}, Please download to view!</p>`;
     }
 }
 
