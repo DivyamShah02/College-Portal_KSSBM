@@ -106,6 +106,13 @@ class TeachersDataViewSet(viewsets.ViewSet):
                 return render(request, "Admin/teachers.html")
         return redirect('dashboard-list')
 
+class TeachersDailyTrackViewSet(viewsets.ViewSet):
+    def list(self, request):
+        if request.user.is_authenticated:            
+            if request.user.role == 'teacher':
+                return render(request, "Teacher/daily-track.html")
+        return redirect('dashboard-list')
+
 class EventViewSet(viewsets.ViewSet):
     def list(self, request):
         if request.user.is_authenticated:

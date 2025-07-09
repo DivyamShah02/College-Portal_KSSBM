@@ -1022,8 +1022,6 @@ class SubjectDetailViewSet(viewsets.ViewSet):
                 subject_data_obj = Subject.objects.filter(subject_id=subject_id).first()
                 subject_data = TeacherSubjectSerializer(subject_data_obj).data
 
-
-
             data = {
                 'all_announcements': all_announcements[::-1],
                 'total_announcements': len(all_announcements),
@@ -3133,3 +3131,92 @@ class AdminTeacherDataViewSet(viewsets.ViewSet):
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
+
+# <<< NEW CODE ADDED HERE >>>
+class DailyTrackViewSet(viewsets.ViewSet):
+    def generate_entry_id(self):
+        while True:
+            entry_id = ''.join(random.choices(string.digits, k=12))
+            if not DailyTrackEntry.objects.filter(entry_id=entry_id).exists():
+                return entry_id
+
+    def list(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated or user.role != 'teacher':
+                return Response({"success": False, "error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            date_filter = request.query_params.get('date')
+            if not date_filter:
+                return Response({"success": False, "error": "Date parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            entries = DailyTrackEntry.objects.filter(teacher_id=user.user_id, date=date_filter).order_by('start_time')
+            serializer = DailyTrackEntrySerializer(entries, many=True)
+
+            return Response({
+                "success": True,
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as ex:
+            print(ex)
+            return Response({"success": False, "error": str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, request):
+        try:
+            user = request.user
+            if not user.is_authenticated or user.role != 'teacher':
+                return Response({"success": False, "error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            data = request.data.copy()
+            data['teacher_id'] = user.user_id
+            data['entry_id'] = self.generate_entry_id()
+            
+            serializer = DailyTrackEntrySerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"success": True, "data": serializer.data}, status=status.HTTP_201_CREATED)
+            
+            return Response({"success": False, "error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as ex:
+            print(ex)
+            return Response({"success": False, "error": str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self, request, pk=None):
+        try:
+            user = request.user
+            if not user.is_authenticated or user.role != 'teacher':
+                return Response({"success": False, "error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            entry = DailyTrackEntry.objects.get(entry_id=pk, teacher_id=user.user_id)
+            serializer = DailyTrackEntrySerializer(entry, data=request.data, partial=True)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
+
+            return Response({"success": False, "error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        except DailyTrackEntry.DoesNotExist:
+            return Response({"success": False, "error": "Entry not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            print(ex)
+            return Response({"success": False, "error": str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, pk=None):
+        try:
+            user = request.user
+            if not user.is_authenticated or user.role != 'teacher':
+                return Response({"success": False, "error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            entry = DailyTrackEntry.objects.get(entry_id=pk, teacher_id=user.user_id)
+            entry.delete()
+            
+            return Response({"success": True, "message": "Entry deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+        except DailyTrackEntry.DoesNotExist:
+            return Response({"success": False, "error": "Entry not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            print(ex)
+            return Response({"success": False, "error": str(ex)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

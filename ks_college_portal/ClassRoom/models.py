@@ -121,3 +121,28 @@ class AcademicYear(models.Model):
 
 def get_current_academic_year():    
     return AcademicYear.objects.get(is_current=True).year
+
+# <<< NEW CODE ADDED HERE >>>
+class DailyTrackEntry(models.Model):
+    entry_id = models.CharField(max_length=12, unique=True)
+    teacher_id = models.CharField(max_length=12)
+    date = models.DateField()
+    activity_type = models.CharField(max_length=50)
+    subject_id = models.CharField(max_length=12, null=True, blank=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    description = models.TextField()
+    notes = models.TextField(null=True, blank=True)
+    academic_year = models.CharField(max_length=9)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = CurrentAcedemicManager()
+    all_objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        if not self.academic_year:
+            self.academic_year = get_current_academic_year()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.teacher_id} - {self.activity_type} on {self.date}"

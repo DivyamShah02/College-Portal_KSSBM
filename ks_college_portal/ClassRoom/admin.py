@@ -56,3 +56,13 @@ class MarkedAttendanceAdmin(admin.ModelAdmin):
 class AcademicYearAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'is_current')
     search_fields = ('year',)
+
+# <<< NEW CODE ADDED HERE >>>
+@admin.register(DailyTrackEntry)
+class DailyTrackEntryAdmin(admin.ModelAdmin):
+    list_display = ('entry_id', 'teacher_id', 'date', 'activity_type', 'subject_id', 'start_time', 'end_time')
+    search_fields = ('teacher_id', 'activity_type', 'subject_id')
+    list_filter = ('date', 'activity_type')
+
+    def get_queryset(self, request):
+        return DailyTrackEntry.all_objects.all()

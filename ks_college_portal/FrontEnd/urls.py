@@ -25,6 +25,8 @@ router.register(r'assignments', AssignmentsViewSet, basename='assignments')
 router.register(r'students', StudentsDataViewSet, basename='students')
 router.register(r'teachers', TeachersDataViewSet, basename='teachers')
 
+router.register(r'daily-track', TeachersDailyTrackViewSet, basename='daily-track')
+
 router.register(r'events', EventViewSet, basename='events')
 router.register(r'event-detail', EventDetailViewSet, basename='event-detail')
 

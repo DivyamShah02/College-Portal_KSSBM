@@ -97,6 +97,9 @@ function logPageLoadUrl() {
     else if (currentUrl.includes('announcements')) {
         document.getElementById('Announcements-nav').className = 'nav-link active';
     }
+    else if (currentUrl.includes('daily-track')) {
+        document.getElementById('Daily-Track-nav').className = 'nav-link active';
+    }
 
     else if (currentUrl.includes('assignments')) {
         document.getElementById('Assignments-nav').className = 'nav-link active';

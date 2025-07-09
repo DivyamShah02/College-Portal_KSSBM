@@ -74,7 +74,7 @@ class CommentSerializer(serializers.ModelSerializer):
         if 'user_id' in representation:
             user_data = User.objects.filter(user_id=representation['user_id']).first()
             user_name = user_data.name
-            representation['user_name'] = user_name
+            representation['user_name'] = user_data.name
 
         return representation
 
@@ -186,4 +186,25 @@ class MarkedAttendanceSerializer(serializers.ModelSerializer):
             representation['student_name'] = user_data_obj.name
             representation['user_data'] = user_data
 
+        return representation
+
+# <<< NEW CODE ADDED HERE >>>
+class DailyTrackEntrySerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%H:%M | %d-%m-%Y', read_only=True)
+    date = serializers.DateField(format='%Y-%m-%d')
+    start_time = serializers.TimeField(format='%H:%M')
+    end_time = serializers.TimeField(format='%H:%M')
+
+    class Meta:
+        model = DailyTrackEntry
+        fields = '__all__'
+        read_only_fields = ('teacher_id', 'academic_year', 'created_at', 'entry_id')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.subject_id:
+            subject = Subject.objects.filter(subject_id=instance.subject_id).first()
+            representation['subject_name'] = subject.subject_name if subject else 'N/A'
+        else:
+            representation['subject_name'] = 'General'
         return representation
